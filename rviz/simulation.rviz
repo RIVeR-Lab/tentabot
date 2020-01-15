@@ -1,0 +1,943 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /MarkerArray1/Namespaces1
+      Splitter Ratio: 0.566233754
+    Tree Height: 542
+  - Class: rviz/Selection
+    Name: Selection
+  - Class: rviz/Tool Properties
+    Expanded:
+      - /2D Pose Estimate1
+      - /2D Nav Goal1
+      - /Publish Point1
+    Name: Tool Properties
+    Splitter Ratio: 0.586667001
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz/Time
+    Experimental: false
+    Name: Time
+    SyncMode: 0
+    SyncSource: Image
+Toolbars:
+  toolButtonStyle: 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 0.100000001
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.0299999993
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 200
+      Reference Frame: firefly/base_link
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /firefly/camera/rgb/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        firefly/base_link:
+          Value: true
+        firefly/base_link_inertia:
+          Value: true
+        firefly/bracket:
+          Value: true
+        firefly/bracket_end_left:
+          Value: true
+        firefly/bracket_end_right:
+          Value: true
+        firefly/camera:
+          Value: true
+        firefly/camera_depth_frame:
+          Value: true
+        firefly/camera_depth_optical_frame:
+          Value: true
+        firefly/camera_rgb_frame:
+          Value: true
+        firefly/camera_rgb_optical_frame:
+          Value: true
+        firefly/imu_link:
+          Value: true
+        firefly/imugt_link:
+          Value: true
+        firefly/odometry_sensor1:
+          Value: true
+        firefly/odometry_sensor1_link:
+          Value: true
+        firefly/odometry_sensorgt_link:
+          Value: true
+        firefly/rotor_0:
+          Value: true
+        firefly/rotor_1:
+          Value: true
+        firefly/rotor_2:
+          Value: true
+        firefly/rotor_3:
+          Value: true
+        firefly/rotor_4:
+          Value: true
+        firefly/rotor_5:
+          Value: true
+        world:
+          Value: true
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          firefly/base_link:
+            firefly/base_link_inertia:
+              {}
+            firefly/bracket_end_right:
+              firefly/bracket:
+                firefly/bracket_end_left:
+                  {}
+                firefly/camera:
+                  firefly/camera_rgb_frame:
+                    firefly/camera_depth_frame:
+                      firefly/camera_depth_optical_frame:
+                        {}
+                    firefly/camera_rgb_optical_frame:
+                      {}
+            firefly/imu_link:
+              {}
+            firefly/imugt_link:
+              {}
+            firefly/odometry_sensor1_link:
+              {}
+            firefly/odometry_sensorgt_link:
+              {}
+            firefly/rotor_0:
+              {}
+            firefly/rotor_1:
+              {}
+            firefly/rotor_2:
+              {}
+            firefly/rotor_3:
+              {}
+            firefly/rotor_4:
+              {}
+            firefly/rotor_5:
+              {}
+          firefly/odometry_sensor1:
+            {}
+      Update Interval: 0
+      Value: true
+    - Class: rviz/Axes
+      Enabled: true
+      Length: 1
+      Name: Axes
+      Radius: 0.100000001
+      Reference Frame: world
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.100000001
+      Style: Spheres
+      Topic: /firefly/ego_occupancy_pc
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /firefly/tentacles
+      Name: MarkerArray
+      Namespaces:
+        tentacle0: true
+        tentacle1: true
+        tentacle10: true
+        tentacle100: true
+        tentacle101: true
+        tentacle102: true
+        tentacle103: true
+        tentacle104: true
+        tentacle105: true
+        tentacle106: true
+        tentacle107: true
+        tentacle108: true
+        tentacle109: true
+        tentacle11: true
+        tentacle110: true
+        tentacle111: true
+        tentacle112: true
+        tentacle113: true
+        tentacle114: true
+        tentacle115: true
+        tentacle116: true
+        tentacle117: true
+        tentacle118: true
+        tentacle119: true
+        tentacle12: true
+        tentacle120: true
+        tentacle121: true
+        tentacle122: true
+        tentacle123: true
+        tentacle124: true
+        tentacle125: true
+        tentacle126: true
+        tentacle127: true
+        tentacle128: true
+        tentacle129: true
+        tentacle13: true
+        tentacle130: true
+        tentacle131: true
+        tentacle132: true
+        tentacle133: true
+        tentacle134: true
+        tentacle135: true
+        tentacle136: true
+        tentacle137: true
+        tentacle138: true
+        tentacle139: true
+        tentacle14: true
+        tentacle140: true
+        tentacle141: true
+        tentacle142: true
+        tentacle143: true
+        tentacle144: true
+        tentacle145: true
+        tentacle146: true
+        tentacle147: true
+        tentacle148: true
+        tentacle149: true
+        tentacle15: true
+        tentacle150: true
+        tentacle151: true
+        tentacle152: true
+        tentacle153: true
+        tentacle154: true
+        tentacle155: true
+        tentacle156: true
+        tentacle157: true
+        tentacle158: true
+        tentacle159: true
+        tentacle16: true
+        tentacle160: true
+        tentacle161: true
+        tentacle162: true
+        tentacle163: true
+        tentacle164: true
+        tentacle165: true
+        tentacle166: true
+        tentacle167: true
+        tentacle168: true
+        tentacle169: true
+        tentacle17: true
+        tentacle170: true
+        tentacle171: true
+        tentacle172: true
+        tentacle173: true
+        tentacle174: true
+        tentacle175: true
+        tentacle176: true
+        tentacle177: true
+        tentacle178: true
+        tentacle179: true
+        tentacle18: true
+        tentacle180: true
+        tentacle181: true
+        tentacle182: true
+        tentacle183: true
+        tentacle184: true
+        tentacle185: true
+        tentacle186: true
+        tentacle187: true
+        tentacle188: true
+        tentacle189: true
+        tentacle19: true
+        tentacle190: true
+        tentacle191: true
+        tentacle192: true
+        tentacle193: true
+        tentacle194: true
+        tentacle195: true
+        tentacle196: true
+        tentacle197: true
+        tentacle198: true
+        tentacle199: true
+        tentacle2: true
+        tentacle20: true
+        tentacle200: true
+        tentacle201: true
+        tentacle202: true
+        tentacle203: true
+        tentacle204: true
+        tentacle205: true
+        tentacle206: true
+        tentacle207: true
+        tentacle208: true
+        tentacle209: true
+        tentacle21: true
+        tentacle210: true
+        tentacle211: true
+        tentacle212: true
+        tentacle213: true
+        tentacle214: true
+        tentacle215: true
+        tentacle216: true
+        tentacle217: true
+        tentacle218: true
+        tentacle219: true
+        tentacle22: true
+        tentacle220: true
+        tentacle221: true
+        tentacle222: true
+        tentacle223: true
+        tentacle224: true
+        tentacle225: true
+        tentacle226: true
+        tentacle227: true
+        tentacle228: true
+        tentacle229: true
+        tentacle23: true
+        tentacle230: true
+        tentacle231: true
+        tentacle232: true
+        tentacle233: true
+        tentacle234: true
+        tentacle235: true
+        tentacle236: true
+        tentacle237: true
+        tentacle238: true
+        tentacle239: true
+        tentacle24: true
+        tentacle240: true
+        tentacle241: true
+        tentacle242: true
+        tentacle243: true
+        tentacle244: true
+        tentacle245: true
+        tentacle246: true
+        tentacle247: true
+        tentacle248: true
+        tentacle249: true
+        tentacle25: true
+        tentacle250: true
+        tentacle251: true
+        tentacle252: true
+        tentacle253: true
+        tentacle254: true
+        tentacle255: true
+        tentacle256: true
+        tentacle257: true
+        tentacle258: true
+        tentacle259: true
+        tentacle26: true
+        tentacle260: true
+        tentacle261: true
+        tentacle262: true
+        tentacle263: true
+        tentacle264: true
+        tentacle265: true
+        tentacle266: true
+        tentacle267: true
+        tentacle268: true
+        tentacle269: true
+        tentacle27: true
+        tentacle270: true
+        tentacle271: true
+        tentacle272: true
+        tentacle273: true
+        tentacle274: true
+        tentacle275: true
+        tentacle276: true
+        tentacle277: true
+        tentacle278: true
+        tentacle279: true
+        tentacle28: true
+        tentacle280: true
+        tentacle281: true
+        tentacle282: true
+        tentacle283: true
+        tentacle284: true
+        tentacle285: true
+        tentacle286: true
+        tentacle287: true
+        tentacle288: true
+        tentacle289: true
+        tentacle29: true
+        tentacle290: true
+        tentacle291: true
+        tentacle292: true
+        tentacle293: true
+        tentacle294: true
+        tentacle295: true
+        tentacle296: true
+        tentacle297: true
+        tentacle298: true
+        tentacle299: true
+        tentacle3: true
+        tentacle30: true
+        tentacle300: true
+        tentacle301: true
+        tentacle302: true
+        tentacle303: true
+        tentacle304: true
+        tentacle305: true
+        tentacle306: true
+        tentacle307: true
+        tentacle308: true
+        tentacle309: true
+        tentacle31: true
+        tentacle310: true
+        tentacle311: true
+        tentacle312: true
+        tentacle313: true
+        tentacle314: true
+        tentacle315: true
+        tentacle316: true
+        tentacle317: true
+        tentacle318: true
+        tentacle319: true
+        tentacle32: true
+        tentacle320: true
+        tentacle321: true
+        tentacle322: true
+        tentacle323: true
+        tentacle324: true
+        tentacle325: true
+        tentacle326: true
+        tentacle327: true
+        tentacle328: true
+        tentacle329: true
+        tentacle33: true
+        tentacle330: true
+        tentacle331: true
+        tentacle332: true
+        tentacle333: true
+        tentacle334: true
+        tentacle335: true
+        tentacle336: true
+        tentacle337: true
+        tentacle338: true
+        tentacle339: true
+        tentacle34: true
+        tentacle340: true
+        tentacle341: true
+        tentacle342: true
+        tentacle343: true
+        tentacle344: true
+        tentacle345: true
+        tentacle346: true
+        tentacle347: true
+        tentacle348: true
+        tentacle349: true
+        tentacle35: true
+        tentacle350: true
+        tentacle351: true
+        tentacle352: true
+        tentacle353: true
+        tentacle354: true
+        tentacle355: true
+        tentacle356: true
+        tentacle357: true
+        tentacle358: true
+        tentacle359: true
+        tentacle36: true
+        tentacle360: true
+        tentacle361: true
+        tentacle362: true
+        tentacle363: true
+        tentacle364: true
+        tentacle365: true
+        tentacle366: true
+        tentacle367: true
+        tentacle368: true
+        tentacle369: true
+        tentacle37: true
+        tentacle370: true
+        tentacle371: true
+        tentacle372: true
+        tentacle373: true
+        tentacle374: true
+        tentacle375: true
+        tentacle376: true
+        tentacle377: true
+        tentacle378: true
+        tentacle379: true
+        tentacle38: true
+        tentacle380: true
+        tentacle381: true
+        tentacle382: true
+        tentacle383: true
+        tentacle384: true
+        tentacle385: true
+        tentacle386: true
+        tentacle387: true
+        tentacle388: true
+        tentacle389: true
+        tentacle39: true
+        tentacle390: true
+        tentacle391: true
+        tentacle392: true
+        tentacle393: true
+        tentacle394: true
+        tentacle395: true
+        tentacle396: true
+        tentacle397: true
+        tentacle398: true
+        tentacle399: true
+        tentacle4: true
+        tentacle40: true
+        tentacle400: true
+        tentacle401: true
+        tentacle402: true
+        tentacle403: true
+        tentacle404: true
+        tentacle405: true
+        tentacle406: true
+        tentacle407: true
+        tentacle408: true
+        tentacle409: true
+        tentacle41: true
+        tentacle410: true
+        tentacle411: true
+        tentacle412: true
+        tentacle413: true
+        tentacle414: true
+        tentacle415: true
+        tentacle416: true
+        tentacle417: true
+        tentacle418: true
+        tentacle419: true
+        tentacle42: true
+        tentacle420: true
+        tentacle421: true
+        tentacle422: true
+        tentacle423: true
+        tentacle424: true
+        tentacle425: true
+        tentacle426: true
+        tentacle427: true
+        tentacle428: true
+        tentacle429: true
+        tentacle43: true
+        tentacle430: true
+        tentacle431: true
+        tentacle432: true
+        tentacle433: true
+        tentacle434: true
+        tentacle435: true
+        tentacle436: true
+        tentacle437: true
+        tentacle438: true
+        tentacle439: true
+        tentacle44: true
+        tentacle440: true
+        tentacle441: true
+        tentacle442: true
+        tentacle443: true
+        tentacle444: true
+        tentacle445: true
+        tentacle446: true
+        tentacle447: true
+        tentacle448: true
+        tentacle449: true
+        tentacle45: true
+        tentacle450: true
+        tentacle451: true
+        tentacle452: true
+        tentacle453: true
+        tentacle454: true
+        tentacle455: true
+        tentacle456: true
+        tentacle457: true
+        tentacle458: true
+        tentacle459: true
+        tentacle46: true
+        tentacle460: true
+        tentacle461: true
+        tentacle462: true
+        tentacle463: true
+        tentacle464: true
+        tentacle465: true
+        tentacle466: true
+        tentacle467: true
+        tentacle468: true
+        tentacle469: true
+        tentacle47: true
+        tentacle470: true
+        tentacle471: true
+        tentacle472: true
+        tentacle473: true
+        tentacle474: true
+        tentacle475: true
+        tentacle476: true
+        tentacle477: true
+        tentacle478: true
+        tentacle479: true
+        tentacle48: true
+        tentacle480: true
+        tentacle481: true
+        tentacle482: true
+        tentacle483: true
+        tentacle484: true
+        tentacle485: true
+        tentacle486: true
+        tentacle487: true
+        tentacle488: true
+        tentacle489: true
+        tentacle49: true
+        tentacle490: true
+        tentacle491: true
+        tentacle492: true
+        tentacle493: true
+        tentacle494: true
+        tentacle495: true
+        tentacle496: true
+        tentacle497: true
+        tentacle498: true
+        tentacle499: true
+        tentacle5: true
+        tentacle50: true
+        tentacle500: true
+        tentacle501: true
+        tentacle502: true
+        tentacle503: true
+        tentacle504: true
+        tentacle505: true
+        tentacle506: true
+        tentacle507: true
+        tentacle508: true
+        tentacle509: true
+        tentacle51: true
+        tentacle510: true
+        tentacle511: true
+        tentacle512: true
+        tentacle513: true
+        tentacle514: true
+        tentacle515: true
+        tentacle516: true
+        tentacle517: true
+        tentacle518: true
+        tentacle519: true
+        tentacle52: true
+        tentacle520: true
+        tentacle521: true
+        tentacle522: true
+        tentacle523: true
+        tentacle524: true
+        tentacle525: true
+        tentacle526: true
+        tentacle527: true
+        tentacle528: true
+        tentacle529: true
+        tentacle53: true
+        tentacle530: true
+        tentacle531: true
+        tentacle532: true
+        tentacle533: true
+        tentacle534: true
+        tentacle535: true
+        tentacle536: true
+        tentacle537: true
+        tentacle538: true
+        tentacle539: true
+        tentacle54: true
+        tentacle540: true
+        tentacle541: true
+        tentacle542: true
+        tentacle543: true
+        tentacle544: true
+        tentacle545: true
+        tentacle546: true
+        tentacle547: true
+        tentacle548: true
+        tentacle549: true
+        tentacle55: true
+        tentacle550: true
+        tentacle551: true
+        tentacle552: true
+        tentacle553: true
+        tentacle554: true
+        tentacle555: true
+        tentacle556: true
+        tentacle557: true
+        tentacle558: true
+        tentacle559: true
+        tentacle56: true
+        tentacle560: true
+        tentacle561: true
+        tentacle562: true
+        tentacle563: true
+        tentacle564: true
+        tentacle565: true
+        tentacle566: true
+        tentacle567: true
+        tentacle568: true
+        tentacle569: true
+        tentacle57: true
+        tentacle570: true
+        tentacle571: true
+        tentacle572: true
+        tentacle573: true
+        tentacle574: true
+        tentacle575: true
+        tentacle576: true
+        tentacle577: true
+        tentacle578: true
+        tentacle579: true
+        tentacle58: true
+        tentacle580: true
+        tentacle581: true
+        tentacle582: true
+        tentacle583: true
+        tentacle584: true
+        tentacle585: true
+        tentacle586: true
+        tentacle587: true
+        tentacle588: true
+        tentacle589: true
+        tentacle59: true
+        tentacle590: true
+        tentacle591: true
+        tentacle592: true
+        tentacle593: true
+        tentacle594: true
+        tentacle595: true
+        tentacle596: true
+        tentacle597: true
+        tentacle598: true
+        tentacle599: true
+        tentacle6: true
+        tentacle60: true
+        tentacle600: true
+        tentacle601: true
+        tentacle602: true
+        tentacle603: true
+        tentacle604: true
+        tentacle605: true
+        tentacle606: true
+        tentacle607: true
+        tentacle608: true
+        tentacle609: true
+        tentacle61: true
+        tentacle610: true
+        tentacle611: true
+        tentacle612: true
+        tentacle613: true
+        tentacle614: true
+        tentacle615: true
+        tentacle616: true
+        tentacle617: true
+        tentacle618: true
+        tentacle619: true
+        tentacle62: true
+        tentacle620: true
+        tentacle621: true
+        tentacle622: true
+        tentacle623: true
+        tentacle624: true
+        tentacle625: true
+        tentacle626: true
+        tentacle627: true
+        tentacle628: true
+        tentacle629: true
+        tentacle63: true
+        tentacle630: true
+        tentacle631: true
+        tentacle632: true
+        tentacle633: true
+        tentacle634: true
+        tentacle635: true
+        tentacle636: true
+        tentacle637: true
+        tentacle638: true
+        tentacle639: true
+        tentacle64: true
+        tentacle640: true
+        tentacle641: true
+        tentacle642: true
+        tentacle643: true
+        tentacle644: true
+        tentacle645: true
+        tentacle646: true
+        tentacle647: true
+        tentacle648: true
+        tentacle649: true
+        tentacle65: true
+        tentacle650: true
+        tentacle66: true
+        tentacle67: true
+        tentacle68: true
+        tentacle69: true
+        tentacle7: true
+        tentacle70: true
+        tentacle71: true
+        tentacle72: true
+        tentacle73: true
+        tentacle74: true
+        tentacle75: true
+        tentacle76: true
+        tentacle77: true
+        tentacle78: true
+        tentacle79: true
+        tentacle8: true
+        tentacle80: true
+        tentacle81: true
+        tentacle82: true
+        tentacle83: true
+        tentacle84: true
+        tentacle85: true
+        tentacle86: true
+        tentacle87: true
+        tentacle88: true
+        tentacle89: true
+        tentacle9: true
+        tentacle90: true
+        tentacle91: true
+        tentacle92: true
+        tentacle93: true
+        tentacle94: true
+        tentacle95: true
+        tentacle96: true
+        tentacle97: true
+        tentacle98: true
+        tentacle99: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /firefly/twoGoal
+      Name: MarkerArray
+      Namespaces:
+        twoGoal_wp1: true
+        twoGoal_wp2: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /firefly/path2glory
+      Name: Marker
+      Namespaces:
+        path2glory: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /firefly/commandante
+      Name: Marker
+      Namespaces:
+        commandante: true
+      Queue Size: 100
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Default Light: true
+    Fixed Frame: world
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/FocusCamera
+    - Class: rviz/Measure
+    - Class: rviz/SetInitialPose
+      Topic: /robocremers1/initialpose
+    - Class: rviz/SetGoal
+      Topic: /robocremers1/move_base_simple/goal
+    - Class: rviz/PublishPoint
+      Single click: true
+      Topic: /clicked_point
+  Value: true
+  Views:
+    Current:
+      Class: rviz/Orbit
+      Distance: 51.0848465
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.0599999987
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 7.19176626
+        Y: 7.50229454
+        Z: 3.45874596
+      Focal Shape Fixed Size: false
+      Focal Shape Size: 0.0500000007
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.00999999978
+      Pitch: 1.0947969
+      Target Frame: firefly/base_link
+      Value: Orbit (rviz)
+      Yaw: 1.2486037
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1056
+  Hide Left Dock: false
+  Hide Right Dock: false
+  Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd00000004000000000000019300000399fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000002ad000000d700fffffffb0000000a0049006d00610067006501000002db000000e60000001600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d0061006700650100000337000000cd0000000000000000fb0000000a0049006d0061006700650100000369000000d00000000000000000000000010000016000000399fc0200000008fb0000000a0049006d0061006700650000000041000001290000000000000000fb0000000a0049006d00610067006501000000410000021e0000000000000000fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000028000001630000006100fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000a30000000000000000fb0000000a0049006d00610067006500000000ab000000fa0000000000000000fb0000000a0049006d00610067006501000000d80000017b0000000000000000fb0000000a00560069006500770073010000019100000230000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000461000000bcfc0100000002fb0000000a0049006d0061006700650100000000000004610000000000000000fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007410000003bfc0100000002fb0000000800540069006d00650100000000000007410000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000004420000039900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: false
+  Time:
+    collapsed: false
+  Tool Properties:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 1857
+  X: 63
+  Y: 24
