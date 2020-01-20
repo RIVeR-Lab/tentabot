@@ -1,6 +1,6 @@
 # Tentabot: A 3D Reactive Navigation Algorithm for Mobile Robots by Using Tentacle-Based Sampling
 
-[![teaser](tentabot.gif)](https://youtu.be/5vZSEuWUXe4)
+[![teaser](tentabot_cylinders0.gif)](https://youtu.be/5vZSEuWUXe4) [![teaser](tentabot_forest1.gif)](https://youtu.be/5vZSEuWUXe4)
 
 ### 1. Related Papers
 
