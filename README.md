@@ -12,7 +12,7 @@ The system has been tested with Ubuntu 16.04 (ROS Kinetic).
 
 Follow the tutorials to [install ROS Kinetic](http://wiki.ros.org/ROS/Installation) and to [set up catkin workspace](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
 
-# Install required packages into the src folder:
+#### Install required packages into the src folder:
 ```
 cd ~/catkin_ws/src
 ```
@@ -27,7 +27,7 @@ Install [octomap_msgs](http://wiki.ros.org/octomap_msgs) for the the ROS Kinetic
 git clone https://github.com/OctoMap/octomap_msgs.git
 ```
 
-Follow the instructions and install [ewok](https://github.com/VladyslavUsenko/ewok/tree/ubuntu_16_04_kinetic)
+Follow the instructions and install [ewok](https://github.com/VladyslavUsenko/ewok/tree/ubuntu_16_04_kinetic) for the ROS Kinetic branch.
 
 ### 3. Simulation example
 
