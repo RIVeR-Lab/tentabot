@@ -11,10 +11,8 @@
 
 double MapUtility::randdouble(double from, double to)
 {
-  std::default_random_engine rng;
-  rng.seed(std::random_device()());
-  std::uniform_real_distribution<float> randd(from, to);
-  return randd(rng);  
+  double f = (double)rand() / RAND_MAX;
+  return from + f * (to - from);  
 }
 
 void MapUtility::createColorOcTree(double new_oct_resolution, sensor_msgs::PointCloud pcd, vector<int> color_RGB)

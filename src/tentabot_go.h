@@ -190,21 +190,21 @@ struct VisuParams
 };
 
 // GENERAL FUNCTIONS:
-int randint(int from, int to)
+/*int randint(int from, int to)
 {
   std::default_random_engine rng;
   rng.seed(std::random_device()());
   std::uniform_int_distribution<std::mt19937::result_type> randi(from, to);
   return randi(rng);
-}
+}*/
 
-double randdouble(double from, double to)
+/*double randdouble(double from, double to)
 {
   std::default_random_engine rng;
   rng.seed(std::random_device()());
   std::uniform_real_distribution<float> randd(from, to);
   return randd(rng);
-}
+}*/
 
 vector<double> sampling_func(double mini, double maxi, int snum, string stype)
 {
@@ -2182,9 +2182,9 @@ class Tentabot
       this -> map_util.setPCData(recent_pc);
     }
 
-    void odometryCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+    void odometryCallback(const geometry_msgs::Pose::ConstPtr& msg)
     {
-      this -> status_param.robot_pose = msg -> pose;
+      this -> status_param.robot_pose = *msg;
 
       this -> status_param.command_pub.publish(this -> status_param.robot_pose_command);
 

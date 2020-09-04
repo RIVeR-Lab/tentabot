@@ -410,10 +410,8 @@ void GoalUtility::printGoal()
 
 double GoalUtility::randdouble(double from, double to)
 {
-  std::default_random_engine rng;
-  rng.seed(std::random_device()());
-  std::uniform_real_distribution<float> randd(from, to);
-  return randd(rng);  
+  double f = (double)rand() / RAND_MAX;
+  return from + f * (to - from);   
 }
 
 bool GoalUtility::isVecContainPoint(vector<geometry_msgs::Pose> vec, geometry_msgs::Point p)

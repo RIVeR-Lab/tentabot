@@ -20,6 +20,7 @@ int main(int argc, char** argv)
     // INITIALIZE THE ROS NODE HANDLE FOR PARAMETERS
     ros::NodeHandle pnh("~");
 
+    
     // INITIALIZE TRANSFORM LISTENER
     tf::TransformListener* listener = new tf::TransformListener;
 
@@ -144,6 +145,7 @@ int main(int argc, char** argv)
     // START THE GAZEBO
     std_srvs::Empty srv;
     bool unpaused = ros::service::call("/gazebo/unpause_physics", srv);
+
     unsigned int i = 0;
 
     while (i <= 10 && !unpaused) 
@@ -183,7 +185,7 @@ int main(int argc, char** argv)
     p.pose.orientation.w = 1;
 
     trajectory_pub.publish(p);
-    
+
     // INITIALIZE TENTABOT OBJECT
     Tentabot tbot(nh, listener, pp, rp, offtp, ontp, mu);
 
@@ -198,6 +200,6 @@ int main(int argc, char** argv)
 
     // NAV LOOP
     ros::Timer timer = nh.createTimer(ros::Duration(pp.nav_dt), &Tentabot::sendCommandCallback, &tbot);
-    
+
     ros::spin();
 }

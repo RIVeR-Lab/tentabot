@@ -15,7 +15,6 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   pcl_conversions
   pcl_ros
-  octomap
   octomap_ros
   octomap_msgs
   message_generation
@@ -40,7 +39,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-# find_package(octomap REQUIRED)
+find_package(octomap REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
