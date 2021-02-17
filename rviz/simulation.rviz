@@ -1,13 +1,14 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 172
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /MarkerArray1/Namespaces1
-      Splitter Ratio: 0.566233754
-    Tree Height: 542
+        - /MarkerArray3/Namespaces1
+        - /MarkerArray4/Namespaces1
+      Splitter Ratio: 0.56623375415802
+    Tree Height: 380
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -16,7 +17,7 @@ Panels:
       - /2D Nav Goal1
       - /Publish Point1
     Name: Tool Properties
-    Splitter Ratio: 0.586667001
+    Splitter Ratio: 0.586667001247406
   - Class: rviz/Views
     Expanded:
       - /Current View1
@@ -26,19 +27,21 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: Image
+    SyncSource: PointCloud
+Preferences:
+  PromptSaveOnExit: true
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 0.100000001
+      Cell Size: 0.10000000149011612
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
-        Line Width: 0.0299999993
+        Line Width: 0.029999999329447746
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -49,7 +52,7 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 200
       Reference Frame: firefly/base_link
-      Value: true
+      Value: false
     - Class: rviz/Image
       Enabled: true
       Image Topic: /firefly/camera/rgb/image_raw
@@ -63,105 +66,34 @@ Visualization Manager:
       Unreliable: false
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        firefly/base_link:
-          Value: true
-        firefly/base_link_inertia:
-          Value: true
-        firefly/bracket:
-          Value: true
-        firefly/bracket_end_left:
-          Value: true
-        firefly/bracket_end_right:
-          Value: true
-        firefly/camera:
-          Value: true
-        firefly/camera_depth_frame:
-          Value: true
-        firefly/camera_depth_optical_frame:
-          Value: true
-        firefly/camera_rgb_frame:
-          Value: true
-        firefly/camera_rgb_optical_frame:
-          Value: true
-        firefly/imu_link:
-          Value: true
-        firefly/imugt_link:
-          Value: true
-        firefly/odometry_sensor1:
-          Value: true
-        firefly/odometry_sensor1_link:
-          Value: true
-        firefly/odometry_sensorgt_link:
-          Value: true
-        firefly/rotor_0:
-          Value: true
-        firefly/rotor_1:
-          Value: true
-        firefly/rotor_2:
-          Value: true
-        firefly/rotor_3:
-          Value: true
-        firefly/rotor_4:
-          Value: true
-        firefly/rotor_5:
-          Value: true
-        world:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          firefly/base_link:
-            firefly/base_link_inertia:
-              {}
-            firefly/bracket_end_right:
-              firefly/bracket:
-                firefly/bracket_end_left:
-                  {}
-                firefly/camera:
-                  firefly/camera_rgb_frame:
-                    firefly/camera_depth_frame:
-                      firefly/camera_depth_optical_frame:
-                        {}
-                    firefly/camera_rgb_optical_frame:
-                      {}
-            firefly/imu_link:
-              {}
-            firefly/imugt_link:
-              {}
-            firefly/odometry_sensor1_link:
-              {}
-            firefly/odometry_sensorgt_link:
-              {}
-            firefly/rotor_0:
-              {}
-            firefly/rotor_1:
-              {}
-            firefly/rotor_2:
-              {}
-            firefly/rotor_3:
-              {}
-            firefly/rotor_4:
-              {}
-            firefly/rotor_5:
-              {}
-          firefly/odometry_sensor1:
-            {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Class: rviz/Axes
       Enabled: true
       Length: 1
       Name: Axes
-      Radius: 0.100000001
+      Radius: 0.10000000149011612
       Reference Frame: world
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /firefly/twoGoal
+      Name: MarkerArray
+      Namespaces:
+        twoGoal_wp1: true
+        twoGoal_wp2: true
+      Queue Size: 100
       Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
@@ -186,7 +118,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.100000001
+      Size (m): 0.10000000149011612
       Style: Spheres
       Topic: /firefly/ego_occupancy_pc
       Unreliable: false
@@ -812,6 +744,7 @@ Visualization Manager:
         tentacle649: true
         tentacle65: true
         tentacle650: true
+        tentacle651: true
         tentacle66: true
         tentacle67: true
         tentacle68: true
@@ -852,14 +785,21 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /firefly/twoGoal
+      Enabled: false
+      Marker Topic: /firefly/sampling_points
       Name: MarkerArray
       Namespaces:
-        twoGoal_wp1: true
-        twoGoal_wp2: true
+        {}
       Queue Size: 100
-      Value: true
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /firefly/support_voxels
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /firefly/path2glory
@@ -869,11 +809,35 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: rviz/Marker
-      Enabled: true
+      Enabled: false
       Marker Topic: /firefly/commandante
       Name: Marker
       Namespaces:
-        commandante: true
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /firefly/global_trajectory
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /firefly/optimal_trajectory
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /firefly/tmp
+      Name: Marker
+      Namespaces:
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -891,7 +855,10 @@ Visualization Manager:
     - Class: rviz/FocusCamera
     - Class: rviz/Measure
     - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
       Topic: /robocremers1/initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
     - Class: rviz/SetGoal
       Topic: /robocremers1/move_base_simple/goal
     - Class: rviz/PublishPoint
@@ -901,43 +868,43 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 51.0848465
+      Distance: 47.84968566894531
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.0599999987
+        Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 7.19176626
-        Y: 7.50229454
-        Z: 3.45874596
+        X: -7.217761039733887
+        Y: -9.043783187866211
+        Z: -7.529234409332275
       Focal Shape Fixed Size: false
-      Focal Shape Size: 0.0500000007
+      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.00999999978
-      Pitch: 1.0947969
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.979796826839447
       Target Frame: firefly/base_link
       Value: Orbit (rviz)
-      Yaw: 1.2486037
+      Yaw: 2.619983673095703
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1056
+  Height: 1052
   Hide Left Dock: false
-  Hide Right Dock: false
+  Hide Right Dock: true
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000019300000399fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000002ad000000d700fffffffb0000000a0049006d00610067006501000002db000000e60000001600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d0061006700650100000337000000cd0000000000000000fb0000000a0049006d0061006700650100000369000000d00000000000000000000000010000016000000399fc0200000008fb0000000a0049006d0061006700650000000041000001290000000000000000fb0000000a0049006d00610067006501000000410000021e0000000000000000fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000028000001630000006100fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000a30000000000000000fb0000000a0049006d00610067006500000000ab000000fa0000000000000000fb0000000a0049006d00610067006501000000d80000017b0000000000000000fb0000000a00560069006500770073010000019100000230000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000461000000bcfc0100000002fb0000000a0049006d0061006700650100000000000004610000000000000000fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007410000003bfc0100000002fb0000000800540069006d00650100000000000007410000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000004420000039900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000016100000343fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006e00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000470000026f000000f100fffffffb0000000a0049006d00610067006501000002bd000000cd0000001900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d0061006700650100000337000000cd0000000000000000fb0000000a0049006d0061006700650100000369000000d0000000000000000000000001000001600000034bfc0200000008fb0000000a0049006d0061006700650000000041000001290000000000000000fb0000000a0049006d00610067006501000000410000021e0000000000000000fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730000000047000001440000006e00fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000a30000000000000000fb0000000a0049006d00610067006500000000ab000000fa0000000000000000fb0000000a0049006d00610067006501000000d80000017b0000000000000000fb0000000a00560069006500770073000000019200000200000000c200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000461000000bcfc0100000002fb0000000a0049006d0061006700650100000000000004610000000000000000fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000006afc0100000002fb0000000800540069006d00650100000000000007800000037100fffffffb0000000800540069006d00650100000000000004500000000000000000000006180000034300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
     collapsed: false
   Tool Properties:
-    collapsed: false
+    collapsed: true
   Views:
-    collapsed: false
-  Width: 1857
-  X: 63
-  Y: 24
+    collapsed: true
+  Width: 1920
+  X: 1920
+  Y: 0

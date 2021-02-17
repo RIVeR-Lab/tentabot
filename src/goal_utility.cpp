@@ -11,9 +11,10 @@
 
 GoalUtility::GoalUtility()
 {
-  this -> frame_name = "";
-  this -> goal_name = "";
+  this -> frame_name = "default_frame";
+  this -> goal_name = "default_goal";
   this -> active_goal_index = -1;
+  //this -> goal_visu_pub = nh.advertise<visualization_msgs::MarkerArray>(this -> goal_name, 100);
 }
 
 GoalUtility::GoalUtility(NodeHandle nh, string new_frame_name, string new_goal_name)

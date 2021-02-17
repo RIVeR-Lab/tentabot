@@ -27,7 +27,7 @@ class MapUtility
   private:
   	string map_name;
     string frame_name;
- 		vector<double> x_range;
+ 	vector<double> x_range;
   	vector<double> y_range;
   	vector<double> z_range;
   	double oct_resolution;
@@ -116,15 +116,15 @@ class MapUtility
 
     void setMaxOccupancyBeliefValue(double new_max_occupancy_belief_value);
 
-    void setPCData(sensor_msgs::PointCloud new_pcd);
+    void setPCData(sensor_msgs::PointCloud& new_pcd);
 
     void setHistorySize(int new_hsize);
 
-    void setHistoryPCData(sensor_msgs::PointCloud new_hpcd);
+    void setHistoryPCData(sensor_msgs::PointCloud& new_hpcd);
 
-    void addPCData(sensor_msgs::PointCloud new_pc_data);
+    void addPCData(sensor_msgs::PointCloud& new_pc_data);
 
-    void addHistoryPCData(sensor_msgs::PointCloud new_history_pcd);
+    void addHistoryPCData(sensor_msgs::PointCloud& new_history_pcd);
 
     void fillPCData();
 

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tentabot)
 
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 add_definitions(-std=c++11 -g -O3 -ftree-vectorize -march=native)
@@ -8,6 +10,9 @@ add_definitions(-std=c++11 -g -O3 -ftree-vectorize -march=native)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
+#list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
@@ -19,26 +24,23 @@ find_package(catkin REQUIRED COMPONENTS
   octomap_msgs
   message_generation
   sensor_msgs
-  
-  #ewok_simulation
-  #ewok_optimization
-  #ewok_poly_spline
-  #ewok_ring_buffer
-  forest_gen
   catkin_simple
-  rotors_control
   mav_msgs
   eigen_conversions
   tf
   tf_conversions
   cv_bridge
+  ewok_optimization
+  ewok_poly_spline
+  ewok_ring_buffer
+  forest_gen
+  rotors_control
 )
 
-#find_package(Eigen3 REQUIRED)
-#find_package(SuiteSparse REQUIRED)
-
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(catkin_simple REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(SuiteSparse REQUIRED)
 find_package(octomap REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -132,7 +134,7 @@ catkin_package(
    #INCLUDE_DIRS include
    LIBRARIES tentabot pcl mat
    CATKIN_DEPENDS roscpp rospy std_msgs geometry_msgs pcl_conversions pcl_ros octomap_ros octomap_msgs message_runtime sensor_msgs
-#   DEPENDS system_lib
+   #DEPENDS
 )
 
 ###########
@@ -143,11 +145,10 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include/
-  ${OCTOMAP_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
+  ${EIGEN3_INCLUDE_DIRS}
   ${CHOLMOD_INCLUDE_DIR}
-  #ewok/
+  ${catkin_INCLUDE_DIRS}
+  ${OCTOMAP_INCLUDE_DIRS}
   mav_comm/
   rotors_simulator/
 )
@@ -178,8 +179,17 @@ include_directories(
 add_library(goal_utility src/goal_utility.cpp)
 add_library(map_utility src/map_utility.cpp)
 
+add_executable(t_bspline_lee_position_controller_node src/t_bspline_lee_position_controller_node.cpp)
+target_link_libraries(t_bspline_lee_position_controller_node ${catkin_LIBRARIES})
+
 add_executable(tentabot_go src/tentabot_go.cpp)
 target_link_libraries(tentabot_go ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} goal_utility map_utility ${OCTOMAP_LIBRARIES})
+
+add_executable(tentabot_go_mobiman src/tmp/tentabot_go_mobiman.cpp)
+target_link_libraries(tentabot_go_mobiman ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} goal_utility map_utility ${OCTOMAP_LIBRARIES})
+
+add_executable(tentabot_go_extend src/tmp/tentabot_go_extend.cpp)
+target_link_libraries(tentabot_go_extend  ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${TF_LIBRARIES} goal_utility map_utility ${OCTOMAP_LIBRARIES})
 
 #############
 ## Install ##

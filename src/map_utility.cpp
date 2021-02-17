@@ -149,7 +149,7 @@ MapUtility::MapUtility()
   this -> pc_resolution_factor = 0;
   this -> max_occupancy_belief_value = 0;
   this -> octmap = new ColorOcTree(0.5);
-  this -> history_size = 300000;
+  this -> history_size = 500000;
 }
 
 MapUtility::MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, double new_oct_resolution, int new_pc_resolution_factor, string new_frame_name, string new_map_name)
@@ -164,7 +164,7 @@ MapUtility::MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, vector<double
   this -> pc_resolution_factor = new_pc_resolution_factor;
   this -> max_occupancy_belief_value = 100;
   this -> octmap = new ColorOcTree(new_oct_resolution);
-  this -> history_size = 300000;
+  this -> history_size = 500000;
   this -> fillMapVisu();
   this -> octmap_visu_pub = nh.advertise<octomap_msgs::Octomap>("OcTree_"+new_map_name, 100);
   this -> pcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("PC_"+new_map_name, 100);
@@ -185,7 +185,7 @@ MapUtility::MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, vector<double
   this -> createColorOcTree(new_oct_resolution, new_pcd);
   this -> fillMapVisu();
   this -> fillPCData();
-  this -> history_size = 300000;
+  this -> history_size = 500000;
   this -> fillHistoryPCData();
   this -> octmap_visu_pub = nh.advertise<octomap_msgs::Octomap>("OcTree_"+new_map_name, 100);
   this -> pcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("PC_"+new_map_name, 100);
@@ -202,7 +202,7 @@ MapUtility::MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, double new_oc
   this -> octmap = new ColorOcTree(new_oct_resolution);
   this -> fillMapVisu();
   this -> fillPCData();
-  this -> history_size = 300000;
+  this -> history_size = 500000;
   this -> fillHistoryPCData();
   this -> octmap_visu_pub = nh.advertise<octomap_msgs::Octomap>("OcTree_"+new_map_name, 100);
   this -> pcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("PC_"+new_map_name, 100);
@@ -381,11 +381,9 @@ void MapUtility::setMaxOccupancyBeliefValue(double new_max_occupancy_belief_valu
   this -> max_occupancy_belief_value = new_max_occupancy_belief_value;
 }
 
-void MapUtility::setPCData(sensor_msgs::PointCloud new_pc_data)
+void MapUtility::setPCData(sensor_msgs::PointCloud& new_pc_data)
 {
-  this -> pc_data.header = new_pc_data.header;
-  this -> pc_data.channels = new_pc_data.channels;
-  this -> pc_data.points = new_pc_data.points;
+  this -> pc_data = new_pc_data;
 }
 
 void MapUtility::setHistorySize(int new_hsize)
@@ -393,35 +391,33 @@ void MapUtility::setHistorySize(int new_hsize)
   this -> history_size = new_hsize;
 }
 
-void MapUtility::setHistoryPCData(sensor_msgs::PointCloud new_hpc_data)
+void MapUtility::setHistoryPCData(sensor_msgs::PointCloud& new_hpc_data)
 {
   this -> history_pc_data.header = new_hpc_data.header;
   this -> history_pc_data.channels = new_hpc_data.channels;
   this -> history_pc_data.points = new_hpc_data.points;
 }
 
-void MapUtility::addPCData(sensor_msgs::PointCloud new_pc_data)
+void MapUtility::addPCData(sensor_msgs::PointCloud& new_pc_data)
 {
   this -> pc_data.header = new_pc_data.header;
   this -> pc_data.channels = new_pc_data.channels;
   this -> pc_data.points.insert(end(this -> pc_data.points), begin(new_pc_data.points), end(new_pc_data.points));
 }
 
-void MapUtility::addHistoryPCData(sensor_msgs::PointCloud new_hpc_data)
+void MapUtility::addHistoryPCData(sensor_msgs::PointCloud& new_hpc_data)
 {
-  int current_hpc_size = this -> history_pc_data.points.size();
-  int new_hpc_size = new_hpc_data.points.size();
-  int delta;
-
-  if(current_hpc_size + new_hpc_size > this -> history_size)
-  {
-    delta = current_hpc_size + new_hpc_size - this -> history_size;
-    this -> history_pc_data.points.erase(this -> history_pc_data.points.begin(), this -> history_pc_data.points.begin() + delta);
-  }
-
   this -> history_pc_data.header = new_hpc_data.header;
   this -> history_pc_data.channels = new_hpc_data.channels;
+
   this -> history_pc_data.points.insert(this -> history_pc_data.points.end(), new_hpc_data.points.begin(), new_hpc_data.points.end());
+
+  if(this -> history_pc_data.points.size() > this -> history_size)
+  {
+    int delta = this -> history_pc_data.points.size() - this -> history_size;
+    this -> history_pc_data.points.erase(this -> history_pc_data.points.begin(), this -> history_pc_data.points.begin() + delta);
+  }
+  //ROS_INFO_STREAM("MapUtility::addHistoryPCData ADDED............");
 }
 
 void MapUtility::fillPCData()
@@ -443,6 +439,7 @@ void MapUtility::fillPCData()
       this -> pc_data.points.push_back(opc[i]);
     }
   }
+
   this -> pc_data.header.frame_id = this -> frame_name;
 }
 
@@ -474,8 +471,8 @@ void MapUtility::fillOctMap()
     rp.position.z = this -> pc_data.points[i].z;
 
     this -> octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
-    octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
   }
+  octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
   this -> fillMapVisu();
 }
 
