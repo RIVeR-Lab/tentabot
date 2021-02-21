@@ -1,4 +1,4 @@
-// LAST UPDATE: 2020.09.04
+// LAST UPDATE: 2021.02.19
 //
 // AUTHOR: Neset Unver Akmandor (NUA)
 //
@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     pnh.param("resolution", resolution, 0.15);
     string map_name;
     pnh.param<string>("world_name", map_name, "map");
-    MapUtility mu(nh, gu, resolution, world_frame_name, map_name);
+    MapUtility mu(nh, resolution, world_frame_name, map_name);
 
     // INITIALIZE AND SET PROCESS PARAMETERS
     ProcessParams pp;
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
     ontp.tbin_obs_cnt_threshold = 1;
 
     // INITIALIZE TENTABOT OBJECT
-    Tentabot tbot(nh, listener, pp, rp, offtp, ontp, mu);
+    Tentabot tbot(nh, listener, pp, rp, offtp, ontp, mu, gu);
 
     // SUBSCRIBE TO THE ODOMETRY DATA
     //ros::Subscriber sub = nh.subscribe("/firefly/odometry_sensor1/pose", 10, &Tentabot::odometryCallback, &tbot);

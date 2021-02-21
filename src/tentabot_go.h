@@ -1,4 +1,4 @@
-// LAST UPDATE: 2020.01.15
+// LAST UPDATE: 2021.02.19
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -37,6 +37,7 @@
 
 // CUSTOM LIBRARIES:
 #include "map_utility.h"
+#include "goal_utility.h"
 
 // GLOBAL VARIABLES:
 #define PI 3.141592653589793
@@ -502,6 +503,7 @@ class Tentabot
     OnTuningParams on_tuning_param;
     HeuristicParams heuristic_param;
     StatusParams status_param;
+    GoalUtility goal_util;
     MapUtility map_util;
     VisuParams visu_param;
     ofstream nav_param_bench;
@@ -1104,7 +1106,7 @@ class Tentabot
     }
 
   public:
-    Tentabot(NodeHandle& nh, tf::TransformListener* listener, ProcessParams& pp, RobotParams& rp, OffTuningParams& offtp, OnTuningParams& ontp, MapUtility& mu)                                                    // constructor
+    Tentabot(NodeHandle& nh, tf::TransformListener* listener, ProcessParams& pp, RobotParams& rp, OffTuningParams& offtp, OnTuningParams& ontp, MapUtility& mu, GoalUtility& gu)
     {
       cout << "Welcome to Tentabot 3D Navigation Simulation! I hope you'll enjoy the ride..." << endl;
 
@@ -1118,8 +1120,9 @@ class Tentabot
       ros::Time t1 = ros::Time::now();
       this -> setEgoGridData();
       ros::Time t2 = ros::Time::now();
+      this -> goal_util = gu;
       this -> map_util = mu;
-
+      
       ros::Time t3 = ros::Time::now();
       this -> construct_tentacle_pitchExt();
       ros::Time t4 = ros::Time::now();
@@ -1471,7 +1474,11 @@ class Tentabot
     {
       if(this -> process_param.visu_flag == true)
       {
-        this -> map_util.publishMap();
+        goal_util.publishGoal();
+
+        map_util.publishOctmapMsg();
+
+        map_util.publishRecentPCMsg();
 
         //this -> publishRobot();
 
@@ -1491,11 +1498,11 @@ class Tentabot
       // TRANSFORM POINT CLOUD WRT WORLD TO ROBOT FRAME
       sensor_msgs::PointCloud pc_wrt_robot;
 
-      this -> map_util.addHistoryPCData(this -> map_util.getPCData());
+      this -> map_util.addHistoryPCMsg(this -> map_util.getRecentPCMsg());
 
       try
       {
-        this -> tflistener -> transformPointCloud(this -> robot_param.robot_frame_name, this -> map_util.getHistoryPCData(), pc_wrt_robot);
+        this -> tflistener -> transformPointCloud(this -> robot_param.robot_frame_name, this -> map_util.getHistoryPCMsg(), pc_wrt_robot);
       }
       catch(tf::TransformException ex)
       {
@@ -1547,7 +1554,7 @@ class Tentabot
 
     void updateHeuristicFunctions()
     {
-      geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
+      geometry_msgs::Pose active_goal = this -> goal_util.getActiveGoal();
       int tentacle_cnt = this -> robot_param.tentacle_data.size();
       int tsamp_cnt;
 
@@ -1894,7 +1901,7 @@ class Tentabot
     // DESCRIPTION: MOVE THE ROBOT
     void moveTentabot()
     {
-      geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
+      geometry_msgs::Pose active_goal = this -> goal_util.getActiveGoal();
       double dist2goal = find_Euclidean_distance(active_goal.position, this -> status_param.robot_pose.position);
       bool isSwitched;
       bool firstFlag = false;
@@ -1908,7 +1915,7 @@ class Tentabot
       }
       else if(dist2goal < this -> process_param.goal_close_threshold)   // reach goal
       {
-        isSwitched = this -> map_util.getGoalUtil().switchActiveGoal();
+        isSwitched = this -> goal_util.switchActiveGoal();
 
         this -> status_param.speed_counter = 0;
 
@@ -1919,7 +1926,7 @@ class Tentabot
         }
         else
         {
-          cout << "Yey! Waypoint #" << this -> map_util.getGoalUtil().getActiveGoalIndex()-1 << " has reached!" << endl;
+          cout << "Yey! Waypoint #" << this -> goal_util.getActiveGoalIndex()-1 << " has reached!" << endl;
         }
 
         this -> status_param.nav_result = 1;
@@ -2238,7 +2245,7 @@ class Tentabot
         }
       }
 
-      this -> map_util.setPCData(recent_pc);
+      this -> map_util.setRecentPCMsg(recent_pc);
     }
 
     void odometryCallback(const geometry_msgs::Pose::ConstPtr& msg)

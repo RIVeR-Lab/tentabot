@@ -1,13 +1,10 @@
-// LAST UPDATE: 2019.08.04
+// LAST UPDATE: 2021.02.19
 //
 // AUTHOR: Neset Unver Akmandor
 //
 // E-MAIL: akmandor.n@northeastern.edu
 //
 // DESCRIPTION:
-
-// LOCAL LIBRARIES:
-#include "goal_utility.h"
 
 // OUTSOURCE LIBRARIES:
 #include <pcl_conversions/pcl_conversions.h>
@@ -33,19 +30,23 @@ class MapUtility
   	double oct_resolution;
     double pc_resolution_factor;
   	double max_occupancy_belief_value;
-  	octomap::ColorOcTree *octmap;
-    sensor_msgs::PointCloud pc_data;
     int history_size;
-    sensor_msgs::PointCloud history_pc_data;
-    octomap_msgs::Octomap octomap_visu;
-  	ros::Publisher octmap_visu_pub;
-    ros::Publisher pcdata_visu_pub;
-    ros::Publisher hpcdata_visu_pub;
-    GoalUtility goal_util;
+
+  	octomap::ColorOcTree *octmap;
+    octomap_msgs::Octomap octmap_msg;
+    
+    sensor_msgs::PointCloud recent_pc_msg;
+    sensor_msgs::PointCloud history_pc_msg;
+    sensor_msgs::PointCloud local_pc_msg;
+    
+  	ros::Publisher octmap_msg_pub;
+    ros::Publisher recent_pc_msg_pub;
+    ros::Publisher history_pc_msg_pub;
+    ros::Publisher local_pc_msg_pub;
   	
     double randdouble(double from, double to);
 
-    void createColorOcTree(double new_oct_resolution, sensor_msgs::PointCloud pc, vector<int> color_RGB=vector<int>{155,128,0});
+    void createColorOcTree(double new_oct_resolution, sensor_msgs::PointCloud& new_pc, vector<int> color_RGB=vector<int>{155,128,0});
 
     vector<geometry_msgs::Point32> extract_pc_from_node_center(geometry_msgs::Point center);
 
@@ -54,11 +55,26 @@ class MapUtility
   public:
     MapUtility();
 
-  	MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, double new_oct_resolution, int pc_resolution_factor, string new_frame_name, string new_map_name);
+  	MapUtility(NodeHandle& nh, 
+               vector<double> new_x_range, 
+               vector<double> new_y_range, 
+               vector<double> new_z_range, 
+               double new_oct_resolution, 
+               int new_pc_resolution_factor, 
+               string new_frame_name, 
+               string new_map_name);
 
-  	MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, double new_oct_resolution, int pc_resolution_factor, string new_frame_name, string new_map_name, sensor_msgs::PointCloud new_pcd);
+  	MapUtility(NodeHandle& nh, 
+               vector<double> new_x_range, 
+               vector<double> new_y_range, 
+               vector<double> new_z_range, 
+               double new_oct_resolution, 
+               int new_pc_resolution_factor, 
+               string new_frame_name, 
+               string new_map_name, 
+               sensor_msgs::PointCloud& new_pc);
 
-    MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, double new_oct_resolution, string new_frame_name, string new_map_name);
+    MapUtility(NodeHandle& nh, double new_oct_resolution, string new_frame_name, string new_map_name);
 
   	MapUtility(const MapUtility& mu);
 
@@ -70,8 +86,6 @@ class MapUtility
 
     string getFrameName();
 
-    GoalUtility& getGoalUtil();
-
     vector<double> getXRange();
 
     vector<double> getYRange();
@@ -82,27 +96,31 @@ class MapUtility
 
     int getPCResolutionFactor();
 
+    int getHistorySize();
+
     double getMaxOccupancyBeliefValue();
 
     octomap::ColorOcTree* getOctmap();
 
-    sensor_msgs::PointCloud& getPCData();
+    octomap_msgs::Octomap& getOctmapMsg();
 
-    int getHistorySize();
+    sensor_msgs::PointCloud& getRecentPCMsg();
 
-    sensor_msgs::PointCloud& getHistoryPCData();
+    sensor_msgs::PointCloud& getHistoryPCMsg();
 
-    octomap_msgs::Octomap getOctmapVisu();
+    sensor_msgs::PointCloud& getLocalPCMsg();
 
-    ros::Publisher getOctmapVisuPub();
+    ros::Publisher getOctmapMsgPub();
 
-    ros::Publisher getPCDataVisuPub();
+    ros::Publisher getRecentPCMsgPub();
+
+    ros::Publisher getHistoryPCMsgPub();
+
+    ros::Publisher getLocalPCMsgPub();
 
     void setMapName(string new_map_name);
 
     void setFrameName(string new_frame_name);
-
-    void setGoalUtil(GoalUtility& new_goal_util);
 
     void setXRange(double x0, double x1);
 
@@ -116,23 +134,47 @@ class MapUtility
 
     void setMaxOccupancyBeliefValue(double new_max_occupancy_belief_value);
 
-    void setPCData(sensor_msgs::PointCloud& new_pcd);
+    void setHistorySize(int new_history_size);
 
-    void setHistorySize(int new_hsize);
+    void setRecentPCMsg(sensor_msgs::PointCloud& new_recent_pc);
 
-    void setHistoryPCData(sensor_msgs::PointCloud& new_hpcd);
+    void setHistoryPCMsg(sensor_msgs::PointCloud& new_history_pc);
 
-    void addPCData(sensor_msgs::PointCloud& new_pc_data);
+    void setLocalPCMsg(sensor_msgs::PointCloud& new_local_pc);
 
-    void addHistoryPCData(sensor_msgs::PointCloud& new_history_pcd);
+    void fillOctmap(sensor_msgs::PointCloud pc_msg);
 
-    void fillPCData();
+    void fillOctmapFromRecentPCMsg();
 
-    void fillHistoryPCData();
+    void fillOctmapMsgFromOctmap();
 
-    void fillOctMap();
+    void fillOctmapMsgFromOctmap(string new_frame_name);
 
-    void addStaticObstacle2PCData(geometry_msgs::Point po);
+    void fillRecentPCMsgFromOctmap();
+
+    void fillRecentPCMsgFromOctmapByResolutionFactor();
+
+    void fillHistoryPCMsgFromOctmap();
+
+    void fillLocalPCMsgFromOctmap();
+
+    void addOctmap(sensor_msgs::PointCloud pc_msg);
+
+    void addOctmapFromRecentPCMsg();
+
+    void addRecentPCMsg(sensor_msgs::PointCloud& new_recent_pc);
+
+    void addHistoryPCMsg(sensor_msgs::PointCloud& new_history_pc);
+
+    void addLocalPCMsg(sensor_msgs::PointCloud& new_local_pc);
+
+    void addLocalPCMsg(geometry_msgs::Point32 new_point);
+
+    void clearRecentPCMsg();
+
+    void clearHistoryPCMsg();
+
+    void clearLocalPCMsg();
 
     bool isOccupied(double x, double y, double z);
 
@@ -140,27 +182,66 @@ class MapUtility
 
     bool isInCube(geometry_msgs::Point po, geometry_msgs::Point center, double rad);
 
-    bool isOccupiedByGoal(double x, double y, double z);
+    bool isOccupiedByGoal(double x, double y, double z, vector<geometry_msgs::Pose> goal);
 
-    bool isOccupiedByGoal(geometry_msgs::Point po);
+    bool isOccupiedByGoal(geometry_msgs::Point po, vector<geometry_msgs::Pose> goal);
 
-    bool addStaticObstacle(double x, double y, double z, bool constraint_flag=true, geometry_msgs::Point robot_center=geometry_msgs::Point(), double robot_free_rad=1, vector<int> color_RGB=vector<int>{155,128,0});
+    void addStaticObstacleByResolutionFactor2RecentPCMsg(geometry_msgs::Point po);
 
-    vector<bool> addStaticObstacle(sensor_msgs::PointCloud pcd, bool constraint_flag=true, geometry_msgs::Point robot_center=geometry_msgs::Point(), double robot_free_rad=1, vector<int> color_RGB=vector<int>{155,128,0});
+    bool addStaticObstacle(double x, 
+                           double y, 
+                           double z, 
+                           bool constraint_flag=true, 
+                           vector<geometry_msgs::Pose> goal=vector<geometry_msgs::Pose>{}, 
+                           geometry_msgs::Point robot_center=geometry_msgs::Point(), 
+                           double robot_free_rad=1, 
+                           vector<int> color_RGB=vector<int>{155,128,0});
 
-    void createRandomStaticObstacleMap(int num, bool constraint_flag=true, geometry_msgs::Point robot_center=geometry_msgs::Point(), double robot_free_rad=1, vector<int> color_RGB=vector<int>{155,128,0});
+    vector<bool> addStaticObstacle(sensor_msgs::PointCloud& pcd, 
+                                   bool constraint_flag=true, 
+                                   vector<geometry_msgs::Pose> goal=vector<geometry_msgs::Pose>{}, 
+                                   geometry_msgs::Point robot_center=geometry_msgs::Point(), 
+                                   double robot_free_rad=1, 
+                                   vector<int> color_RGB=vector<int>{155,128,0});
 
-    void createRandomStaticObstacleMap(vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, int num, bool constraint_flag=true, geometry_msgs::Point robot_center=geometry_msgs::Point(), double robot_free_rad=1, vector<int> color_RGB=vector<int>{155,128,0});
+    void createRandomStaticObstacleMap(int num, 
+                                       bool constraint_flag=true, 
+                                       vector<geometry_msgs::Pose> goal=vector<geometry_msgs::Pose>{}, 
+                                       geometry_msgs::Point robot_center=geometry_msgs::Point(), 
+                                       double robot_free_rad=1, 
+                                       vector<int> color_RGB=vector<int>{155,128,0});
 
-    void addRandomStaticObstacle(vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, int num, bool constraint_flag=true, geometry_msgs::Point robot_center=geometry_msgs::Point(), double robot_free_rad=1, vector<int> color_RGB=vector<int>{155,128,0});
+    void createRandomStaticObstacleMap(vector<double> new_x_range, 
+                                       vector<double> new_y_range, 
+                                       vector<double> new_z_range, 
+                                       int num, 
+                                       bool constraint_flag=true, 
+                                       vector<geometry_msgs::Pose> goal=vector<geometry_msgs::Pose>{}, 
+                                       geometry_msgs::Point robot_center=geometry_msgs::Point(), 
+                                       double robot_free_rad=1, 
+                                       vector<int> color_RGB=vector<int>{155,128,0});
 
-    void fillMapVisu();
+    void addRandomStaticObstacle(vector<double> new_x_range, 
+                                 vector<double> new_y_range, 
+                                 vector<double> new_z_range, 
+                                 int num, 
+                                 bool constraint_flag=true, 
+                                 vector<geometry_msgs::Pose> goal=vector<geometry_msgs::Pose>{},
+                                 geometry_msgs::Point robot_center=geometry_msgs::Point(), 
+                                 double robot_free_rad=1, 
+                                 vector<int> color_RGB=vector<int>{155,128,0});
 
-    void publishMap();
+    void createRandomMapSet(string mapset_name, int map_cnt, int map_occupancy_count);
+
+    void publishOctmapMsg();
+
+    void publishRecentPCMsg();
+
+    void publishHistoryPCMsg();
+
+    void publishLocalPCMsg();
 
     void saveMap(string filename="");
 
     void loadMap(string filename);
-
-    void createRandomMapSet(string mapset_name, int map_cnt, int map_occupancy_count, bool random_goal_flag=true);
 };

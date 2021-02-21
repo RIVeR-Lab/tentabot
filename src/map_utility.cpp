@@ -1,4 +1,4 @@
-// LAST UPDATE: 2019.08.04
+// LAST UPDATE: 2021.02.19
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -15,24 +15,30 @@ double MapUtility::randdouble(double from, double to)
   return from + f * (to - from);  
 }
 
-void MapUtility::createColorOcTree(double new_oct_resolution, sensor_msgs::PointCloud pcd, vector<int> color_RGB)
+void MapUtility::createColorOcTree(double new_oct_resolution, sensor_msgs::PointCloud& new_pc, vector<int> color_RGB)
 {
   //delete this -> octmap;
-  this -> octmap = new ColorOcTree(new_oct_resolution);
+  octmap = new ColorOcTree(new_oct_resolution);
 
-  int pcd_size = pcd.points.size();
+  int pcd_size = new_pc.points.size();
 
   for(int i = 0; i < pcd_size; i++)
   {
-    this -> octmap -> updateNode(pcd.points[i].x, pcd.points[i].y, pcd.points[i].z, true);
-    this -> octmap -> setNodeColor(this -> octmap -> coordToKey(pcd.points[i].x, pcd.points[i].y, pcd.points[i].z), color_RGB[0], color_RGB[1], color_RGB[2]);
+    octmap -> updateNode(new_pc.points[i].x, new_pc.points[i].y, new_pc.points[i].z, true);
+    octmap -> setNodeColor(octmap -> coordToKey(new_pc.points[i].x, new_pc.points[i].y, new_pc.points[i].z), color_RGB[0], color_RGB[1], color_RGB[2]);
   }
+  fillOctmapMsgFromOctmap();
 }
 
 vector<geometry_msgs::Point32> MapUtility::extract_pc_from_node_center(geometry_msgs::Point center)
 {
-  double half_vdim = 0.5 * this -> oct_resolution;
-  double pc_resolution = this -> oct_resolution / this -> pc_resolution_factor;
+  double half_vdim = 0.5 * oct_resolution;
+  if (pc_resolution_factor == 0)
+  {
+    ROS_WARN("MapUtility::extract_pc_from_node_center -> pc_resolution_factor has not set. It is set to 1.");
+    pc_resolution_factor = 1;
+  }
+  double pc_resolution = oct_resolution / pc_resolution_factor;
   vector<geometry_msgs::Point32> opc;
   geometry_msgs::Point minp;
   geometry_msgs::Point maxp;
@@ -140,358 +146,457 @@ string MapUtility::createFileName()
 
 MapUtility::MapUtility()
 {
-  this -> map_name = "";
-  this -> frame_name = "";
-  this -> x_range.clear();
-  this -> y_range.clear();
-  this -> z_range.clear();
-  this -> oct_resolution = 0;
-  this -> pc_resolution_factor = 0;
-  this -> max_occupancy_belief_value = 0;
-  this -> octmap = new ColorOcTree(0.5);
-  this -> history_size = 500000;
+  map_name = "";
+  frame_name = "";
+  x_range.clear();
+  y_range.clear();
+  z_range.clear();
+  oct_resolution = 0;
+  pc_resolution_factor = 0;
+  max_occupancy_belief_value = 0;
+  octmap = new ColorOcTree(0.5);
+  history_size = 500000;
 }
 
-MapUtility::MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, double new_oct_resolution, int new_pc_resolution_factor, string new_frame_name, string new_map_name)
+MapUtility::MapUtility(NodeHandle& nh, 
+                       vector<double> new_x_range, 
+                       vector<double> new_y_range, 
+                       vector<double> new_z_range, 
+                       double new_oct_resolution, 
+                       int new_pc_resolution_factor, 
+                       string new_frame_name, 
+                       string new_map_name)
 {
-  this -> map_name = new_map_name;
-  this -> frame_name = new_frame_name;
-  this -> goal_util = new_goal_util;
-  this -> x_range = new_x_range;
-  this -> y_range = new_y_range;
-  this -> z_range = new_z_range;
-  this -> oct_resolution = new_oct_resolution;
-  this -> pc_resolution_factor = new_pc_resolution_factor;
-  this -> max_occupancy_belief_value = 100;
-  this -> octmap = new ColorOcTree(new_oct_resolution);
-  this -> history_size = 500000;
-  this -> fillMapVisu();
-  this -> octmap_visu_pub = nh.advertise<octomap_msgs::Octomap>("OcTree_"+new_map_name, 100);
-  this -> pcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("PC_"+new_map_name, 100);
-  this -> hpcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("HistoryPC_"+new_map_name, 100);
+  map_name = new_map_name;
+  frame_name = new_frame_name;
+  x_range = new_x_range;
+  y_range = new_y_range;
+  z_range = new_z_range;
+  oct_resolution = new_oct_resolution;
+  pc_resolution_factor = new_pc_resolution_factor;
+  max_occupancy_belief_value = 100;
+  octmap = new ColorOcTree(new_oct_resolution);
+  fillOctmapMsgFromOctmap();
+  history_size = 500000;
+  octmap_msg_pub = nh.advertise<octomap_msgs::Octomap>("Octmap_"+new_map_name, 100);
+  recent_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("RecentPC_"+new_map_name, 100);
+  history_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("HistoryPC_"+new_map_name, 100);
+  local_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("LocalPC_"+new_map_name, 100);
 }
 
-MapUtility::MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, double new_oct_resolution, int new_pc_resolution_factor, string new_frame_name, string new_map_name, sensor_msgs::PointCloud new_pcd)
+MapUtility::MapUtility(NodeHandle& nh, 
+                       vector<double> new_x_range, 
+                       vector<double> new_y_range, 
+                       vector<double> new_z_range, 
+                       double new_oct_resolution, 
+                       int new_pc_resolution_factor, 
+                       string new_frame_name, 
+                       string new_map_name, 
+                       sensor_msgs::PointCloud& new_pc)
 {
-  this -> map_name = new_map_name;
-  this -> frame_name = new_frame_name;
-  this -> goal_util = new_goal_util;
-  this -> x_range = new_x_range;
-  this -> y_range = new_y_range;
-  this -> z_range = new_z_range;
-  this -> oct_resolution = new_oct_resolution;
-  this -> pc_resolution_factor = new_pc_resolution_factor;
-  this -> max_occupancy_belief_value = 100;
-  this -> createColorOcTree(new_oct_resolution, new_pcd);
-  this -> fillMapVisu();
-  this -> fillPCData();
-  this -> history_size = 500000;
-  this -> fillHistoryPCData();
-  this -> octmap_visu_pub = nh.advertise<octomap_msgs::Octomap>("OcTree_"+new_map_name, 100);
-  this -> pcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("PC_"+new_map_name, 100);
-  this -> hpcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("HistoryPC_"+new_map_name, 100);
+  map_name = new_map_name;
+  frame_name = new_frame_name;
+  x_range = new_x_range;
+  y_range = new_y_range;
+  z_range = new_z_range;
+  oct_resolution = new_oct_resolution;
+  pc_resolution_factor = new_pc_resolution_factor;
+  max_occupancy_belief_value = 100;
+  history_size = 500000;
+  createColorOcTree(new_oct_resolution, new_pc);
+  fillOctmapMsgFromOctmap();
+  fillRecentPCMsgFromOctmapByResolutionFactor();
+  octmap_msg_pub = nh.advertise<octomap_msgs::Octomap>("Octmap_"+new_map_name, 100);
+  recent_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("RecentPC_"+new_map_name, 100);
+  history_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("HistoryPC_"+new_map_name, 100);
+  local_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("LocalPC_"+new_map_name, 100);
 }
 
-MapUtility::MapUtility(NodeHandle& nh, GoalUtility& new_goal_util, double new_oct_resolution, string new_frame_name, string new_map_name)
+MapUtility::MapUtility(NodeHandle& nh, double new_oct_resolution, string new_frame_name, string new_map_name)
 {
-  this -> map_name = new_map_name;
-  this -> frame_name = new_frame_name;
-  this -> goal_util = new_goal_util;
-  this -> oct_resolution = new_oct_resolution;
-  this -> max_occupancy_belief_value = 100;
-  this -> octmap = new ColorOcTree(new_oct_resolution);
-  this -> fillMapVisu();
-  this -> fillPCData();
-  this -> history_size = 500000;
-  this -> fillHistoryPCData();
-  this -> octmap_visu_pub = nh.advertise<octomap_msgs::Octomap>("OcTree_"+new_map_name, 100);
-  this -> pcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("PC_"+new_map_name, 100);
-  this -> hpcdata_visu_pub = nh.advertise<sensor_msgs::PointCloud>("HistoryPC_"+new_map_name, 100);
+  map_name = new_map_name;
+  frame_name = new_frame_name;
+  oct_resolution = new_oct_resolution;
+  max_occupancy_belief_value = 100;
+  history_size = 500000;
+  octmap = new ColorOcTree(new_oct_resolution);
+  fillOctmapMsgFromOctmap();
+  octmap_msg_pub = nh.advertise<octomap_msgs::Octomap>("Octmap_"+new_map_name, 100);
+  recent_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("RecentPC_"+new_map_name, 100);
+  history_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("HistoryPC_"+new_map_name, 100);
+  local_pc_msg_pub = nh.advertise<sensor_msgs::PointCloud>("LocalPC_"+new_map_name, 100);
 }
 
 MapUtility::MapUtility(const MapUtility& mu)
 {
-  this -> map_name = mu.map_name;
-  this -> frame_name = mu.frame_name;
-  this -> goal_util = mu.goal_util;
-  this -> x_range = mu.x_range;
-  this -> y_range = mu.y_range;
-  this -> z_range = mu.z_range;
-  this -> oct_resolution = mu.oct_resolution;
-  this -> pc_resolution_factor = mu.pc_resolution_factor;
-  this -> max_occupancy_belief_value = mu.max_occupancy_belief_value;    
-  this -> octmap = mu.octmap;
-  this -> fillMapVisu();
-  this -> fillPCData();
-  this -> history_size = mu.history_size;
-  this -> fillHistoryPCData();
-  this -> octmap_visu_pub = mu.octmap_visu_pub;
-  this -> pcdata_visu_pub = mu.pcdata_visu_pub;
-  this -> hpcdata_visu_pub = mu.hpcdata_visu_pub;
+  map_name = mu.map_name;
+  frame_name = mu.frame_name;
+  x_range = mu.x_range;
+  y_range = mu.y_range;
+  z_range = mu.z_range;
+  oct_resolution = mu.oct_resolution;
+  pc_resolution_factor = mu.pc_resolution_factor;
+  max_occupancy_belief_value = mu.max_occupancy_belief_value;
+  history_size = mu.history_size;    
+  octmap = mu.octmap;
+  octmap_msg = mu.octmap_msg;
+  recent_pc_msg = mu.recent_pc_msg;
+  history_pc_msg = mu.history_pc_msg;
+  local_pc_msg = mu.local_pc_msg;
+  octmap_msg_pub = mu.octmap_msg_pub;
+  recent_pc_msg_pub = mu.recent_pc_msg_pub;
+  history_pc_msg_pub = mu.history_pc_msg_pub;
+  local_pc_msg_pub = mu.local_pc_msg_pub;
 }
 
 MapUtility::~MapUtility()
 {
   //ROS_INFO( "Calling Destructor for MapUtility..." );
-
   delete (this -> octmap);
 }
 
 MapUtility& MapUtility::operator = (const MapUtility& mu) 
 { 
-  this -> map_name = mu.map_name;
-  this -> frame_name = mu.frame_name;
-  this -> goal_util = mu.goal_util;
-  this -> x_range = mu.x_range;
-  this -> y_range = mu.y_range;
-  this -> z_range = mu.z_range;
-  this -> oct_resolution = mu.oct_resolution;
-  this -> pc_resolution_factor = mu.pc_resolution_factor;
-  this -> max_occupancy_belief_value = mu.max_occupancy_belief_value;      
-  this -> octmap = mu.octmap;
-  this -> fillMapVisu();
-  this -> fillPCData();
-  this -> history_size = mu.history_size;
-  this -> fillHistoryPCData();
-  this -> octmap_visu_pub = mu.octmap_visu_pub;
-  this -> pcdata_visu_pub = mu.pcdata_visu_pub;
-  this -> hpcdata_visu_pub = mu.hpcdata_visu_pub;
+  map_name = mu.map_name;
+  frame_name = mu.frame_name;
+  x_range = mu.x_range;
+  y_range = mu.y_range;
+  z_range = mu.z_range;
+  oct_resolution = mu.oct_resolution;
+  pc_resolution_factor = mu.pc_resolution_factor;
+  max_occupancy_belief_value = mu.max_occupancy_belief_value;
+  history_size = mu.history_size;    
+  octmap = mu.octmap;
+  octmap_msg = mu.octmap_msg;
+  recent_pc_msg = mu.recent_pc_msg;
+  history_pc_msg = mu.history_pc_msg;
+  local_pc_msg = mu.local_pc_msg;
+  octmap_msg_pub = mu.octmap_msg_pub;
+  recent_pc_msg_pub = mu.recent_pc_msg_pub;
+  history_pc_msg_pub = mu.history_pc_msg_pub;
+  local_pc_msg_pub = mu.local_pc_msg_pub;
 }
 
 string MapUtility::getMapName()
 {
-  return this -> map_name;
+  return map_name;
 }
 
 string MapUtility::getFrameName()
 {
-  return this -> frame_name;
-}   
-
-GoalUtility& MapUtility::getGoalUtil()
-{
-  return this -> goal_util;
-} 
+  return frame_name;
+}
 
 vector<double> MapUtility::getXRange()
 {
-  return this -> x_range;
+  return x_range;
 }
 
 vector<double> MapUtility::getYRange()
 {
-  return this -> y_range;
+  return y_range;
 }
 
 vector<double> MapUtility::getZRange()
 {
-  return this -> z_range;
+  return z_range;
 }
 
 double MapUtility::getOctResolution()
 {
-  return this -> oct_resolution;
+  return oct_resolution;
 }
 
 int MapUtility::getPCResolutionFactor()
 {
-  return this -> pc_resolution_factor;
+  return pc_resolution_factor;
 }
 
 double MapUtility::getMaxOccupancyBeliefValue()
 {
-  return this -> max_occupancy_belief_value;
-}
-
-octomap::ColorOcTree* MapUtility::getOctmap()
-{
-  return this -> octmap;
-}
-
-sensor_msgs::PointCloud& MapUtility::getPCData()
-{
-  return this -> pc_data;
+  return max_occupancy_belief_value;
 }
 
 int MapUtility::getHistorySize()
 {
-  return this -> history_size;
+  return history_size;
 }
 
-sensor_msgs::PointCloud& MapUtility::getHistoryPCData()
+octomap::ColorOcTree* MapUtility::getOctmap()
 {
-  return this -> history_pc_data;
+  return octmap;
 }
 
-octomap_msgs::Octomap MapUtility::getOctmapVisu()
+octomap_msgs::Octomap& MapUtility::getOctmapMsg()
 {
-  return this -> octomap_visu;
+  return octmap_msg;
 }
 
-ros::Publisher MapUtility::getOctmapVisuPub()
+sensor_msgs::PointCloud& MapUtility::getRecentPCMsg()
 {
-  return this -> octmap_visu_pub;
+  return recent_pc_msg;
+}
+
+sensor_msgs::PointCloud& MapUtility::getHistoryPCMsg()
+{
+  return history_pc_msg;
+}
+
+sensor_msgs::PointCloud& MapUtility::getLocalPCMsg()
+{
+  return local_pc_msg;
+}
+
+ros::Publisher MapUtility::getOctmapMsgPub()
+{
+  return octmap_msg_pub;
 }
 
 void MapUtility::setMapName(string new_map_name)
 {
-  this -> map_name = new_map_name;
+  map_name = new_map_name;
 }
 
 void MapUtility::setFrameName(string new_frame_name)
 {
-  this -> frame_name = new_frame_name;
+  frame_name = new_frame_name;
 }
-
-void MapUtility::setGoalUtil(GoalUtility& new_goal_util)
-{
-  this -> goal_util = new_goal_util;
-} 
 
 void MapUtility::setXRange(double x0, double x1)
 {
-  this -> x_range[0] = x0;
-  this -> x_range[1] = x1;
+  x_range[0] = x0;
+  x_range[1] = x1;
 }
 
 void MapUtility::setYRange(double y0, double y1)
 {
-  this -> y_range[0] = y0;
-  this -> y_range[1] = y1;
+  y_range[0] = y0;
+  y_range[1] = y1;
 }
 
 void MapUtility::setZRange(double z0, double z1)
 {
-  this -> z_range[0] = z0;
-  this -> z_range[1] = z1;
+  z_range[0] = z0;
+  z_range[1] = z1;
 }
 
 void MapUtility::setOctResolution(double new_oct_resolution)
 {
-  this -> oct_resolution = new_oct_resolution;
+  oct_resolution = new_oct_resolution;
 }
 
 void MapUtility::setPCResolutionFactor(int new_pc_resolution_factor)
 {
-  this -> pc_resolution_factor = new_pc_resolution_factor;
+  pc_resolution_factor = new_pc_resolution_factor;
 }
 
 void MapUtility::setMaxOccupancyBeliefValue(double new_max_occupancy_belief_value)
 {
-  this -> max_occupancy_belief_value = new_max_occupancy_belief_value;
+  max_occupancy_belief_value = new_max_occupancy_belief_value;
 }
 
-void MapUtility::setPCData(sensor_msgs::PointCloud& new_pc_data)
+void MapUtility::setHistorySize(int new_history_size)
 {
-  this -> pc_data = new_pc_data;
+  history_size = new_history_size;
 }
 
-void MapUtility::setHistorySize(int new_hsize)
+void MapUtility::setRecentPCMsg(sensor_msgs::PointCloud& new_recent_pc_msg)
 {
-  this -> history_size = new_hsize;
+  recent_pc_msg = new_recent_pc_msg;
 }
 
-void MapUtility::setHistoryPCData(sensor_msgs::PointCloud& new_hpc_data)
+void MapUtility::setHistoryPCMsg(sensor_msgs::PointCloud& new_history_pc_msg)
 {
-  this -> history_pc_data.header = new_hpc_data.header;
-  this -> history_pc_data.channels = new_hpc_data.channels;
-  this -> history_pc_data.points = new_hpc_data.points;
+  history_pc_msg.header = new_history_pc_msg.header;
+  history_pc_msg.channels = new_history_pc_msg.channels;
+  history_pc_msg.points = new_history_pc_msg.points;
 }
 
-void MapUtility::addPCData(sensor_msgs::PointCloud& new_pc_data)
+void MapUtility::setLocalPCMsg(sensor_msgs::PointCloud& new_local_pc_msg)
 {
-  this -> pc_data.header = new_pc_data.header;
-  this -> pc_data.channels = new_pc_data.channels;
-  this -> pc_data.points.insert(end(this -> pc_data.points), begin(new_pc_data.points), end(new_pc_data.points));
+  local_pc_msg.header = new_local_pc_msg.header;
+  local_pc_msg.channels = new_local_pc_msg.channels;
+  local_pc_msg.points = new_local_pc_msg.points;
 }
 
-void MapUtility::addHistoryPCData(sensor_msgs::PointCloud& new_hpc_data)
+void MapUtility::fillOctmap(sensor_msgs::PointCloud pc_msg)
 {
-  this -> history_pc_data.header = new_hpc_data.header;
-  this -> history_pc_data.channels = new_hpc_data.channels;
+  octmap -> clear();
 
-  this -> history_pc_data.points.insert(this -> history_pc_data.points.end(), new_hpc_data.points.begin(), new_hpc_data.points.end());
-
-  if(this -> history_pc_data.points.size() > this -> history_size)
+  for(int i = 0; i < pc_msg.points.size(); i++)
   {
-    int delta = this -> history_pc_data.points.size() - this -> history_size;
-    this -> history_pc_data.points.erase(this -> history_pc_data.points.begin(), this -> history_pc_data.points.begin() + delta);
+    octmap -> updateNode(pc_msg.points[i].x, pc_msg.points[i].y, pc_msg.points[i].z, true);
   }
-  //ROS_INFO_STREAM("MapUtility::addHistoryPCData ADDED............");
 }
 
-void MapUtility::fillPCData()
+void MapUtility::fillOctmapFromRecentPCMsg()
 {
-  this -> pc_data.points.clear();
-  
-  for(octomap::ColorOcTree::iterator it = this -> octmap -> begin(); it != this -> octmap -> end(); ++it)
+  octmap -> clear();
+
+  for(int i = 0; i < recent_pc_msg.points.size(); i++)
   {
-    geometry_msgs::Point op;
-    op.x = it.getCoordinate().x();
-    op.y = it.getCoordinate().y();
-    op.z = it.getCoordinate().z();
-
-    //this -> history_pc_data.points.push_back(op);
-
-    vector<geometry_msgs::Point32> opc = this -> extract_pc_from_node_center(op);
-    for(int i = 0; i < opc.size(); i++)
-    {
-      this -> pc_data.points.push_back(opc[i]);
-    }
+    octmap -> updateNode(recent_pc_msg.points[i].x, recent_pc_msg.points[i].y, recent_pc_msg.points[i].z, true);
   }
-
-  this -> pc_data.header.frame_id = this -> frame_name;
 }
 
-void MapUtility::fillHistoryPCData()
+void MapUtility::fillOctmapMsgFromOctmap()
 {
-  this -> history_pc_data.points.clear();
+  octmap_msg.header.frame_id = frame_name;
+  octmap_msg.binary = false;
+  octmap_msg.id = map_name;
+  octmap_msg.resolution = oct_resolution;
+  octomap_msgs::fullMapToMsg(*octmap, octmap_msg);
+}
+
+void MapUtility::fillOctmapMsgFromOctmap(string new_frame_name)
+{
+  octmap_msg.header.frame_id = new_frame_name;
+  octmap_msg.binary = false;
+  octmap_msg.id = map_name;
+  octmap_msg.resolution = oct_resolution;
+  octomap_msgs::fullMapToMsg(*octmap, octmap_msg);
+}
+
+void MapUtility::fillRecentPCMsgFromOctmap()
+{
+  recent_pc_msg.points.clear();
   
-  for(octomap::ColorOcTree::iterator it = this -> octmap -> begin(); it != this -> octmap -> end(); ++it)
+  for(octomap::ColorOcTree::iterator it = octmap -> begin(); it != octmap -> end(); ++it)
   {
     geometry_msgs::Point32 op;
     op.x = it.getCoordinate().x();
     op.y = it.getCoordinate().y();
     op.z = it.getCoordinate().z();
 
-    this -> history_pc_data.points.push_back(op);
+    recent_pc_msg.points.push_back(op);
   }
-  this -> history_pc_data.header.frame_id = this -> frame_name;
+  recent_pc_msg.header.frame_id = frame_name;
 }
 
-void MapUtility::fillOctMap()
+void MapUtility::fillRecentPCMsgFromOctmapByResolutionFactor()
 {
-  this -> octmap -> clear();
-
-  for(int i = 0; i < this -> pc_data.points.size(); i++)
+  recent_pc_msg.points.clear();
+  
+  for(octomap::ColorOcTree::iterator it = octmap -> begin(); it != octmap -> end(); ++it)
   {
-    geometry_msgs::Pose rp;
-    rp.position.x = this -> pc_data.points[i].x;
-    rp.position.y = this -> pc_data.points[i].y;
-    rp.position.z = this -> pc_data.points[i].z;
+    geometry_msgs::Point op;
+    op.x = it.getCoordinate().x();
+    op.y = it.getCoordinate().y();
+    op.z = it.getCoordinate().z();
 
-    this -> octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
+    vector<geometry_msgs::Point32> opc = extract_pc_from_node_center(op);
+    for(int i = 0; i < opc.size(); i++)
+    {
+      recent_pc_msg.points.push_back(opc[i]);
+    }
   }
-  octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
-  this -> fillMapVisu();
+  recent_pc_msg.header.frame_id = frame_name;
 }
 
-void MapUtility::addStaticObstacle2PCData(geometry_msgs::Point po)
+void MapUtility::fillHistoryPCMsgFromOctmap()
 {
-  vector<geometry_msgs::Point32> opc = this -> extract_pc_from_node_center(po);
-  for(int i = 0; i < opc.size(); i++)
+  history_pc_msg.points.clear();
+  
+  for(octomap::ColorOcTree::iterator it = octmap -> begin(); it != octmap -> end(); ++it)
   {
-    this -> pc_data.points.push_back(opc[i]);
+    geometry_msgs::Point32 op;
+    op.x = it.getCoordinate().x();
+    op.y = it.getCoordinate().y();
+    op.z = it.getCoordinate().z();
+
+    history_pc_msg.points.push_back(op);
   }
-  this -> pc_data.header.frame_id = this -> frame_name;
+  history_pc_msg.header.frame_id = frame_name;
+}
+
+void MapUtility::fillLocalPCMsgFromOctmap()
+{
+  local_pc_msg.points.clear();
+  
+  for(octomap::ColorOcTree::iterator it = octmap -> begin(); it != octmap -> end(); ++it)
+  {
+    geometry_msgs::Point32 op;
+    op.x = it.getCoordinate().x();
+    op.y = it.getCoordinate().y();
+    op.z = it.getCoordinate().z();
+
+    local_pc_msg.points.push_back(op);
+  }
+  local_pc_msg.header.frame_id = frame_name;
+}
+
+void MapUtility::addOctmap(sensor_msgs::PointCloud pc_msg)
+{
+  for(int i = 0; i < pc_msg.points.size(); i++)
+  {
+    octmap -> updateNode(pc_msg.points[i].x, pc_msg.points[i].y, pc_msg.points[i].z, true);
+  }
+}
+
+void MapUtility::addOctmapFromRecentPCMsg()
+{
+  for(int i = 0; i < recent_pc_msg.points.size(); i++)
+  {
+    octmap -> updateNode(recent_pc_msg.points[i].x, recent_pc_msg.points[i].y, recent_pc_msg.points[i].z, true);
+  }
+  fillOctmapMsgFromOctmap();
+}
+
+void MapUtility::addRecentPCMsg(sensor_msgs::PointCloud& new_recent_pc_msg)
+{
+  recent_pc_msg.header = new_recent_pc_msg.header;
+  recent_pc_msg.channels = new_recent_pc_msg.channels;
+  recent_pc_msg.points.insert(end(recent_pc_msg.points), begin(new_recent_pc_msg.points), end(new_recent_pc_msg.points));
+}
+
+void MapUtility::addHistoryPCMsg(sensor_msgs::PointCloud& new_history_pc_msg)
+{
+  history_pc_msg.header = new_history_pc_msg.header;
+  history_pc_msg.channels = new_history_pc_msg.channels;
+
+  history_pc_msg.points.insert(history_pc_msg.points.end(), new_history_pc_msg.points.begin(), new_history_pc_msg.points.end());
+
+  if(history_pc_msg.points.size() > history_size)
+  {
+    int delta = history_pc_msg.points.size() - history_size;
+    history_pc_msg.points.erase(history_pc_msg.points.begin(), history_pc_msg.points.begin() + delta);
+  }
+  //ROS_INFO_STREAM("MapUtility::addHistoryPCData ADDED............");
+}
+
+void MapUtility::addLocalPCMsg(sensor_msgs::PointCloud& new_local_pc_msg)
+{
+  local_pc_msg.header = new_local_pc_msg.header;
+  local_pc_msg.channels = new_local_pc_msg.channels;
+  local_pc_msg.points.insert(end(local_pc_msg.points), begin(new_local_pc_msg.points), end(new_local_pc_msg.points));
+}
+
+void MapUtility::addLocalPCMsg(geometry_msgs::Point32 new_point)
+{
+  local_pc_msg.points.push_back(new_point);
+}
+
+void MapUtility::clearRecentPCMsg()
+{
+  recent_pc_msg.points.clear();
+}
+
+void MapUtility::clearHistoryPCMsg()
+{
+  history_pc_msg.points.clear();
+}
+
+void MapUtility::clearLocalPCMsg()
+{
+  local_pc_msg.points.clear();
 }
 
 bool MapUtility::isOccupied(double x, double y, double z)
 {
-  OcTreeNode* node = this -> octmap -> search(x, y, z);
+  OcTreeNode* node = octmap -> search(x, y, z);
   if(node)
   {
-    return this -> octmap -> isNodeOccupied(node);
+    return octmap -> isNodeOccupied(node);
   }
   else
   {
@@ -501,10 +606,10 @@ bool MapUtility::isOccupied(double x, double y, double z)
 
 bool MapUtility::isOccupied(geometry_msgs::Point po)
 {
-  OcTreeNode* node = this -> octmap -> search(po.x, po.y, po.z);
+  OcTreeNode* node = octmap -> search(po.x, po.y, po.z);
   if(node)
   {
-    return this -> octmap -> isNodeOccupied(node);
+    return octmap -> isNodeOccupied(node);
   }
   else
   {
@@ -517,20 +622,18 @@ bool MapUtility::isInCube(geometry_msgs::Point po, geometry_msgs::Point center, 
   return (po.x >= center.x - rad) && (po.x <= center.x + rad) && (po.y >= center.y - rad) && (po.y <= center.y + rad) && (po.z >= center.z - rad) && (po.z <= center.z + rad);
 }
 
-bool MapUtility::isOccupiedByGoal(double x, double y, double z)
+bool MapUtility::isOccupiedByGoal(double x, double y, double z, vector<geometry_msgs::Pose> goal)
 {
   geometry_msgs::Point po;
   po.x = x;
   po.y = y;
   po.z = z;
 
-  double free_rad = 2 * (this -> oct_resolution);
+  double free_rad = 2 * oct_resolution;
 
-  int goal_count = this -> goal_util.getGoal().size();
-
-  for(int i = 0; i < goal_count; i++)
+  for(int i = 0; i < goal.size(); i++)
   {
-    if( isInCube(po, this -> goal_util.getGoal()[i].position, free_rad) )
+    if( isInCube(po, goal[i].position, free_rad) )
     {
       return true;
     }
@@ -538,15 +641,13 @@ bool MapUtility::isOccupiedByGoal(double x, double y, double z)
   return false;
 }
 
-bool MapUtility::isOccupiedByGoal(geometry_msgs::Point po)
+bool MapUtility::isOccupiedByGoal(geometry_msgs::Point po, vector<geometry_msgs::Pose> goal)
 {
-  double free_rad = 2 * (this -> oct_resolution);
+  double free_rad = 2 * oct_resolution;
 
-  int goal_count = this -> goal_util.getGoal().size();
-
-  for(int i = 0; i < goal_count; i++)
+  for(int i = 0; i < goal.size(); i++)
   {
-    if( isInCube(po, this -> goal_util.getGoal()[i].position, free_rad) )
+    if( isInCube(po, goal[i].position, free_rad) )
     {
       return true;
     }
@@ -554,31 +655,50 @@ bool MapUtility::isOccupiedByGoal(geometry_msgs::Point po)
   return false;
 }
 
-bool MapUtility::addStaticObstacle(double x, double y, double z, bool constraint_flag, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
+void MapUtility::addStaticObstacleByResolutionFactor2RecentPCMsg(geometry_msgs::Point po)
+{
+  vector<geometry_msgs::Point32> opc = extract_pc_from_node_center(po);
+  for(int i = 0; i < opc.size(); i++)
+  {
+    recent_pc_msg.points.push_back(opc[i]);
+  }
+  recent_pc_msg.header.frame_id = frame_name;
+}
+
+bool MapUtility::addStaticObstacle(double x, 
+                                   double y, 
+                                   double z, 
+                                   bool constraint_flag, 
+                                   vector<geometry_msgs::Pose> goal, 
+                                   geometry_msgs::Point robot_center, 
+                                   double robot_free_rad, 
+                                   vector<int> color_RGB)
 {
   geometry_msgs::Point po;
   po.x = x;
   po.y = y;
   po.z = z;
 
-  int goal_count = this -> goal_util.getGoal().size();
-
-  if( constraint_flag && (isOccupied(x, y, z) || isOccupiedByGoal(x, y, z) || isInCube(po, robot_center, robot_free_rad + (this -> oct_resolution))) )
+  if( constraint_flag && (isOccupied(x, y, z) || isOccupiedByGoal(x, y, z, goal) || isInCube(po, robot_center, robot_free_rad + oct_resolution)) )
   {
     return false;
   }
   else
   {
-    this -> octmap -> updateNode(x, y, z, true);
-    this -> octmap -> setNodeColor(this -> octmap -> coordToKey(x, y, z), color_RGB[0], color_RGB[1], color_RGB[2]);
-    octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
-    this -> addStaticObstacle2PCData(po);
-    this -> fillMapVisu();
+    octmap -> updateNode(x, y, z, true);
+    octmap -> setNodeColor(octmap -> coordToKey(x, y, z), color_RGB[0], color_RGB[1], color_RGB[2]);
+    fillOctmapMsgFromOctmap();
+    addStaticObstacleByResolutionFactor2RecentPCMsg(po);
     return true;
   }
 }
 
-vector<bool> MapUtility::addStaticObstacle(sensor_msgs::PointCloud pcd, bool constraint_flag, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
+vector<bool> MapUtility::addStaticObstacle(sensor_msgs::PointCloud& pcd, 
+                                           bool constraint_flag, 
+                                           vector<geometry_msgs::Pose> goal, 
+                                           geometry_msgs::Point robot_center, 
+                                           double robot_free_rad, 
+                                           vector<int> color_RGB)
 {
   vector<bool> pc_add_result;
       
@@ -586,65 +706,40 @@ vector<bool> MapUtility::addStaticObstacle(sensor_msgs::PointCloud pcd, bool con
 
   for(int i = 0; i < pcd_size; i++)
   {
-    pc_add_result.push_back( addStaticObstacle(pcd.points[i].x, pcd.points[i].y, pcd.points[i].z, constraint_flag, robot_center, robot_free_rad, color_RGB) );
+    pc_add_result.push_back( addStaticObstacle(pcd.points[i].x, pcd.points[i].y, pcd.points[i].z, constraint_flag, goal, robot_center, robot_free_rad, color_RGB) );
   }
   return pc_add_result;
 }
 
-void MapUtility::createRandomStaticObstacleMap(int num, bool constraint_flag, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
+void MapUtility::createRandomStaticObstacleMap(int num, bool constraint_flag, vector<geometry_msgs::Pose> goal, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
 {
-  this -> octmap -> clear();
+  octmap -> clear();
 
   for(int i = 0; i < num ; i++)
   {
     geometry_msgs::Pose rp;
-    rp.position.x = randdouble(this -> x_range[0], this -> x_range[1]);
-    rp.position.y = randdouble(this -> y_range[0], this -> y_range[1]);
-    rp.position.z = randdouble(this -> z_range[0], this -> z_range[1]);
+    rp.position.x = randdouble(x_range[0], x_range[1]);
+    rp.position.y = randdouble(y_range[0], y_range[1]);
+    rp.position.z = randdouble(z_range[0], z_range[1]);
 
-    while( isOccupied(rp.position) || (constraint_flag && isOccupiedByGoal(rp.position) || isInCube(rp.position, robot_center, robot_free_rad + (this -> oct_resolution))) )    // check for duplicates, goal and initial robot occupancy
+    while( isOccupied(rp.position) || (constraint_flag && isOccupiedByGoal(rp.position, goal) || isInCube(rp.position, robot_center, robot_free_rad + oct_resolution)) )    // check for duplicates, goal and initial robot occupancy
     {
-      rp.position.x = randdouble(this -> x_range[0], this -> x_range[1]);
-      rp.position.y = randdouble(this -> y_range[0], this -> y_range[1]);
-      rp.position.z = randdouble(this -> z_range[0], this -> z_range[1]);
+      rp.position.x = randdouble(x_range[0], x_range[1]);
+      rp.position.y = randdouble(y_range[0], y_range[1]);
+      rp.position.z = randdouble(z_range[0], z_range[1]);
     }
 
-    this -> octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
-    this -> octmap -> setNodeColor(this -> octmap -> coordToKey(rp.position.x, rp.position.y, rp.position.z), color_RGB[0], color_RGB[1], color_RGB[2]);
-    octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
+    octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
+    octmap -> setNodeColor(octmap -> coordToKey(rp.position.x, rp.position.y, rp.position.z), color_RGB[0], color_RGB[1], color_RGB[2]);  
   }
-  this -> fillMapVisu();
-  this -> fillPCData();
+  fillOctmapMsgFromOctmap();
+  fillRecentPCMsgFromOctmap();
 }
 
-void MapUtility::createRandomStaticObstacleMap(vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, int num, bool constraint_flag, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
+void MapUtility::createRandomStaticObstacleMap(vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, int num, bool constraint_flag, vector<geometry_msgs::Pose> goal, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
 {
-  this -> octmap -> clear();
+  octmap -> clear();
 
-  for(int i = 0; i < num ; i++)
-  {
-    geometry_msgs::Pose rp;
-    rp.position.x = randdouble(new_x_range[0], new_x_range[1]);
-    rp.position.y = randdouble(new_y_range[0], new_y_range[1]);
-    rp.position.z = randdouble(new_z_range[0], new_z_range[1]);
-
-    while( isOccupied(rp.position) || (constraint_flag && isOccupiedByGoal(rp.position) || isInCube(rp.position, robot_center, robot_free_rad + (this -> oct_resolution))) )    // check for duplicates, goal and initial robot occupancy
-    {
-      rp.position.x = randdouble(new_x_range[0], new_x_range[1]);
-      rp.position.y = randdouble(new_y_range[0], new_y_range[1]);
-      rp.position.z = randdouble(new_z_range[0], new_z_range[1]);
-    }
-
-    this -> octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
-    this -> octmap -> setNodeColor(this -> octmap -> coordToKey(rp.position.x, rp.position.y, rp.position.z), color_RGB[0], color_RGB[1], color_RGB[2]);
-    octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
-  }
-  this -> fillMapVisu();
-  //this -> fillPCData();
-}
-
-void MapUtility::addRandomStaticObstacle(vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, int num, bool constraint_flag, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
-{
   for(int i = 0; i < num ; i++)
   {
     geometry_msgs::Pose rp;
@@ -652,52 +747,97 @@ void MapUtility::addRandomStaticObstacle(vector<double> new_x_range, vector<doub
     rp.position.y = randdouble(new_y_range[0], new_y_range[1]);
     rp.position.z = randdouble(new_z_range[0], new_z_range[1]);
 
-    while( isOccupied(rp.position) || (constraint_flag && isOccupiedByGoal(rp.position) || isInCube(rp.position, robot_center, robot_free_rad + (this -> oct_resolution))) )    // check for duplicates, goal and initial robot occupancy
+    while( isOccupied(rp.position) || (constraint_flag && isOccupiedByGoal(rp.position, goal) || isInCube(rp.position, robot_center, robot_free_rad + oct_resolution)) )    // check for duplicates, goal and initial robot occupancy
     {
       rp.position.x = randdouble(new_x_range[0], new_x_range[1]);
       rp.position.y = randdouble(new_y_range[0], new_y_range[1]);
       rp.position.z = randdouble(new_z_range[0], new_z_range[1]);
     }
 
-    this -> octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
-    this -> octmap -> setNodeColor(this -> octmap -> coordToKey(rp.position.x, rp.position.y, rp.position.z), color_RGB[0], color_RGB[1], color_RGB[2]);
-    octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
-    this -> addStaticObstacle2PCData(rp.position);
+    octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
+    octmap -> setNodeColor(octmap -> coordToKey(rp.position.x, rp.position.y, rp.position.z), color_RGB[0], color_RGB[1], color_RGB[2]);
   }
-  this -> fillMapVisu();
+  fillOctmapMsgFromOctmap();
+  fillRecentPCMsgFromOctmap();
 }
 
-void MapUtility::fillMapVisu()
+void MapUtility::addRandomStaticObstacle(vector<double> new_x_range, vector<double> new_y_range, vector<double> new_z_range, int num, bool constraint_flag, vector<geometry_msgs::Pose> goal, geometry_msgs::Point robot_center, double robot_free_rad, vector<int> color_RGB)
 {
-  this -> octomap_visu.header.frame_id = this -> frame_name;
-  this -> octomap_visu.binary = false;
-  this -> octomap_visu.id = this -> map_name;
-  this -> octomap_visu.resolution = this -> oct_resolution;
-  octomap_msgs::fullMapToMsg(*(this -> octmap), this -> octomap_visu);
+  for(int i = 0; i < num ; i++)
+  {
+    geometry_msgs::Pose rp;
+    rp.position.x = randdouble(new_x_range[0], new_x_range[1]);
+    rp.position.y = randdouble(new_y_range[0], new_y_range[1]);
+    rp.position.z = randdouble(new_z_range[0], new_z_range[1]);
+
+    while( isOccupied(rp.position) || (constraint_flag && isOccupiedByGoal(rp.position, goal) || isInCube(rp.position, robot_center, robot_free_rad + oct_resolution)) )    // check for duplicates, goal and initial robot occupancy
+    {
+      rp.position.x = randdouble(new_x_range[0], new_x_range[1]);
+      rp.position.y = randdouble(new_y_range[0], new_y_range[1]);
+      rp.position.z = randdouble(new_z_range[0], new_z_range[1]);
+    }
+
+    octmap -> updateNode(rp.position.x, rp.position.y, rp.position.z, true);
+    octmap -> setNodeColor(octmap -> coordToKey(rp.position.x, rp.position.y, rp.position.z), color_RGB[0], color_RGB[1], color_RGB[2]);
+    addStaticObstacleByResolutionFactor2RecentPCMsg(rp.position);
+  }
+  fillOctmapMsgFromOctmap();
 }
 
-void MapUtility::publishMap()
+void MapUtility::createRandomMapSet(string mapset_name, int map_cnt, int map_occupancy_count)
 {
-  this -> octomap_visu.header.seq++;
-  this -> octomap_visu.header.stamp = ros::Time(0);
-  this -> octmap_visu_pub.publish(this -> octomap_visu);
+  vector<double> goal_x_range;
+  goal_x_range.push_back(x_range[0] + 4);
+  goal_x_range.push_back(x_range[1] - 4);
 
-  this -> pc_data.header.seq++;
-  this -> pc_data.header.stamp = ros::Time(0);
-  this -> pcdata_visu_pub.publish(this -> pc_data);
+  vector<double> goal_y_range;
+  goal_y_range.push_back(y_range[0] + 4);
+  goal_y_range.push_back(y_range[1] - 4);
 
-  // PUBLISH THE GOAL
-  this -> goal_util.publishGoal();
+  vector<double> goal_z_range;
+  goal_z_range.push_back(z_range[0] + 4);
+  goal_z_range.push_back(z_range[1] - 4);
+  
+  for (int i = 0; i < map_cnt; i++)
+  {
+    createRandomStaticObstacleMap(map_occupancy_count);
+    saveMap("mapset/" + mapset_name + "/map" + to_string(i));
+  }
+}
 
-  //ros::spinOnce();
-  //ros::Duration(0.01).sleep();
+void MapUtility::publishOctmapMsg()
+{
+  octmap_msg.header.seq++;
+  octmap_msg.header.stamp = ros::Time(0);
+  octmap_msg_pub.publish(octmap_msg);
+}
+
+void MapUtility::publishRecentPCMsg()
+{
+  recent_pc_msg.header.seq++;
+  recent_pc_msg.header.stamp = ros::Time(0);
+  recent_pc_msg_pub.publish(recent_pc_msg);
+}
+
+void MapUtility::publishHistoryPCMsg()
+{
+  history_pc_msg.header.seq++;
+  history_pc_msg.header.stamp = ros::Time(0);
+  history_pc_msg_pub.publish(history_pc_msg);
+}
+
+void MapUtility::publishLocalPCMsg()
+{
+  local_pc_msg.header.seq++;
+  local_pc_msg.header.stamp = ros::Time(0);
+  local_pc_msg_pub.publish(local_pc_msg);
 }
 
 void MapUtility::saveMap(string filename)
 {
   if(filename == "")
   {
-    filename = this -> createFileName();
+    filename = createFileName();
   }
 
   ofstream map_file;
@@ -705,36 +845,26 @@ void MapUtility::saveMap(string filename)
 
   if( map_file.is_open() )
   {
-    map_file << "map_name," + this -> map_name + "\n";
-    map_file << "frame_name," + this -> frame_name + "\n";
-    map_file << "x_range," + to_string(this -> x_range[0]) + "," + to_string(this -> x_range[1]) + "\n";
-    map_file << "y_range," + to_string(this -> y_range[0]) + "," + to_string(this -> y_range[1]) + "\n";
-    map_file << "z_range," + to_string(this -> z_range[0]) + "," + to_string(this -> z_range[1]) + "\n";
-    map_file << "oct_resolution," + to_string(this -> oct_resolution) + "\n";
-    map_file << "pc_resolution_factor," + to_string(this -> pc_resolution_factor) + "\n";
-    map_file << "max_occupancy_belief_value," + to_string(this -> max_occupancy_belief_value) + "\n";
-    map_file << "goal,\n";
-
-    geometry_msgs::Point po;
-    int goal_cnt = this -> goal_util.getGoal().size();
-    for(int i = 0; i < goal_cnt; i++)
-    {
-      po = this -> goal_util.getGoal()[i].position;
-      map_file << to_string(po.x) + "," + to_string(po.y) + "," + to_string(po.z) + "\n";
-    }
+    map_file << "map_name," + map_name + "\n";
+    map_file << "frame_name," + frame_name + "\n";
+    map_file << "x_range," + to_string(x_range[0]) + "," + to_string(x_range[1]) + "\n";
+    map_file << "y_range," + to_string(y_range[0]) + "," + to_string(y_range[1]) + "\n";
+    map_file << "z_range," + to_string(z_range[0]) + "," + to_string(z_range[1]) + "\n";
+    map_file << "oct_resolution," + to_string(oct_resolution) + "\n";
+    map_file << "pc_resolution_factor," + to_string(pc_resolution_factor) + "\n";
+    map_file << "max_occupancy_belief_value," + to_string(max_occupancy_belief_value) + "\n";
 
     map_file << "map,\n";
 
-    for(octomap::ColorOcTree::iterator it = this -> octmap -> begin(); it != this -> octmap -> end(); ++it)
+    for(octomap::ColorOcTree::iterator it = octmap -> begin(); it != octmap -> end(); ++it)
     {
-      geometry_msgs::Point op;
       map_file << to_string(it.getCoordinate().x()) + "," + to_string(it.getCoordinate().y()) + "," + to_string(it.getCoordinate().z()) + "\n";
     }
     map_file.close();
   }
   else
   {
-    cout << "Unable to open map file to save." << endl;
+    ROS_WARN("MapUtility::saveMap -> Unable to open map file to save.");
   }
 }
 
@@ -744,41 +874,26 @@ void MapUtility::loadMap(string filename)
 
   if( map_file.is_open() )
   {
-    cout << filename + " is loading from the file..." << endl;
+    ROS_INFO_STREAM("" << filename << " is loading from the file...");
 
-    this -> octmap -> clear();
-    this -> goal_util.clearGoal();
-    this -> goal_util.clearGoalVisu();
+    octmap -> clear();
 
     string line = "";
-    bool goal_flag = false;
     bool map_flag = false;
     while( getline(map_file, line) )
     {
       vector<string> vec;
       boost::algorithm::split(vec, line, boost::is_any_of(","));
 
-      if(vec[0] == "goal")
-      {
-        goal_flag = true;
-        continue;
-      }
-
       if(vec[0] == "map")
       {
         map_flag = true;
-        goal_flag = false;
         continue;
-      }
-
-      if(goal_flag)
-      {
-        this -> goal_util.addGoalPoint( atof(vec[0].c_str()), atof(vec[1].c_str()), atof(vec[2].c_str()) );
       }
 
       if(map_flag)
       {          
-        this -> addStaticObstacle( atof(vec[0].c_str()), atof(vec[1].c_str()), atof(vec[2].c_str()) );
+        addStaticObstacle( atof(vec[0].c_str()), atof(vec[1].c_str()), atof(vec[2].c_str()) );
       }
     }
 
@@ -788,29 +903,6 @@ void MapUtility::loadMap(string filename)
   }
   else
   {
-    cout << "Unable to open " + filename + " file to load." << endl;
-  }
-}
-
-void MapUtility::createRandomMapSet(string mapset_name, int map_cnt, int map_occupancy_count, bool random_goal_flag)
-{
-  vector<double> goal_x_range;
-  goal_x_range.push_back(this -> x_range[0] + 4);
-  goal_x_range.push_back(this -> x_range[1] - 4);
-  vector<double> goal_y_range;
-  goal_y_range.push_back(this -> y_range[0] + 4);
-  goal_y_range.push_back(this -> y_range[1] - 4);
-  vector<double> goal_z_range;
-  goal_z_range.push_back(this -> z_range[0] + 4);
-  goal_z_range.push_back(this -> z_range[1] - 4);
-  
-  for (int i = 0; i < map_cnt; i++)
-  {
-    if(random_goal_flag)
-    {
-      this -> goal_util.setRandomGoal(goal_x_range, goal_y_range, goal_z_range, 1);
-    }
-    this -> createRandomStaticObstacleMap(map_occupancy_count);
-    this -> saveMap("mapset/" + mapset_name + "/map" + to_string(i));
+    ROS_WARN_STREAM("MapUtility::loadMap -> Unable to open " << filename << " file to load.");
   }
 }

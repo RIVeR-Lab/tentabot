@@ -1,4 +1,4 @@
-// LAST UPDATE: 2020.09.04
+// LAST UPDATE: 2021.02.19
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -54,6 +54,7 @@
 
 // CUSTOM LIBRARIES:
 #include "/home/akmandor/catkin_ws/src/tentabot/src/map_utility.h"
+#include "/home/akmandor/catkin_ws/src/tentabot/src/goal_utility.h"
 
 // GLOBAL VARIABLES:
 #define PI 3.141592653589793
@@ -509,6 +510,7 @@ class Tentabot
     OnTuningParams on_tuning_param;
     HeuristicParams heuristic_param;
     StatusParams status_param;
+    GoalUtility goal_util;
     MapUtility map_util;
     VisuParams visu_param;
     ofstream nav_param_bench;
@@ -1111,7 +1113,7 @@ class Tentabot
     }
 
   public:
-    Tentabot(NodeHandle& nh, tf::TransformListener* listener, ProcessParams& pp, RobotParams& rp, OffTuningParams& offtp, OnTuningParams& ontp, MapUtility& mu)                                                    // constructor
+    Tentabot(NodeHandle& nh, tf::TransformListener* listener, ProcessParams& pp, RobotParams& rp, OffTuningParams& offtp, OnTuningParams& ontp, MapUtility& mu, GoalUtility& gu)
     {
       cout << "Welcome to Tentabot 3D Navigation Simulation! I hope you'll enjoy the ride..." << endl;
 
@@ -1125,6 +1127,7 @@ class Tentabot
       ros::Time t1 = ros::Time::now();
       this -> setEgoGridData();
       ros::Time t2 = ros::Time::now();
+      this -> goal_util = gu;
       this -> map_util = mu;
 
       ros::Time t3 = ros::Time::now();
@@ -1500,11 +1503,11 @@ class Tentabot
       // TRANSFORM POINT CLOUD WRT WORLD TO ROBOT FRAME
       sensor_msgs::PointCloud pc_wrt_robot;
 
-      this -> map_util.addHistoryPCData(this -> map_util.getPCData());
+      this -> map_util.addHistoryPCMsg(this -> map_util.getRecentPCMsg());
 
       try
       {
-        this -> tflistener -> transformPointCloud(this -> robot_param.robot_frame_name, this -> map_util.getHistoryPCData(), pc_wrt_robot);
+        this -> tflistener -> transformPointCloud(this -> robot_param.robot_frame_name, this -> map_util.getHistoryPCMsg(), pc_wrt_robot);
       }
       catch(tf::TransformException ex)
       {
@@ -1696,9 +1699,9 @@ class Tentabot
         this -> heuristic_param.flatness_set[k] = (2 / (1 + exp(-1 * flatness_value_avg))) - 1;
 
         // DETERMINE TARGET CLOSENESS VALUE
-        if (this -> map_util.getGoalUtil().getActiveGoalIndex() > 0)
+        if (this -> goal_util.getActiveGoalIndex() > 0)
         {
-          geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
+          geometry_msgs::Pose active_goal = this -> goal_util.getActiveGoal();
 
           crash_po_wrt_robot.point = this -> robot_param.tentacle_data[k][tentacle_crash_index];
           crash_po_wrt_robot.header.seq++;
@@ -1846,7 +1849,7 @@ class Tentabot
     // DESCRIPTION: MOVE THE ROBOT
     void moveTentabot()
     {
-      geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
+      geometry_msgs::Pose active_goal = this -> goal_util.getActiveGoal();
       double dist2goal = find_Euclidean_distance(active_goal.position, this -> status_param.robot_pose.position);
       bool isSwitched;
       bool firstFlag = false;
@@ -1860,7 +1863,7 @@ class Tentabot
       }
       else if(dist2goal < this -> process_param.goal_close_threshold)   // reach goal
       {
-        isSwitched = this -> map_util.getGoalUtil().switchActiveGoal();
+        isSwitched = this -> goal_util.switchActiveGoal();
 
         this -> status_param.speed_counter = 0;
 
@@ -1871,7 +1874,7 @@ class Tentabot
         }
         else
         {
-          cout << "Yey! Waypoint #" << this -> map_util.getGoalUtil().getActiveGoalIndex()-1 << " has reached!" << endl;
+          cout << "Yey! Waypoint #" << this -> goal_util.getActiveGoalIndex()-1 << " has reached!" << endl;
         }
 
         this -> status_param.nav_result = 1;
@@ -2068,9 +2071,9 @@ class Tentabot
     // DESCRIPTION: MOVE THE ROBOT
     void moveTentabotByTwist()
     {
-      if(this -> map_util.getGoalUtil().getActiveGoalIndex() < 0)
+      if(this -> goal_util.getActiveGoalIndex() < 0)
       {
-        geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
+        geometry_msgs::Pose active_goal = this -> goal_util.getActiveGoal();
         double dist2goal = find_Euclidean_distance(active_goal.position, this -> status_param.robot_pose.position);
 
         if(this -> status_param.nav_result == -1)                         // crash
@@ -2081,13 +2084,13 @@ class Tentabot
         }
         else if(dist2goal < this -> process_param.goal_close_threshold)   // reach goal
         {
-          bool isSwitched = this -> map_util.getGoalUtil().switchActiveGoal();
+          bool isSwitched = this -> goal_util.switchActiveGoal();
 
           this -> status_param.speed_counter = 0;
 
           if(isSwitched)
           {
-            cout << "Yey! Waypoint #" << this -> map_util.getGoalUtil().getActiveGoalIndex()-1 << " has reached!" << endl;
+            cout << "Yey! Waypoint #" << this -> goal_util.getActiveGoalIndex()-1 << " has reached!" << endl;
           }
           else
           {
@@ -2412,7 +2415,7 @@ class Tentabot
         }
       }
 
-      this -> map_util.setPCData(recent_pc);
+      this -> map_util.setRecentPCMsg(recent_pc);
     }
 
     void pc_callback(const sensor_msgs::PointCloud2ConstPtr& cloud1, const sensor_msgs::PointCloud2ConstPtr& cloud2)
@@ -2435,8 +2438,8 @@ class Tentabot
       sensor_msgs::convertPointCloud2ToPointCloud(transformed_cloud1_pc2, pc1);
       sensor_msgs::convertPointCloud2ToPointCloud(transformed_cloud2_pc2, pc2);
 
-      this -> map_util.setPCData(pc1);
-      this -> map_util.addPCData(pc2);
+      this -> map_util.setRecentPCMsg(pc1);
+      this -> map_util.addRecentPCMsg(pc2);
     }
 
     void odometryCallback(const geometry_msgs::Pose::ConstPtr& msg)

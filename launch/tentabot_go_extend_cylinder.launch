@@ -1,4 +1,5 @@
 <launch>
+  <!--INITIALIZE AND SET PROCESS PARAMETERS-->
   <arg name="mav_name" value="firefly"/>
   <arg name="enable_logging" default="false" />
   <arg name="enable_ground_truth" default="true" />
@@ -6,6 +7,8 @@
   <arg name="paused" value="true"/>
 
   <arg name="world_frame_name" default="world"/>
+  <arg name="world_resolution" value="0.15"/>
+  <arg name="world_name" value="cylinders0"/>
 
   <arg name="start_x" value="-15.0"/>
   <arg name="start_y" value="15.0"/>
@@ -21,9 +24,6 @@
   <arg name="goal2_y" value="-15.0"/>
   <arg name="goal2_z" value="1.0"/>
   <arg name="goal2_yaw" value="$(eval -pi/4)"/>
-
-  <arg name="resolution" value="0.15"/>
-  <arg name="world_name" value="cylinders0"/>
   
   <arg name="time_limit" value="90" />
   <arg name="dt" value="0.05" />
@@ -34,9 +34,9 @@
   <arg name="tyaw_cnt" value="31" />
   <arg name="tpitch_cnt" value="21" />
   <arg name="tsamp_cnt" value="25" />
-  <!--arg name="tyaw_cnt" value="31" />
-  <arg name="tpitch_cnt" value="21" />
-  <arg name="tsamp_cnt" value="30" /-->
+  <!--arg name="tyaw_cnt" value="7" />
+  <arg name="tpitch_cnt" value="3" />
+  <arg name="tsamp_cnt" value="25" /-->
   <arg name="tlen" value="10" />
   <arg name="tyaw" value="0.942" />
   <arg name="tpitch" value="0.628" />
@@ -46,15 +46,15 @@
   <arg name="pdist" value="0.4" />
   <arg name="sdist" value="1.0" />
   <arg name="egrid_vdim" value="0.1" />
-  <arg name="egrid_vnumx" value="200" />
-  <arg name="egrid_vnumy" value="200" />
-  <arg name="egrid_vnumz" value="200" />
+  <arg name="egrid_vnumx" value="210" />
+  <arg name="egrid_vnumy" value="210" />
+  <arg name="egrid_vnumz" value="210" />
 
   <arg name="crash_dist" value="8" />
   <arg name="clear_scale" value="0" />
-  <arg name="flat_scale" value="30" />
+  <arg name="flat_scale" value="20" />
   <arg name="close_scale" value="60" />
-  <arg name="smooth_scale" value="3" />
+  <arg name="smooth_scale" value="2" />
   <!--arg name="clear_scale" value="50" />
   <arg name="flat_scale" value="100" />
   <arg name="close_scale" value="80" />
@@ -104,6 +104,8 @@
     <node name="tentabot_go_extend" pkg="tentabot" type="tentabot_go_extend" output="screen">
 
       <param name="world_frame_name" value="$(arg world_frame_name)" />
+      <param name="world_resolution" value="$(arg world_resolution)" />
+      <param name="world_name" value="$(arg world_name)"/>
       <param name="start_x" value="$(arg start_x)" />
       <param name="start_y" value="$(arg start_y)" />
       <param name="start_z" value="$(arg start_z)" />
@@ -116,8 +118,6 @@
       <param name="goal2_y" value="$(arg goal2_y)" />
       <param name="goal2_z" value="$(arg goal2_z)" />
       <param name="goal2_yaw" value="$(arg goal2_yaw)" />
-      <param name="resolution" value="$(arg resolution)" />
-      <param name="world_name" value="$(arg world_name)"/>
       <param name="time_limit" value="$(arg time_limit)" />
       <param name="dt" value="$(arg dt)" />
       <param name="dummy_max_lat_velo" value="$(arg dummy_max_lat_velo)" />

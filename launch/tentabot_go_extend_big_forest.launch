@@ -6,6 +6,8 @@
   <arg name="paused" value="true"/>
 
   <arg name="world_frame_name" default="world"/>
+  <arg name="world_resolution" value="0.15"/>
+  <arg name="world_name" value="forest0"/>
 
   <arg name="start_x" value="-35.0"/>
   <arg name="start_y" value="35.0"/>
@@ -21,9 +23,6 @@
   <arg name="goal2_y" value="-35.0"/>
   <arg name="goal2_z" value="0.6"/>
   <arg name="goal2_yaw" value="$(eval -pi/4)"/>
-
-  <arg name="resolution" value="0.15"/>
-  <arg name="world_name" value="forest0"/>
   
   <arg name="time_limit" value="180" />
   <arg name="dt" value="0.05" />
@@ -83,6 +82,8 @@
     <node name="tentabot_go_extend" pkg="tentabot" type="tentabot_go_extend" output="screen">
 
       <param name="world_frame_name" value="$(arg world_frame_name)" />
+      <param name="world_resolution" value="$(arg world_resolution)" />
+      <param name="world_name" value="$(arg world_name)"/>
       <param name="start_x" value="$(arg start_x)" />
       <param name="start_y" value="$(arg start_y)" />
       <param name="start_z" value="$(arg start_z)" />
@@ -95,8 +96,6 @@
       <param name="goal2_y" value="$(arg goal2_y)" />
       <param name="goal2_z" value="$(arg goal2_z)" />
       <param name="goal2_yaw" value="$(arg goal2_yaw)" />
-      <param name="resolution" value="$(arg resolution)" />
-      <param name="world_name" value="$(arg world_name)"/>
       <param name="time_limit" value="$(arg time_limit)" />
       <param name="dt" value="$(arg dt)" />
       <param name="dummy_max_lat_velo" value="$(arg dummy_max_lat_velo)" />

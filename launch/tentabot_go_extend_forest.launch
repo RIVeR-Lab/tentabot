@@ -6,6 +6,8 @@
   <arg name="paused" value="true"/>
 
   <arg name="world_frame_name" default="world"/>
+  <arg name="world_resolution" value="0.15"/>
+  <arg name="world_name" value="forest0"/>
 
   <arg name="start_x" value="-15.0"/>
   <arg name="start_y" value="15.0"/>
@@ -21,19 +23,16 @@
   <arg name="goal2_y" value="-15.0"/>
   <arg name="goal2_z" value="0.6"/>
   <arg name="goal2_yaw" value="$(eval -pi/4)"/>
-
-  <arg name="resolution" value="0.15"/>
-  <arg name="world_name" value="forest9"/>
   
   <arg name="time_limit" value="90" />
   <arg name="dt" value="0.05" />
 
-  <arg name="dummy_max_lat_velo" value="15" />
-  <arg name="dummy_max_yaw_velo" value="5" />
+  <arg name="dummy_max_lat_velo" value="30" />
+  <arg name="dummy_max_yaw_velo" value="30" />
   
   <arg name="tyaw_cnt" value="31" />
   <arg name="tpitch_cnt" value="21" />
-  <arg name="tsamp_cnt" value="30" />
+  <arg name="tsamp_cnt" value="25" />
   <arg name="tlen" value="10" />
   <arg name="tyaw" value="0.942" />
   <arg name="tpitch" value="0.628" />
@@ -47,8 +46,8 @@
 
   <arg name="crash_dist" value="2" />
   <arg name="clear_scale" value="0" />
-  <arg name="flat_scale" value="20" />
-  <arg name="close_scale" value="70" />
+  <arg name="clutter_scale" value="20" />
+  <arg name="close_scale" value="60" />
   <arg name="smooth_scale" value="2" />
 
   <env name="GAZEBO_MODEL_PATH" value="$(find rotors_gazebo)/models"/>
@@ -83,6 +82,8 @@
     <node name="tentabot_go_extend" pkg="tentabot" type="tentabot_go_extend" output="screen">
 
       <param name="world_frame_name" value="$(arg world_frame_name)" />
+      <param name="world_resolution" value="$(arg world_resolution)" />
+      <param name="world_name" value="$(arg world_name)"/>
       <param name="start_x" value="$(arg start_x)" />
       <param name="start_y" value="$(arg start_y)" />
       <param name="start_z" value="$(arg start_z)" />
@@ -95,8 +96,6 @@
       <param name="goal2_y" value="$(arg goal2_y)" />
       <param name="goal2_z" value="$(arg goal2_z)" />
       <param name="goal2_yaw" value="$(arg goal2_yaw)" />
-      <param name="resolution" value="$(arg resolution)" />
-      <param name="world_name" value="$(arg world_name)"/>
       <param name="time_limit" value="$(arg time_limit)" />
       <param name="dt" value="$(arg dt)" />
       <param name="dummy_max_lat_velo" value="$(arg dummy_max_lat_velo)" />
@@ -116,7 +115,7 @@
       <param name="egrid_vnumz" value="$(arg egrid_vnumz)" />
       <param name="crash_dist" value="$(arg crash_dist)" />
       <param name="clear_scale" value="$(arg clear_scale)" />
-      <param name="flat_scale" value="$(arg flat_scale)" />
+      <param name="clutter_scale" value="$(arg clutter_scale)" />
       <param name="close_scale" value="$(arg close_scale)" />
       <param name="smooth_scale" value="$(arg smooth_scale)" />
     </node>

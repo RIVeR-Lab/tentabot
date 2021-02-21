@@ -1,4 +1,4 @@
-// LAST UPDATE: 2020.02.13
+// LAST UPDATE: 2021.02.17
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -41,6 +41,7 @@
 
 // CUSTOM LIBRARIES:
 #include "/home/akmandor/catkin_ws/src/tentabot/src/map_utility.h"
+#include "/home/akmandor/catkin_ws/src/tentabot/src/goal_utility.h"
 
 // GLOBAL VARIABLES:
 #define PI 3.141592653589793
@@ -139,7 +140,7 @@ struct OnTuningParams
   int tbin_window;                              // number of tentacle bins in sliding window to decide whether the number of obstacles (histogram) correlate within consecutive bins, range: 1 <= bin_window, E Z+
   int tbin_obs_cnt_threshold;                   // threshold of number of obstacle on the tentacle bin, range: 0 <= obs_num_threshold, E Z+
   double clear_scale;                           // parameter to adjust the weight of the clearance value while selecting best tentacle, range: 0 <= clear_scale, E R+
-  double flat_scale;                            // parameter to adjust the weight of the flatness value while selecting best tentacle, range: 0 <= flat_scale, E R+, NUA TODO: Change to clutterness
+  double clutter_scale;                            // parameter to adjust the weight of the clutterness value while selecting best tentacle, range: 0 <= clutter_scale, E R+, NUA TODO: Change to clutterness
   double close_scale;                           // parameter to adjust the weight of the closeness value while selecting best tentacle, range: 0 <= close_scale, E R+
   double smooth_scale;                          // parameter to adjust the weight of the smoothness value while selecting best tentacle, range: 0 <= smooth_scale, E R+
   double crash_dist;                            // crash distance on the selected tentacle, range: 0 <= crash_dist, E R+
@@ -149,7 +150,7 @@ struct HeuristicParams
 {
   vector<int> navigability_set;
   vector<double> clearance_set;
-  vector<double> flatness_set;
+  vector<double> clutterness_set;
   vector<double> closeness_set;
   vector<double> smoothness_set;
 };
@@ -453,6 +454,7 @@ class Tentabot
     OnTuningParams on_tuning_param;
     HeuristicParams heuristic_param;
     StatusParams status_param;
+    GoalUtility goal_util;
     MapUtility map_util;
     VisuParams visu_param;
     ofstream nav_param_bench;
@@ -482,7 +484,7 @@ class Tentabot
       tmp_marker.scale.x = 0.1;
       tmp_marker.scale.y = 0.1;
       tmp_marker.scale.z = 0.1;
-      tmp_marker.color.r = 0.0;
+      tmp_marker.color.r = 1.0;
       tmp_marker.color.g = 0.0;
       tmp_marker.color.b = 0.0;
       tmp_marker.color.a = 1;
@@ -508,6 +510,21 @@ class Tentabot
 
       tf::pointStampedTFToMsg(p_to_stamped_tf, p_to_stamped_msg);
       p_to_msg = p_to_stamped_msg.point;
+    }
+
+    void transformPoint(string frame_from, geometry_msgs::Point32& p_from_msg, string frame_to, geometry_msgs::Point32& p_to_msg)
+    {
+      geometry_msgs::Point tmp_p_from;
+      tmp_p_from.x = p_from_msg.x;
+      tmp_p_from.y = p_from_msg.y;
+      tmp_p_from.z = p_from_msg.z;
+      geometry_msgs::Point tmp_p_to;
+
+      transformPoint(frame_from, tmp_p_from, frame_to, tmp_p_to);
+
+      p_to_msg.x = tmp_p_to.x;
+      p_to_msg.y = tmp_p_to.y;
+      p_to_msg.z = tmp_p_to.z;
     }
 
     void transformOrientation(string frame_from, geometry_msgs::Quaternion& q_from_msg, string frame_to, geometry_msgs::Quaternion& q_to_msg)
@@ -554,27 +571,78 @@ class Tentabot
       q_to_msg = q_to_stamped_msg.quaternion;
     }
 
-		int toIndex(double pos, int grid_vnum, double grid_vdim)
-		{
-		  return (0.5 * grid_vnum + floor(pos / grid_vdim));
+		int toIndex(double pos, int grid_vnum)
+		{   
+		  return (0.5 * grid_vnum + floor(pos / off_tuning_param.egrid_vdim));
 		}
 
-		int toLinIndex(geometry_msgs::Point32 po, int grid_vnumx, int grid_vnumy, int grid_vnumz, double grid_vdim)
+		int toLinIndex(geometry_msgs::Point po)
 		{
-		  int ind_x = toIndex(po.x, grid_vnumx, grid_vdim);
-		  int ind_y = toIndex(po.y, grid_vnumy, grid_vdim);
-		  int ind_z = toIndex(po.z, grid_vnumz, grid_vdim);
+      int grid_vnumx = off_tuning_param.egrid_vnumx;
+      int grid_vnumy = off_tuning_param.egrid_vnumy;
+      int grid_vnumz = off_tuning_param.egrid_vnumz;
+
+		  int ind_x = toIndex(po.x, grid_vnumx);
+		  int ind_y = toIndex(po.y, grid_vnumy);
+		  int ind_z = toIndex(po.z, grid_vnumz);
+
 		  return (ind_x + ind_y * grid_vnumx + ind_z * grid_vnumx * grid_vnumy);
 		}
 
-		geometry_msgs::Point toPoint(int ind, int grid_vnumx, int grid_vnumy, int grid_vnumz, double grid_vdim)
+    int toLinIndex(geometry_msgs::Point32 po)
+    {
+      int grid_vnumx = off_tuning_param.egrid_vnumx;
+      int grid_vnumy = off_tuning_param.egrid_vnumy;
+      int grid_vnumz = off_tuning_param.egrid_vnumz;
+
+      int ind_x = toIndex(po.x, grid_vnumx);
+      int ind_y = toIndex(po.y, grid_vnumy);
+      int ind_z = toIndex(po.z, grid_vnumz);
+
+      return (ind_x + ind_y * grid_vnumx + ind_z * grid_vnumx * grid_vnumy);
+    }
+
+		void toPoint(int ind, geometry_msgs::Point& po)
 		{
-		  geometry_msgs::Point po; 
+      int grid_vnumx = off_tuning_param.egrid_vnumx;
+      int grid_vnumy = off_tuning_param.egrid_vnumy;
+      int grid_vnumz = off_tuning_param.egrid_vnumz;
+      double grid_vdim = off_tuning_param.egrid_vdim;
+ 
 		  po.x = grid_vdim * ((ind % (grid_vnumx * grid_vnumy)) % grid_vnumx  - 0.5 * grid_vnumx) + 0.5 * grid_vdim;
 		  po.y = grid_vdim * ((ind % (grid_vnumx * grid_vnumy)) / grid_vnumx  - 0.5 * grid_vnumy) + 0.5 * grid_vdim;
 		  po.z = grid_vdim * (ind / (grid_vnumx * grid_vnumy) - 0.5 * grid_vnumz) + 0.5 * grid_vdim;
-		  return po;
 		}
+
+    void toPoint(int ind, geometry_msgs::Point32& po)
+    {
+      int grid_vnumx = off_tuning_param.egrid_vnumx;
+      int grid_vnumy = off_tuning_param.egrid_vnumy;
+      int grid_vnumz = off_tuning_param.egrid_vnumz;
+      double grid_vdim = off_tuning_param.egrid_vdim;
+ 
+      po.x = grid_vdim * ((ind % (grid_vnumx * grid_vnumy)) % grid_vnumx  - 0.5 * grid_vnumx) + 0.5 * grid_vdim;
+      po.y = grid_vdim * ((ind % (grid_vnumx * grid_vnumy)) / grid_vnumx  - 0.5 * grid_vnumy) + 0.5 * grid_vdim;
+      po.z = grid_vdim * (ind / (grid_vnumx * grid_vnumy) - 0.5 * grid_vnumz) + 0.5 * grid_vdim;
+    }
+
+    bool isInsideRectCuboid(geometry_msgs::Point32 po)
+    {
+      double radx = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumx;
+      double rady = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumy;
+      double radz = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumz;
+
+      return (po.x >= -radx) && (po.x < radx) && (po.y >= -rady) && (po.y < rady) && (po.z >= -radz) && (po.z < radz);
+    }
+
+    bool isInsideRectCuboid(geometry_msgs::Point32 po, geometry_msgs::Point center)
+    {
+      double radx = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumx;
+      double rady = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumy;
+      double radz = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumz;
+
+      return (po.x >= center.x - radx) && (po.x < center.x + radx) && (po.y >= center.y - rady) && (po.y < center.y + rady) && (po.z >= center.z - radz) && (po.z < center.z + radz);
+    }
 
     vector<geometry_msgs::Point> arc_by_radi_ang(geometry_msgs::Point from, double radius, double angle, int sample_cnt)
     {
@@ -641,43 +709,43 @@ class Tentabot
       vector<OccupancyVoxel> svg;
 
       vector<double> archy_limits = find_limits(archy);
-      int min_vox_ind_x = toIndex(archy_limits[0] - this -> off_tuning_param.sdist, this -> off_tuning_param.egrid_vnumx, this -> off_tuning_param.egrid_vdim);
-      int max_vox_ind_x = toIndex(archy_limits[1] + this -> off_tuning_param.sdist, this -> off_tuning_param.egrid_vnumx, this -> off_tuning_param.egrid_vdim);
+      int min_vox_ind_x = toIndex(archy_limits[0] - off_tuning_param.sdist, off_tuning_param.egrid_vnumx);
+      int max_vox_ind_x = toIndex(archy_limits[1] + off_tuning_param.sdist, off_tuning_param.egrid_vnumx);
 
       if(min_vox_ind_x < 0)
       {
         min_vox_ind_x = 0;
       }
 
-      if(max_vox_ind_x >= this -> off_tuning_param.egrid_vnumx)
+      if(max_vox_ind_x >= off_tuning_param.egrid_vnumx)
       {
-        max_vox_ind_x = this -> off_tuning_param.egrid_vnumx - 1;
+        max_vox_ind_x = off_tuning_param.egrid_vnumx - 1;
       }
 
-      int min_vox_ind_y = toIndex(archy_limits[2] - this -> off_tuning_param.sdist, this -> off_tuning_param.egrid_vnumy, this -> off_tuning_param.egrid_vdim);
-      int max_vox_ind_y = toIndex(archy_limits[3] + this -> off_tuning_param.sdist, this -> off_tuning_param.egrid_vnumy, this -> off_tuning_param.egrid_vdim);
+      int min_vox_ind_y = toIndex(archy_limits[2] - off_tuning_param.sdist, off_tuning_param.egrid_vnumy);
+      int max_vox_ind_y = toIndex(archy_limits[3] + off_tuning_param.sdist, off_tuning_param.egrid_vnumy);
 
       if(min_vox_ind_y < 0)
       {
         min_vox_ind_y = 0;
       }
 
-      if(max_vox_ind_y >= this -> off_tuning_param.egrid_vnumy)
+      if(max_vox_ind_y >= off_tuning_param.egrid_vnumy)
       {
-        max_vox_ind_y = this -> off_tuning_param.egrid_vnumy - 1;
+        max_vox_ind_y = off_tuning_param.egrid_vnumy - 1;
       }
 
-      int min_vox_ind_z = toIndex(archy_limits[4] - this -> off_tuning_param.sdist, this -> off_tuning_param.egrid_vnumz, this -> off_tuning_param.egrid_vdim);
-      int max_vox_ind_z = toIndex(archy_limits[5] + this -> off_tuning_param.sdist, this -> off_tuning_param.egrid_vnumz, this -> off_tuning_param.egrid_vdim);
+      int min_vox_ind_z = toIndex(archy_limits[4] - off_tuning_param.sdist, off_tuning_param.egrid_vnumz);
+      int max_vox_ind_z = toIndex(archy_limits[5] + off_tuning_param.sdist, off_tuning_param.egrid_vnumz);
 
       if(min_vox_ind_z < 0)
       {
         min_vox_ind_z = 0;
       }
 
-      if(max_vox_ind_z >= this -> off_tuning_param.egrid_vnumz)
+      if(max_vox_ind_z >= off_tuning_param.egrid_vnumz)
       {
-        max_vox_ind_z = this -> off_tuning_param.egrid_vnumz - 1;
+        max_vox_ind_z = off_tuning_param.egrid_vnumz - 1;
       }
 
       geometry_msgs::Point cell_center;        
@@ -690,22 +758,22 @@ class Tentabot
           for(int r = min_vox_ind_z; r <= max_vox_ind_z; r++)
           {
             OccupancyVoxel sv;
-            gind = i + j * this -> off_tuning_param.egrid_vnumx + r * this -> off_tuning_param.egrid_vnumx * this -> off_tuning_param.egrid_vnumy;
-            cell_center = this -> status_param.ego_grid_data.ovox_pos[gind];
+            gind = i + j * off_tuning_param.egrid_vnumx + r * off_tuning_param.egrid_vnumx * off_tuning_param.egrid_vnumy;
+            cell_center = status_param.ego_grid_data.ovox_pos[gind];
             cd = find_closest_dist(archy, cell_center);
 
-            if(cd[0] <= this -> off_tuning_param.sdist)
+            if(cd[0] <= off_tuning_param.sdist)
             {
               sv.index = gind;     
               sv.histbin = (int) cd[1];
-              if(cd[0] <= this -> off_tuning_param.pdist)
+              if(cd[0] <= off_tuning_param.pdist)
               {
-                sv.weight = this -> off_tuning_param.sweight_max;
+                sv.weight = off_tuning_param.sweight_max;
                 sv.flag = true;
               }
               else
               {
-                sv.weight = this -> off_tuning_param.sweight_max / (this -> off_tuning_param.sweight_scale * (cd[0] - this -> off_tuning_param.pdist));
+                sv.weight = off_tuning_param.sweight_max / (off_tuning_param.sweight_scale * (cd[0] - off_tuning_param.pdist));
                 sv.flag = false;
               }
               svg.push_back(sv);
@@ -927,13 +995,11 @@ class Tentabot
 
         for(int s = 0; s < this -> robot_param.support_vox_data[k].size(); s++)
         {
-          std_msgs::ColorRGBA sv_point_color;
+          geometry_msgs::Point po;
+          toPoint(robot_param.support_vox_data[k][s].index, po);
 
-          support_vox_points.points.push_back( toPoint( this -> robot_param.support_vox_data[k][s].index, 
-                                                        this -> off_tuning_param.egrid_vnumx, 
-                                                        this -> off_tuning_param.egrid_vnumy, 
-                                                        this -> off_tuning_param.egrid_vnumz, 
-                                                        this -> off_tuning_param.egrid_vdim ) );
+          std_msgs::ColorRGBA sv_point_color;
+          support_vox_points.points.push_back(po);
 
           sv_point_color.g = 0;
           sv_point_color.a = 0.05;
@@ -1113,7 +1179,7 @@ class Tentabot
     }
 
   public:
-    Tentabot(NodeHandle& nh, tf::TransformListener* listener, ProcessParams& pp, RobotParams& rp, OffTuningParams& offtp, OnTuningParams& ontp, MapUtility& mu)                                                    // constructor
+    Tentabot(NodeHandle& nh, tf::TransformListener* listener, ProcessParams& pp, RobotParams& rp, OffTuningParams& offtp, OnTuningParams& ontp, MapUtility& mu, GoalUtility& gu)                                                    // constructor
     {
       cout << "Welcome to Tentabot 3D Navigation Simulation! I hope you'll enjoy the ride..." << endl;
 
@@ -1129,6 +1195,7 @@ class Tentabot
       this -> setEgoGridData();
       ros::Time t2 = ros::Time::now();
       this -> map_util = mu;
+      this -> goal_util = gu;
 
       ros::Time t3 = ros::Time::now();
       this -> construct_tentacle_pitchExt();
@@ -1204,7 +1271,7 @@ class Tentabot
       this -> nav_param_bench << "egrid_vnumz," + to_string(this -> off_tuning_param.egrid_vnumz) + "\n";
       this -> nav_param_bench << "crash_dist," + to_string(this -> on_tuning_param.crash_dist) + "\n";
       this -> nav_param_bench << "clear_scale," + to_string(this -> on_tuning_param.clear_scale) + "\n";
-      this -> nav_param_bench << "flat_scale," + to_string(this -> on_tuning_param.flat_scale) + "\n";
+      this -> nav_param_bench << "clutter_scale," + to_string(this -> on_tuning_param.clutter_scale) + "\n";
       this -> nav_param_bench << "close_scale," + to_string(this -> on_tuning_param.close_scale) + "\n";
       this -> nav_param_bench << "smooth_scale," + to_string(this -> on_tuning_param.smooth_scale) + "\n";
       this -> nav_param_bench.close();
@@ -1362,7 +1429,7 @@ class Tentabot
       this -> on_tuning_param.tbin_window = new_on_tuning_param.tbin_window;
       this -> on_tuning_param.tbin_obs_cnt_threshold = new_on_tuning_param.tbin_obs_cnt_threshold;
       this -> on_tuning_param.clear_scale = new_on_tuning_param.clear_scale;
-      this -> on_tuning_param.flat_scale = new_on_tuning_param.flat_scale;
+      this -> on_tuning_param.clutter_scale = new_on_tuning_param.clutter_scale;
       this -> on_tuning_param.close_scale = new_on_tuning_param.close_scale;
       this -> on_tuning_param.smooth_scale = new_on_tuning_param.smooth_scale;
       this -> on_tuning_param.crash_dist = new_on_tuning_param.crash_dist;
@@ -1372,7 +1439,7 @@ class Tentabot
     {
       this -> heuristic_param.navigability_set = new_heuristic_param.navigability_set;
       this -> heuristic_param.clearance_set = new_heuristic_param.clearance_set;
-      this -> heuristic_param.flatness_set = new_heuristic_param.flatness_set;
+      this -> heuristic_param.clutterness_set = new_heuristic_param.clutterness_set;
       this -> heuristic_param.closeness_set = new_heuristic_param.closeness_set;
       this -> heuristic_param.smoothness_set = new_heuristic_param.smoothness_set;
     }
@@ -1422,16 +1489,18 @@ class Tentabot
 
     void setEgoGridData()
     {
-      int total_voxel_cnt = this -> off_tuning_param.egrid_vnumx * this -> off_tuning_param.egrid_vnumy * this -> off_tuning_param.egrid_vnumz;
+      int total_voxel_cnt = off_tuning_param.egrid_vnumx * off_tuning_param.egrid_vnumy * off_tuning_param.egrid_vnumz;
       
-      this -> status_param.ego_grid_data.ovox_pos.resize(total_voxel_cnt);
+      status_param.ego_grid_data.ovox_pos.resize(total_voxel_cnt);
       
       for(int v = 0; v < total_voxel_cnt; v++)
       {
-        this -> status_param.ego_grid_data.ovox_pos[v] = toPoint(v, this -> off_tuning_param.egrid_vnumx, this -> off_tuning_param.egrid_vnumy, this -> off_tuning_param.egrid_vnumz, this -> off_tuning_param.egrid_vdim);
+        geometry_msgs::Point po;
+        toPoint(v, po);
+        status_param.ego_grid_data.ovox_pos[v] = po;
       }
 
-      this -> status_param.ego_grid_data.ovox_value.resize(total_voxel_cnt);
+      status_param.ego_grid_data.ovox_value.resize(total_voxel_cnt);
     }
 
     void setOnTuning(bool flag)
@@ -1495,94 +1564,106 @@ class Tentabot
 
     void publishTentabot()
     {
-      if(this -> process_param.visu_flag == true)
+      if(process_param.visu_flag == true)
       {
-        this -> map_util.publishMap();
+        goal_util.publishGoal();
+
+        map_util.publishOctmapMsg();
+
+        map_util.publishRecentPCMsg();
 
         //this -> publishRobot();
 
-        this -> publishTentacleTsampSupportvox();
+        publishTentacleTsampSupportvox();
 
-        this -> publishOccupancy();
+        publishOccupancy();
 
-        this -> publishPath();
+        publishPath();
 
-        this -> publishCommand();
+        publishCommand();
       }
     }
 
     // DESCRIPTION: UPDATE OCCUPANCY GRID CELL FOR THE ROBOT
     void updateOccupancyVox()
     {
-      // TRANSFORM POINT CLOUD WRT WORLD TO ROBOT FRAME
-      sensor_msgs::PointCloud pc_wrt_robot;
-
-      this -> map_util.addHistoryPCData(this -> map_util.getPCData());
-
-      try
-      {
-        this -> tflistener -> transformPointCloud(this -> robot_param.robot_frame_name, this -> map_util.getHistoryPCData(), pc_wrt_robot);
-      }
-      catch(tf::TransformException ex)
-      {
-        ROS_ERROR("%s",ex.what());
-        ros::Duration(0.01).sleep();
-      }
+      map_util.addOctmapFromRecentPCMsg();
 
       // UPDATE THE LINEAR OCCUPANCY GRID AROUND THE ROBOT
-      int total_voxel_cnt = this -> status_param.ego_grid_data.ovox_pos.size();
-      this -> status_param.ego_grid_data.ovox_value.clear(); 
-      this -> status_param.ego_grid_data.ovox_value.resize(total_voxel_cnt);
-
-      if(this -> process_param.visu_flag == true)
+      int total_voxel_cnt = status_param.ego_grid_data.ovox_pos.size();
+      status_param.ego_grid_data.ovox_value.clear(); 
+      status_param.ego_grid_data.ovox_value.resize(total_voxel_cnt);
+      
+      if (process_param.visu_flag == true)
       {
-        this -> visu_param.occupancy_pc.points.clear();
+        visu_param.occupancy_pc.points.clear();
       }
 
-      int pc_size = pc_wrt_robot.points.size();
+      int vox_index;
 
-      int tmp_index;
-      bool no_need = false;
+      double radx = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumx;
+      double rady = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumy;
+      double radz = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumz;
 
-      for (int i = 0; i < pc_size; i++)
+      octomap::point3d octmap_min(status_param.robot_pose.position.x - radx, status_param.robot_pose.position.y - rady, status_param.robot_pose.position.z - radz);
+      octomap::point3d octmap_max(status_param.robot_pose.position.x + radx, status_param.robot_pose.position.y + rady, status_param.robot_pose.position.z + radz);
+
+      map_util.getOctmap() -> setBBXMin(octmap_min);
+      map_util.getOctmap() -> setBBXMax(octmap_max);
+      for(octomap::ColorOcTree::iterator it = map_util.getOctmap() -> begin(); it != map_util.getOctmap() -> end(); ++it)
       {
-        tmp_index = toLinIndex(pc_wrt_robot.points[i], this -> off_tuning_param.egrid_vnumx, this -> off_tuning_param.egrid_vnumy, this -> off_tuning_param.egrid_vnumz, this -> off_tuning_param.egrid_vdim);
-
-        if( tmp_index >= 0 && tmp_index < (this -> off_tuning_param.egrid_vnumx * this -> off_tuning_param.egrid_vnumy * this -> off_tuning_param.egrid_vnumz) )
+        if (map_util.getOctmap() -> inBBX(it.getKey()))
         {
-          this -> status_param.ego_grid_data.ovox_value[tmp_index] = this -> map_util.getMaxOccupancyBeliefValue();
+          geometry_msgs::Point op_wrt_world;
+          op_wrt_world.x = it.getX();
+          op_wrt_world.y = it.getY();
+          op_wrt_world.z = it.getZ();
 
-          /*if(no_need == false && isInsideRectCuboid(pc_wrt_robot.points[i], 0.5 * this -> robot_param.width, 0.5 * this -> robot_param.length, 0.5 * this -> robot_param.height))
+          // TRANSFORM POINT CLOUD WRT WORLD TO ROBOT FRAME
+          geometry_msgs::Point op_wrt_robot;
+          transformPoint(map_util.getFrameName(), op_wrt_world, robot_param.robot_frame_name, op_wrt_robot);
+
+          vox_index = toLinIndex(op_wrt_robot);
+
+          if ( vox_index >= 0 && vox_index < total_voxel_cnt )
           {
-            this -> status_param.nav_result = -1;
-            no_need = true;
-          }*/
+            if (status_param.ego_grid_data.ovox_value[vox_index] != map_util.getMaxOccupancyBeliefValue())
+            {
+              status_param.ego_grid_data.ovox_value[vox_index] = map_util.getMaxOccupancyBeliefValue();
 
-          if(this -> process_param.visu_flag == true)
-          {
-            geometry_msgs::Point32 po;
-            po.x = this -> status_param.ego_grid_data.ovox_pos[tmp_index].x;
-            po.y = this -> status_param.ego_grid_data.ovox_pos[tmp_index].y;
-            po.z = this -> status_param.ego_grid_data.ovox_pos[tmp_index].z;
+              if (process_param.visu_flag == true)
+              {
+                geometry_msgs::Point32 po;
+                po.x = op_wrt_world.x;
+                po.y = op_wrt_world.y;
+                po.z = op_wrt_world.z;
 
-            this -> visu_param.occupancy_pc.points.push_back(po);
+                visu_param.occupancy_pc.points.push_back(po);
+              }
+            }
           }
+        }
+        else
+        {
+          map_util.getOctmap() -> deleteNode(it.getKey());
         }
       }
     }
 
     void updateHeuristicFunctions()
     {
-      geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
-      int tentacle_cnt = this -> robot_param.tentacle_data.size();
+      geometry_msgs::Pose active_goal = goal_util.getActiveGoal();
+      int tentacle_cnt = robot_param.tentacle_data.size();
       int tsamp_cnt;
+
+      geometry_msgs::Point p_wrt_world;
 
       vector<int> tentacle_bin;
       double total_weight;
       double total_weighted_occupancy;
       
       double temp_len;
-      double flatness_value_avg;
+      double clutterness_value_avg;
       
       int tentacle_crash_index;
       geometry_msgs::Point crash_po_wrt_global;
@@ -1591,15 +1672,15 @@ class Tentabot
 
       double max_smoothness_dist = 0;
 
-      // CLEAR NAVIGABILITY, CLEARANCE, FLATNESS AND CLOSENESS SETS
+      // CLEAR NAVIGABILITY, CLEARANCE, clutterness AND CLOSENESS SETS
       this -> heuristic_param.navigability_set.clear();  
       this -> heuristic_param.navigability_set.resize(tentacle_cnt);
       
       this -> heuristic_param.clearance_set.clear();
       this -> heuristic_param.clearance_set.resize(tentacle_cnt);
 
-      this -> heuristic_param.flatness_set.clear();                      //TODO: CHANGE TO CLUTTERNESS
-      this -> heuristic_param.flatness_set.resize(tentacle_cnt);
+      this -> heuristic_param.clutterness_set.clear();
+      this -> heuristic_param.clutterness_set.resize(tentacle_cnt);
         
       this -> heuristic_param.closeness_set.clear();
       this -> heuristic_param.closeness_set.resize(tentacle_cnt);
@@ -1704,8 +1785,8 @@ class Tentabot
         }
 
         // DETERMINE NEARBY CLUTTERNESS VALUE
-        flatness_value_avg = total_weighted_occupancy / total_weight;
-        this -> heuristic_param.flatness_set[k] = (2 / (1 + exp(-1 * flatness_value_avg))) - 1;
+        clutterness_value_avg = total_weighted_occupancy / total_weight;
+        this -> heuristic_param.clutterness_set[k] = (2 / (1 + exp(-1 * clutterness_value_avg))) - 1;
 
         // DETERMINE TARGET CLOSENESS VALUE
         if (k == 0)
@@ -1756,73 +1837,22 @@ class Tentabot
       int tentacle_cnt = this -> robot_param.tentacle_data.size();
       double tentacle_value;
       double weighted_clearance_value;
-      double weighted_flatness_value;
+      double weighted_clutterness_value;
       double weighted_closeness_value;
       double weighted_smoothness_value;
       double best_tentacle_value = INF;
       bool no_drivable_tentacle = true;
-
-      /*if(this -> status_param.nav_duration > 5*this -> process_param.nav_dt && this -> status_param.nav_duration <= 6*this -> process_param.nav_dt)
-      {
-        timeFlag = true;
-      }
-      */
 
       for(int k = 1; k < tentacle_cnt; k++)
       {
         if( this -> heuristic_param.navigability_set[k] != 0 )
         {
           weighted_clearance_value = this -> on_tuning_param.clear_scale * this -> heuristic_param.clearance_set[k];
-          weighted_flatness_value = this -> on_tuning_param.flat_scale * this -> heuristic_param.flatness_set[k];
+          weighted_clutterness_value = this -> on_tuning_param.clutter_scale * this -> heuristic_param.clutterness_set[k];
           weighted_closeness_value = this -> on_tuning_param.close_scale * this -> heuristic_param.closeness_set[k];
           weighted_smoothness_value = this -> on_tuning_param.smooth_scale * this -> heuristic_param.smoothness_set[k];
 
-          tentacle_value = weighted_clearance_value + weighted_flatness_value + weighted_closeness_value + weighted_smoothness_value;
-
-          /*
-          ROS_INFO_STREAM("selectBestTentacle TENTACLE: " << k);
-          ROS_INFO_STREAM("Navigability: " << this -> heuristic_param.navigability_set[k]);
-          ROS_INFO_STREAM("");
-          ROS_INFO_STREAM("Clearance weight: " << this -> on_tuning_param.clear_scale);
-          ROS_INFO_STREAM("Clearance: " << this -> heuristic_param.clearance_set[k]);
-          ROS_INFO_STREAM("Weighted Clearance: " << weighted_clearance_value);
-          ROS_INFO_STREAM("");
-          ROS_INFO_STREAM("Nearby Clutter weight: " << this -> on_tuning_param.flat_scale);
-          ROS_INFO_STREAM("Nearby Clutter: " << this -> heuristic_param.flatness_set[k]);
-          ROS_INFO_STREAM("Weighted Nearby Clutter: " << weighted_flatness_value);
-          ROS_INFO_STREAM("");
-          ROS_INFO_STREAM("Closeness weight: " << this -> on_tuning_param.close_scale);
-          ROS_INFO_STREAM("Closeness: " << this -> heuristic_param.closeness_set[k]);
-          ROS_INFO_STREAM("Weighted Closeness: " << weighted_closeness_value);
-          ROS_INFO_STREAM("");
-          ROS_INFO_STREAM("Smoothness weight: " << this -> on_tuning_param.smooth_scale);
-          ROS_INFO_STREAM("Smoothness: " << this -> heuristic_param.smoothness_set[k]);
-          ROS_INFO_STREAM("Weighted Smoothness: " << weighted_smoothness_value);
-          ROS_INFO_STREAM("");
-
-          if (timeFlag)
-          {
-            ROS_INFO_STREAM("selectBestTentacle TENTACLE: " << k);
-            ROS_INFO_STREAM("Navigability: " << this -> heuristic_param.navigability_set[k]);
-            ROS_INFO_STREAM("");
-            ROS_INFO_STREAM("Clearance weight: " << this -> on_tuning_param.clear_scale);
-            ROS_INFO_STREAM("Clearance: " << this -> heuristic_param.clearance_set[k]);
-            ROS_INFO_STREAM("Weighted Clearance: " << weighted_clearance_value);
-            ROS_INFO_STREAM("");
-            ROS_INFO_STREAM("Nearby Clutter weight: " << this -> on_tuning_param.flat_scale);
-            ROS_INFO_STREAM("Nearby Clutter: " << this -> heuristic_param.flatness_set[k]);
-            ROS_INFO_STREAM("Weighted Nearby Clutter: " << weighted_flatness_value);
-            ROS_INFO_STREAM("");
-            ROS_INFO_STREAM("Closeness weight: " << this -> on_tuning_param.close_scale);
-            ROS_INFO_STREAM("Closeness: " << this -> heuristic_param.closeness_set[k]);
-            ROS_INFO_STREAM("Weighted Closeness: " << weighted_closeness_value);
-            ROS_INFO_STREAM("");
-            ROS_INFO_STREAM("Smoothness weight: " << this -> on_tuning_param.smooth_scale);
-            ROS_INFO_STREAM("Smoothness: " << this -> heuristic_param.smoothness_set[k]);
-            ROS_INFO_STREAM("Weighted Smoothness: " << weighted_smoothness_value);
-            ROS_INFO_STREAM("");
-          }
-          */
+          tentacle_value = weighted_clearance_value + weighted_clutterness_value + weighted_closeness_value + weighted_smoothness_value;
 
           if(no_drivable_tentacle == true)
           {
@@ -1850,7 +1880,7 @@ class Tentabot
         for(int k = 1; k < tentacle_cnt; k++)
         {
           tentacle_value = this -> on_tuning_param.clear_scale * this -> heuristic_param.clearance_set[k] + 
-                           this -> on_tuning_param.flat_scale * this -> heuristic_param.flatness_set[k] + 
+                           this -> on_tuning_param.clutter_scale * this -> heuristic_param.clutterness_set[k] + 
                            this -> on_tuning_param.close_scale * this -> heuristic_param.closeness_set[k] + 
                            this -> on_tuning_param.smooth_scale * this -> heuristic_param.smoothness_set[k];
 
@@ -1873,21 +1903,6 @@ class Tentabot
       {
         this -> status_param.navigability_flag = true;
       }
-
-      /*
-      ROS_INFO_STREAM("SELECTED TENTACLE: " << this -> status_param.best_tentacle);
-      ROS_INFO_STREAM("");
-      ROS_INFO_STREAM("******************************");
-      ROS_INFO_STREAM("");
-
-      if (timeFlag)
-      {
-        ROS_INFO_STREAM("SELECTED TENTACLE: " << this -> status_param.best_tentacle);
-        ROS_INFO_STREAM("");
-        ROS_INFO_STREAM("******************************");
-        ROS_INFO_STREAM("");
-      }
-      */
 
       if(this -> process_param.visu_flag == true)
       {
@@ -1936,7 +1951,7 @@ class Tentabot
     // DESCRIPTION: MOVE THE ROBOT
     void moveTentabot_extend()
     {
-      geometry_msgs::Pose active_goal = map_util.getGoalUtil().getActiveGoal();
+      geometry_msgs::Pose active_goal = goal_util.getActiveGoal();
       double dist2goal = find_Euclidean_distance(active_goal.position, status_param.robot_pose.position);
       bool isSwitched;
       double dt;
@@ -1949,7 +1964,7 @@ class Tentabot
       }
       else if(dist2goal < process_param.goal_close_threshold)   // reach goal
       {
-        isSwitched = map_util.getGoalUtil().switchActiveGoal();
+        isSwitched = goal_util.switchActiveGoal();
 
         if(isSwitched == false)
         {
@@ -1958,7 +1973,7 @@ class Tentabot
         }
         else
         {
-          cout << "Yey! Waypoint #" << map_util.getGoalUtil().getActiveGoalIndex()-1 << " has reached!" << endl;
+          cout << "Yey! Waypoint #" << goal_util.getActiveGoalIndex()-1 << " has reached!" << endl;
         }
 
         status_param.nav_result = 1;
@@ -2058,11 +2073,7 @@ class Tentabot
         {
           dt = (ros::Time::now() - this -> status_param.prev_action_time).toSec();
           this -> status_param.prev_action_time = ros::Time::now();
-
-
-
-
-
+          //ROS_INFO_STREAM("dt: " << dt);
 
           double delta_dist = find_Euclidean_distance(this -> status_param.prev_robot_pose.position, this -> status_param.robot_pose.position);
           double speedo = delta_dist / dt;
@@ -2099,317 +2110,11 @@ class Tentabot
 
           this -> status_param.nav_length += delta_dist;
           this -> status_param.prev_robot_pose = this -> status_param.robot_pose;
-
-
-
-
-
         }
         this -> status_param.nav_duration += dt;
 
         geometry_msgs::Point opiti = this -> status_param.robot_pose_command.pose.position;
         command_history.push_back(opiti);
-      }
-    }
-
-    // DESCRIPTION: MOVE THE ROBOT
-    void moveTentabot()
-    {
-      geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
-      double dist2goal = find_Euclidean_distance(active_goal.position, this -> status_param.robot_pose.position);
-      bool isSwitched;
-      bool firstFlag = false;
-      double dt;
-
-      if(this -> status_param.nav_result == -1)                         // crash
-      {
-        cout << "OMG! I think I've just hit something!!!" << endl;
-
-        this -> process_param.navexit_flag = true;
-      }
-      else if(dist2goal < this -> process_param.goal_close_threshold)   // reach goal
-      {
-        isSwitched = this -> map_util.getGoalUtil().switchActiveGoal();
-
-        this -> status_param.speed_counter = 0;
-
-        if(isSwitched == false)
-        {
-          cout << "Cawabunga! The goal has reached!" << endl;
-          this -> process_param.navexit_flag = true;
-        }
-        else
-        {
-          cout << "Yey! Waypoint #" << this -> map_util.getGoalUtil().getActiveGoalIndex()-1 << " has reached!" << endl;
-        }
-
-        this -> status_param.nav_result = 1;
-      }
-      else if( this -> status_param.nav_duration > this -> process_param.time_limit )     // time-out
-      {
-        cout << "Ugh! I am too late..." << endl;
-
-        this -> process_param.navexit_flag = true;
-        this -> status_param.nav_result = 0;
-      }
-      else
-      {
-        this -> status_param.speed_counter++;
-
-        double delta_y;
-        double delta_x;
-        double next_yaw;
-
-        tf::Point np;
-        tf::Point gp;
-        gp.setX(active_goal.position.x);
-        gp.setY(active_goal.position.y);
-        gp.setZ(active_goal.position.z);
-        tf::Quaternion nq;
-        
-        tf::Stamped<tf::Quaternion> next_quat_wrt_robot;
-        next_quat_wrt_robot.frame_id_ = this -> robot_param.robot_frame_name;
-        tf::Stamped<tf::Quaternion> next_quat_wrt_world;
-    
-        tf::Stamped<tf::Point> next_point_wrt_robot; 
-        next_point_wrt_robot.frame_id_ = this -> robot_param.robot_frame_name;
-        tf::Stamped<tf::Point> next_point_wrt_world;
-
-        tf::Stamped<tf::Point> goal_wrt_world;
-        goal_wrt_world.setData(gp);
-        goal_wrt_world.frame_id_ = this -> map_util.getFrameName();
-        tf::Stamped<tf::Point> goal_wrt_robot;
-
-        bool non_stop = true;
-
-        if(this -> status_param.nav_duration <= 0.0001)
-        {
-          dt = this -> process_param.nav_dt;
-          this -> status_param.prev_action_time = ros::Time::now();
-          firstFlag = true;
-        }
-        else
-        {
-          dt = (ros::Time::now() - this -> status_param.prev_action_time).toSec();
-          this -> status_param.prev_action_time = ros::Time::now();
-        }
-        this -> status_param.nav_duration += dt;
-
-        double current_speed = 0;
-        double ds = 1;
-
-        if(dist2goal < 2)
-        {
-          current_speed = 0.5 * this -> robot_param.dummy_max_lat_velo;
-        }
-        else if(this -> status_param.navigability_flag == false)
-        {
-          current_speed = 0.25 * this -> robot_param.dummy_max_lat_velo;
-        }
-        else if(ds *  this -> status_param.speed_counter < this -> robot_param.dummy_max_lat_velo)
-        {
-          current_speed = ds * this -> status_param.speed_counter;
-        }
-        else
-        {
-          current_speed = this -> robot_param.dummy_max_lat_velo;
-        }
-
-        double max_dist_dt = current_speed * dt;
-        double max_yaw_angle_dt = this -> robot_param.dummy_max_yaw_velo * dt;
-
-        int best_tentacle = this -> status_param.best_tentacle;
-
-        geometry_msgs::Point next_position;
-
-        // SELECT NEXT POSITION WITH RESPECT TO ROBOT
-        //ROS_INFO_STREAM("Best Tentacle: " << best_tentacle);
-        //ROS_INFO_STREAM("current_speed: " << current_speed);
-
-        np.setX(this -> robot_param.tentacle_data[best_tentacle][0].x);
-        np.setY(this -> robot_param.tentacle_data[best_tentacle][0].y);
-        np.setZ(this -> robot_param.tentacle_data[best_tentacle][0].z);
-
-        //ROS_INFO_STREAM("np data -> x:" << np.getX() << " y:" << np.getY() << " z:" << np.getZ());
-          
-        double tmp_dist = find_norm(this -> robot_param.tentacle_data[best_tentacle][0]);
-        //ROS_INFO_STREAM("tmp_dist: " << tmp_dist);
-        //ROS_INFO_STREAM("dist2goal: " << dist2goal);
-
-        if(dist2goal < tmp_dist)
-        {
-          //cout << "Goal is close..." << endl;
-
-          try
-          {
-            this -> tflistener -> transformPoint(this -> robot_param.robot_frame_name, goal_wrt_world, goal_wrt_robot);
-          }
-          catch(tf::TransformException ex)
-          {
-            ROS_ERROR("%s",ex.what());
-            //ros::Duration(1.0).sleep();
-          }
-              
-          delta_y = goal_wrt_robot.y();
-          delta_x = goal_wrt_robot.x();
-
-          next_yaw = atan2(delta_y, delta_x);
-
-          if(abs(next_yaw) > 0.25*this -> off_tuning_param.tyaw)
-          {
-            double turn_radi = 0.5*off_tuning_param.pdist;
-            double xoffset = turn_radi * sin( abs(next_yaw) );
-            double yoffset = (turn_radi - turn_radi * cos( abs(next_yaw) )) * next_yaw / abs(next_yaw);
-
-            np.setX(xoffset);
-            np.setY(yoffset);
-            np.setZ(0.1);
-
-            if(abs(next_yaw) > this -> off_tuning_param.tyaw)
-            {
-              next_yaw = 0.5 * this -> off_tuning_param.tyaw * next_yaw / abs(next_yaw);
-            }
-
-            non_stop = false;
-          }
-        }
-          
-        if(non_stop)
-        {
-          //ROS_INFO_STREAM("non-stop");
-          next_position = interpol(this -> robot_param.tentacle_data[best_tentacle][this -> status_param.tcrash_bin[best_tentacle]], max_dist_dt);
-
-          double distil = find_norm(next_position);
-
-          np.setX(next_position.x);
-          np.setY(next_position.y);
-          np.setZ(next_position.z);
-
-          delta_y = next_position.y;
-          delta_x = next_position.x;
-
-          next_yaw = atan2(delta_y, delta_x);
-        }
-
-        if(abs(next_yaw) > max_yaw_angle_dt)
-        {
-          next_yaw = next_yaw * max_yaw_angle_dt / abs(next_yaw);
-        }
-
-        // SET NEXT ORIENTATION WITH RESPECT TO ROBOT                                     // NUA TODO: Consider also pitch and roll orientations
-        //ROS_INFO_STREAM("next_position -> x:" << np.getX() << " y:" << np.getY() << " z:" << np.getZ());
-        //ROS_INFO_STREAM("next_yaw -> " << next_yaw);
-        nq.setRPY(0, 0, 3*next_yaw);
-
-        next_quat_wrt_robot.setData(nq);
-        next_quat_wrt_robot.stamp_ = ros::Time(0);
-
-        next_point_wrt_robot.setData(np);
-        next_point_wrt_robot.stamp_ = ros::Time(0);
-
-        try
-        {
-          this -> tflistener -> transformQuaternion(this -> map_util.getFrameName(), next_quat_wrt_robot, next_quat_wrt_world);
-          this -> tflistener -> transformPoint(this -> map_util.getFrameName(), next_point_wrt_robot, next_point_wrt_world);
-        }
-        catch(tf::TransformException ex)
-        {
-          ROS_ERROR("%s",ex.what());
-          //ros::Duration(1.0).sleep();
-        }
-
-        this -> status_param.robot_pose_command.pose.position.x = next_point_wrt_world.x();
-        this -> status_param.robot_pose_command.pose.position.y = next_point_wrt_world.y();
-        this -> status_param.robot_pose_command.pose.position.z = next_point_wrt_world.z();
-
-        tf::quaternionTFToMsg(next_quat_wrt_world, this -> status_param.robot_pose_command.pose.orientation);
-
-        this -> status_param.robot_pose_command.header.seq++;
-        this -> status_param.robot_pose_command.header.stamp = ros::Time::now();
-        this -> status_param.robot_pose_command.header.frame_id = this -> map_util.getFrameName();
-        
-        if(!firstFlag)
-        {
-          this -> status_param.command_pub.publish(this -> status_param.robot_pose_command);
-
-          geometry_msgs::Point opiti;
-          opiti.x = this -> status_param.robot_pose_command.pose.position.x;
-          opiti.y = this -> status_param.robot_pose_command.pose.position.y;
-          opiti.z = this -> status_param.robot_pose_command.pose.position.z;
-
-          this -> visu_param.command_visu.points.push_back(opiti);
-
-          this -> command_history.push_back(opiti);
-        }
-
-        // Set up global trajectory
-        if(this -> process_param.counter == 200)
-        {
-          int samp_num = 3;
-          int samp_scale = (this -> off_tuning_param.tsamp_cnt-1) / samp_num;
-          const Eigen::Vector4d limits(1.2, 4, 0, 0);
-
-          ewok::Polynomial3DOptimization<10> po(limits*0.8);
-          
-          typename ewok::Polynomial3DOptimization<10>::Vector3Array path;
-
-          if (this -> command_history.size() == 0)
-          {
-            path.push_back(Eigen::Vector3d(this -> robot_param.init_robot_pose.position.x, this -> robot_param.init_robot_pose.position.y, this -> robot_param.init_robot_pose.position.z));
-          }
-          else
-          {
-            for (int i = 0; i < this -> command_history.size(); ++i)
-            {
-              path.push_back(Eigen::Vector3d(this -> command_history[i].x, this -> command_history[i].y, this -> command_history[i].z));
-            }
-          }
-
-          tmp_marker.points.clear();
-          tmp_marker.colors.clear();
-          for (int i = 0; i < samp_num; ++i)
-          {
-
-            np.setX(this -> robot_param.tentacle_data[this -> status_param.best_tentacle][i*samp_scale].x);
-            np.setY(this -> robot_param.tentacle_data[this -> status_param.best_tentacle][i*samp_scale].y);
-            np.setZ(this -> robot_param.tentacle_data[this -> status_param.best_tentacle][i*samp_scale].z);
-            next_point_wrt_robot.setData(np);
-            next_point_wrt_robot.stamp_ = ros::Time(0);
-            try
-            {
-              this -> tflistener -> transformPoint(this -> map_util.getFrameName(), next_point_wrt_robot, next_point_wrt_world);
-            }
-            catch(tf::TransformException ex)
-            {
-              ROS_ERROR("%s",ex.what());
-              //ros::Duration(1.0).sleep();
-            }
-
-            path.push_back(Eigen::Vector3d(next_point_wrt_world.x(), next_point_wrt_world.y(),next_point_wrt_world.z()));
-
-            geometry_msgs::Point tmpo;
-            tmpo.x = next_point_wrt_world.x();
-            tmpo.y = next_point_wrt_world.y();
-            tmpo.z = next_point_wrt_world.z();
-            tmp_marker.points.push_back(tmpo);
-          }
-
-          std_msgs::ColorRGBA c1, c2, c3;
-          c1.r = 1;
-          c1.a = 1;
-          c2.r = 1;
-          c2.g = 1;
-          c2.a = 1;
-          c3.b = 1;
-          c3.a = 1;
-          tmp_marker.colors.push_back(c1);
-          tmp_marker.colors.push_back(c2);
-          tmp_marker.colors.push_back(c3);
-
-          polynomial_trajectory = po.computeTrajectory(path);
-
-          polynomial_trajectory->getVisualizationMarkerArray(global_trajectory_marker, "gt", Eigen::Vector3d(1,0,1));
-        }
       }
     }
 
@@ -2424,9 +2129,9 @@ class Tentabot
 
       path.push_back(Eigen::Vector3d(this -> robot_param.init_robot_pose.position.x, this -> robot_param.init_robot_pose.position.y, this -> robot_param.init_robot_pose.position.z));
       
-      for (int i = 0; i < this -> map_util.getGoalUtil().getGoal().size(); ++i)
+      for (int i = 0; i < goal_util.getGoal().size(); ++i)
       {
-        path.push_back(Eigen::Vector3d(this -> map_util.getGoalUtil().getGoal()[i].position.x, this -> map_util.getGoalUtil().getGoal()[i].position.y, this -> map_util.getGoalUtil().getGoal()[i].position.z));
+        path.push_back(Eigen::Vector3d(goal_util.getGoal()[i].position.x, goal_util.getGoal()[i].position.y, goal_util.getGoal()[i].position.z));
       }
 
       polynomial_trajectory = po.computeTrajectory(path);
@@ -2451,7 +2156,7 @@ class Tentabot
     // DESCRIPTION: MOVE THE ROBOT
     void moveOptimizedTentabot()
     {
-      geometry_msgs::Pose active_goal = this -> map_util.getGoalUtil().getActiveGoal();
+      geometry_msgs::Pose active_goal = goal_util.getActiveGoal();
       double dist2goal = find_Euclidean_distance(active_goal.position, this -> status_param.robot_pose.position);
       bool isSwitched;
 
@@ -2463,7 +2168,7 @@ class Tentabot
       }
       else if(dist2goal < this -> process_param.goal_close_threshold)   // reach goal
       {
-        isSwitched = this -> map_util.getGoalUtil().switchActiveGoal();
+        isSwitched = goal_util.switchActiveGoal();
 
         if(isSwitched == false)
         {
@@ -2473,7 +2178,7 @@ class Tentabot
         }
         else
         {
-          cout << "Yey! Waypoint #" << this -> map_util.getGoalUtil().getActiveGoalIndex()-1 << " has been reached!" << endl;
+          cout << "Yey! Waypoint #" << goal_util.getActiveGoalIndex()-1 << " has been reached!" << endl;
         }
       }
       else if( this -> status_param.nav_duration > this -> process_param.time_limit )     // time-out
@@ -2652,7 +2357,6 @@ class Tentabot
         // MOVE THE TENTABOT
         moveTentabot_extend();
         //this -> moveOptimizedTentabot();
-        //this -> moveTentabot();
         //this -> hoverTentabotAtZ1(-15, 15);
 
         auto t5 = std::chrono::high_resolution_clock::now();
@@ -2705,10 +2409,9 @@ class Tentabot
       const float cy = 240.5;
 
       tf::StampedTransform transform;
-
       try
       {
-        this -> tflistener -> lookupTransform(this -> map_util.getFrameName(), msg->header.frame_id, msg->header.stamp, transform);
+        tflistener -> lookupTransform(map_util.getFrameName(), msg->header.frame_id, msg->header.stamp, transform);
       }
       catch (tf::TransformException &ex) 
       {
@@ -2727,7 +2430,7 @@ class Tentabot
       auto t1 = std::chrono::high_resolution_clock::now();
 
       sensor_msgs::PointCloud recent_pc;
-      recent_pc.header.frame_id = this -> map_util.getFrameName();
+      recent_pc.header.frame_id = map_util.getFrameName();
       recent_pc.points.clear();
 
       for(int u = 0; u < cv_ptr -> image.cols; u += 4) 
@@ -2756,7 +2459,7 @@ class Tentabot
         }
       }
 
-      this -> map_util.setPCData(recent_pc);
+      map_util.setRecentPCMsg(recent_pc);
     }
 
     void odometryCallback(const geometry_msgs::Pose::ConstPtr& msg)
@@ -2769,53 +2472,11 @@ class Tentabot
       opiti.z = this -> status_param.robot_pose.position.z;
       this -> visu_param.path_visu.points.push_back(opiti);
 
-      /*
-      double delta_dist = find_Euclidean_distance(this -> status_param.prev_robot_pose.position, this -> status_param.robot_pose.position);
-
-      if(this -> status_param.nav_length != 0)
-      {
-          double dtt = (ros::Time::now() - this -> status_param.tmp_time).toSec();
-          this -> status_param.tmp_time = ros::Time::now();
-          double speedo = delta_dist/dtt;
-          
-
-          tf::Quaternion previous_q(status_param.prev_robot_pose.orientation.x, status_param.prev_robot_pose.orientation.y, status_param.prev_robot_pose.orientation.z, status_param.prev_robot_pose.orientation.w);
-          tf::Quaternion current_q(status_param.robot_pose.orientation.x, status_param.robot_pose.orientation.y, status_param.robot_pose.orientation.z, status_param.robot_pose.orientation.w);
-          tf::Quaternion delta_q = current_q - previous_q;
-          //double delta_yaw = previous_q.angleShortestPath(current_q);
-
-          tf::Matrix3x3 m(current_q);
-          double roll, pitch, yaw;
-          m.getRPY(roll, pitch, yaw);
-
-          double gonzales = 180*yaw / (PI*dtt);
-
-          if(process_param.counter >= 0 && process_param.counter < 2)
-          {
-            std::cout << "counter: " << process_param.counter << endl;
-            //std::cout << "speedo: " << speedo << std::endl;
-
-            //std::cout << "delta_yaw: " << yaw*180/PI << std::endl;
-            //std::cout << "gonzales: " << gonzales << std::endl;
-
-            std::cout << "roll: " << roll << std::endl;
-            std::cout << "pitch: " << pitch << std::endl;
-            std::cout << "yaw: " << yaw << std::endl;
-            std::cout << " " << std::endl;
-          }
-      }
-
-      this -> status_param.nav_length += delta_dist;
-      this -> status_param.prev_robot_pose.position = this -> status_param.robot_pose.position;
-      */
-
-      //std::cout << "delta_dist: " << delta_dist << std::endl;
-
       // PUBLISH THE ROBOT, TENTACLES, SAMPLING POINTS AND SUPPORT VOXELS
       this -> publishTentabot();
       //traj_marker_pub.publish(global_trajectory_marker);
       //current_traj_pub.publish(current_trajectory_marker);
-      //tmp_pub.publish(tmp_marker);
+      tmp_pub.publish(tmp_marker);
 
       if(this -> status_param.robot_pose.position.z < 0.1)
       {

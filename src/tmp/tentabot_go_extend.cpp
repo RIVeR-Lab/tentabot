@@ -1,4 +1,4 @@
-// LAST UPDATE: 2020.02.09
+// LAST UPDATE: 2021.02.19
 //
 // AUTHOR: Neset Unver Akmandor (NUA)
 //
@@ -31,38 +31,10 @@ int main(int argc, char** argv)
     // INITIALIZE AND SET WORLD FRAME NAME
     string world_frame_name;
     pnh.param<string>("world_frame_name", world_frame_name, "world");
-
-    // INITIALIZE AND SET GOAL PARAMETERS
-    double start_x, start_y, start_z, start_yaw;
-    pnh.param("start_x", start_x, 0.0);
-    pnh.param("start_y", start_y, 0.0);
-    pnh.param("start_z", start_z, 0.0);
-    pnh.param("start_yaw", start_yaw, 0.0);
-    tf::Quaternion start_orientation;
-    start_orientation.setRPY(0.0, 0.0, start_yaw);
-    
-    double goal1_x, goal1_y, goal1_z, goal1_yaw;
-    pnh.param("goal1_x", goal1_x, 0.0);
-    pnh.param("goal1_y", goal1_y, 0.0);
-    pnh.param("goal1_z", goal1_z, 0.0);+
-    pnh.param("goal1_yaw", goal1_yaw, 0.0);
-
-    double goal2_x, goal2_y, goal2_z, goal2_yaw;
-    pnh.param("goal2_x", goal2_x, 0.0);
-    pnh.param("goal2_y", goal2_y, 0.0);
-    pnh.param("goal2_z", goal2_z, 0.0);
-    pnh.param("goal2_yaw", goal2_yaw, 0.0);
-
-    GoalUtility gu(nh, world_frame_name, "twoGoal");
-    gu.addGoalPoint(goal1_x, goal1_y, goal1_z);
-    gu.addGoalPoint(goal2_x, goal2_y, goal2_z);
-
-    // INITIALIZE AND SET MAP PARAMETERS
-    double resolution;
-    pnh.param("resolution", resolution, 0.15);
-    string map_name;
-    pnh.param<string>("world_name", map_name, "globalMap");
-    MapUtility mu(nh, gu, resolution, world_frame_name, map_name);
+    double world_resolution;
+    pnh.param("world_resolution", world_resolution, 0.15);
+    string world_name;
+    pnh.param<string>("world_name", world_name, "globalMap");
 
     // INITIALIZE AND SET PROCESS PARAMETERS
     ProcessParams pp;
@@ -74,6 +46,14 @@ int main(int argc, char** argv)
     pnh.param<double>("goal_close_threshold", pp.goal_close_threshold, 0.5);
 
     // INITIALIZE AND SET ROBOT PARAMETERS
+    double start_x, start_y, start_z, start_yaw;
+    pnh.param("start_x", start_x, 0.0);
+    pnh.param("start_y", start_y, 0.0);
+    pnh.param("start_z", start_z, 0.0);
+    pnh.param("start_yaw", start_yaw, 0.0);
+    tf::Quaternion start_orientation;
+    start_orientation.setRPY(0.0, 0.0, start_yaw);
+
     RobotParams rp;
     pnh.param<double>("robot_width", rp.width, 0.5);
     pnh.param<double>("robot_length", rp.length, 0.5);
@@ -94,7 +74,7 @@ int main(int argc, char** argv)
     pnh.param<string>("robot_frame_name", rp.robot_frame_name, "firefly/base_link");
     pnh.param<string>("mav_name", rp.robot_name, "tentabot");
     pnh.param<double>("nav_sensor_freq", rp.nav_sensor.freq, 30);
-    pnh.param<double>("nav_sensor_resolution", rp.nav_sensor.resolution, resolution);
+    pnh.param<double>("nav_sensor_resolution", rp.nav_sensor.resolution, world_resolution);
     pnh.param<double>("nav_sensor_range_x_min", rp.nav_sensor.range_x[0], 0);
     pnh.param<double>("nav_sensor_range_x_max", rp.nav_sensor.range_x[1], 10);
     pnh.param<double>("nav_sensor_range_y_min", rp.nav_sensor.range_y[0], 0);
@@ -141,12 +121,31 @@ int main(int argc, char** argv)
     OnTuningParams ontp;
     pnh.param<double>("crash_dist", ontp.crash_dist, 8);
     pnh.param<double>("clear_scale", ontp.clear_scale, 50);
-    pnh.param<double>("flat_scale", ontp.flat_scale, 100);
+    pnh.param<double>("clutter_scale", ontp.clutter_scale, 100);
     pnh.param<double>("close_scale", ontp.close_scale, 80);
     pnh.param<double>("smooth_scale", ontp.smooth_scale, 0.5);
     ontp.tbin_window = 1;
     ontp.tbin_obs_cnt_threshold = 1;
 
+    // INITIALIZE AND SET GOAL PARAMETERS
+    double goal1_x, goal1_y, goal1_z, goal1_yaw;
+    pnh.param("goal1_x", goal1_x, 0.0);
+    pnh.param("goal1_y", goal1_y, 0.0);
+    pnh.param("goal1_z", goal1_z, 0.0);+
+    pnh.param("goal1_yaw", goal1_yaw, 0.0);
+
+    double goal2_x, goal2_y, goal2_z, goal2_yaw;
+    pnh.param("goal2_x", goal2_x, 0.0);
+    pnh.param("goal2_y", goal2_y, 0.0);
+    pnh.param("goal2_z", goal2_z, 0.0);
+    pnh.param("goal2_yaw", goal2_yaw, 0.0);
+
+    GoalUtility gu(nh, world_frame_name, "twoGoal");
+    gu.addGoalPoint(goal1_x, goal1_y, goal1_z);
+    gu.addGoalPoint(goal2_x, goal2_y, goal2_z);
+
+    // INITIALIZE AND SET MAP PARAMETERS
+    MapUtility mu(nh, world_resolution, world_frame_name, world_name);
     
     // START THE GAZEBO
     std_srvs::Empty srv;
@@ -199,7 +198,7 @@ int main(int argc, char** argv)
     trajectory_pub.publish(p);
 
     // INITIALIZE TENTABOT OBJECT
-    Tentabot tbot(nh, listener, pp, rp, offtp, ontp, mu);
+    Tentabot tbot(nh, listener, pp, rp, offtp, ontp, mu, gu);
 
     // SUBSCRIBE TO THE ODOMETRY DATA
     ros::Subscriber sub = nh.subscribe("/firefly/odometry_sensor1/pose", 10, &Tentabot::odometryCallback, &tbot);
