@@ -12,7 +12,7 @@
   <arg name="start_x" value="-35.0"/>
   <arg name="start_y" value="35.0"/>
   <arg name="start_z" value="0.6"/>
-  <arg name="start_yaw" value="$(eval -pi/4)"/>
+  <arg name="start_yaw" value="$(eval 0)"/>
 
   <arg name="goal1_x" value="0.0"/>
   <arg name="goal1_y" value="0.0"/>
@@ -27,28 +27,28 @@
   <arg name="time_limit" value="180" />
   <arg name="dt" value="0.05" />
 
-  <arg name="dummy_max_lat_velo" value="15" />
-  <arg name="dummy_max_yaw_velo" value="5" />
+  <arg name="dummy_max_lat_velo" value="18" />
+  <arg name="dummy_max_yaw_velo" value="8" />
   
   <arg name="tyaw_cnt" value="31" />
   <arg name="tpitch_cnt" value="21" />
-  <arg name="tsamp_cnt" value="30" />
+  <arg name="tsamp_cnt" value="25" />
   <arg name="tlen" value="10" />
   <arg name="tyaw" value="0.942" />
   <arg name="tpitch" value="0.628" />
   <arg name="tentacle_type" value="linear" />
   <arg name="pdist" value="0.35" />
-  <arg name="sdist" value="1.5" />
+  <arg name="sdist" value="0.5" />
   <arg name="egrid_vdim" value="0.1" />
   <arg name="egrid_vnumx" value="200" />
   <arg name="egrid_vnumy" value="200" />
   <arg name="egrid_vnumz" value="200" />
 
-  <arg name="crash_dist" value="2" />
+  <arg name="crash_dist" value="0.3" />
   <arg name="clear_scale" value="0" />
-  <arg name="flat_scale" value="20" />
-  <arg name="close_scale" value="70" />
-  <arg name="smooth_scale" value="2" />
+  <arg name="clutter_scale" value="20" />
+  <arg name="close_scale" value="120" />
+  <arg name="smooth_scale" value="2.0" />
 
   <env name="GAZEBO_MODEL_PATH" value="$(find rotors_gazebo)/models"/>
   <env name="GAZEBO_RESOURCE_PATH" value="$(find forest_gen)"/>
@@ -115,7 +115,7 @@
       <param name="egrid_vnumz" value="$(arg egrid_vnumz)" />
       <param name="crash_dist" value="$(arg crash_dist)" />
       <param name="clear_scale" value="$(arg clear_scale)" />
-      <param name="flat_scale" value="$(arg flat_scale)" />
+      <param name="clutter_scale" value="$(arg clutter_scale)" />
       <param name="close_scale" value="$(arg close_scale)" />
       <param name="smooth_scale" value="$(arg smooth_scale)" />
     </node>

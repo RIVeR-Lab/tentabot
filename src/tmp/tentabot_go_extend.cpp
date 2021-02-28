@@ -105,9 +105,9 @@ int main(int argc, char** argv)
     pnh.param<double>("tpitch", offtp.tpitch, 0.2*PI);
     pnh.param<double>("troll", offtp.troll, 0);
     pnh.param<string>("tentacle_type", offtp.tentacle_type, "linear");
-    pnh.param<string>("tyaw_samp_type", offtp.tyaw_samp_type, "lin");
-    pnh.param<string>("tpitch_samp_type", offtp.tpitch_samp_type, "lin");
-    pnh.param<string>("troll_samp_type", offtp.troll_samp_type, "lin");
+    pnh.param<string>("tyaw_samp_type", offtp.tyaw_samp_type, "linear");
+    pnh.param<string>("tpitch_samp_type", offtp.tpitch_samp_type, "linear");
+    pnh.param<string>("troll_samp_type", offtp.troll_samp_type, "linear");
     pnh.param<double>("pdist", offtp.pdist, 0.4);
     pnh.param<double>("sdist", offtp.sdist, 1);
     pnh.param<double>("sweight_max", offtp.sweight_max, 1);

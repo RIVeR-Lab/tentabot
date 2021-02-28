@@ -103,6 +103,7 @@ struct RobotParams
   string robot_frame_name;                      						// name of the robot frame
   string robot_name;                            						// name of the robot
   vector< vector<geometry_msgs::Point> > tentacle_data;
+  vector<string> right_left_data;
   vector< vector<OccupancyVoxel> > support_vox_data;
   NavSensor nav_sensor;
 };
@@ -165,6 +166,7 @@ struct StatusParams
   bool navigability_flag;
   int best_tentacle;
   int ex_best_tentacle;
+  int ex_best_sample;
   int nav_result;
   double nav_length;
   double nav_duration;                                      // navigation duration
@@ -199,60 +201,109 @@ struct VisuParams
 };
 
 // GENERAL FUNCTIONS:
-vector<double> sampling_func(double mini, double maxi, int snum, string stype)
+vector<double> sampling_func(double mini, double maxi, int snum, string stype="linear", bool included=true)
 {
   if(snum <= 2)
   { 
     vector<double> v;
-    v.push_back(mini);
-    v.push_back(maxi);
+    if (included)
+    {
+      v.push_back(mini);
+      v.push_back(maxi);
+    }
     return v;
   }
   else
   {
-    vector<double> v(snum);
     int i;
     double srise;
     double srate;
     double s;
-
-    if(stype == "inc")
+    vector<double> v;
+    
+    if (included)
     {
-      v[0] = mini;
+      v.resize(snum);
+    }
+    else
+    {
+      v.resize(snum-2);
+    }
+    
+    if(stype == "increase")
+    {
+      if (included)
+      {
+        v[0] = mini;
+      }
       s = mini;
       srise = (maxi - mini) / (snum-1);
       for(i = 0; i < snum-2; i++)
       {
         srate = 2 * srise * (i+1) / (snum-2);
         s = s + srate;  
-        v[i+1] = s;
+        
+        if (included)
+        {
+          v[i+1] = s;
+        }
+        else
+        {
+          v[i] = s;
+        }
       }
-      v[snum-1] = maxi;
+      if (included)
+      {
+        v[snum-1] = maxi;
+      }
     }
-    else if(stype == "dec")
+    else if(stype == "decrease")
     {
-      v.push_back(mini);
+      int border = snum-3;
+      if (included)
+      {
+        v.push_back(mini);
+        border = snum-2;
+      }
+      
       s = maxi;
       srise = (maxi - mini) / (snum-1);
-      for(i = 0; i < snum-2; i++)
+      for(i = 0; i < border; i++)
       {
         srate = 2 * srise * (i+1) / (snum-2);
         s = s - srate;  
         v[snum-2-i] = s;
       }
-      v[snum-1] = maxi;
+      if (included)
+      {
+        v[snum-1] = maxi;
+      }
     }
     else
     {
-      v[0] = mini;
+      if (included)
+      {
+        v[0] = mini;
+      }
+      
       s = mini;
       srise = (maxi - mini) / (snum-1);
       for(i = 0; i < snum-2; i++)
       {
-        s = s + srise;  
-        v[i+1] = s;
+        s = s + srise;
+        if (included)
+        {
+          v[i+1] = s;
+        }
+        else
+        {
+          v[i] = s;
+        }
       }
-      v[snum-1] = maxi;
+      if (included)
+      {
+        v[snum-1] = maxi;
+      }
     }
     return v;
   }
@@ -477,13 +528,13 @@ class Tentabot
       // SET TMP POINTS VISUALIZATION SETTINGS
       tmp_marker.ns = "tmp";
       tmp_marker.id = 666;
-      tmp_marker.header.frame_id = "world";
+      tmp_marker.header.frame_id = robot_param.robot_frame_name;
       tmp_marker.type = visualization_msgs::Marker::SPHERE_LIST;
       tmp_marker.action = visualization_msgs::Marker::ADD;
       tmp_marker.pose.orientation.w = 1.0;
-      tmp_marker.scale.x = 0.1;
-      tmp_marker.scale.y = 0.1;
-      tmp_marker.scale.z = 0.1;
+      tmp_marker.scale.x = 0.2;
+      tmp_marker.scale.y = 0.2;
+      tmp_marker.scale.z = 0.2;
       tmp_marker.color.r = 1.0;
       tmp_marker.color.g = 0.0;
       tmp_marker.color.b = 0.0;
@@ -644,6 +695,12 @@ class Tentabot
       return (po.x >= center.x - radx) && (po.x < center.x + radx) && (po.y >= center.y - rady) && (po.y < center.y + rady) && (po.z >= center.z - radz) && (po.z < center.z + radz);
     }
 
+    bool isInsideTriangle(double x, double y, double edge_length, double half_angle)
+    {
+      double angle = atan2(y, x);
+      return (abs(angle) <= abs(half_angle)) && (abs(x) <= abs(edge_length*cos(angle)));
+    }
+
     vector<geometry_msgs::Point> arc_by_radi_ang(geometry_msgs::Point from, double radius, double angle, int sample_cnt)
     {
       vector<geometry_msgs::Point> arc;
@@ -796,6 +853,19 @@ class Tentabot
         this -> robot_param.tentacle_data.push_back(newt);
         this -> robot_param.support_vox_data.push_back(voxel_extractor(newt));
       }
+
+      if (yaw_sample > 0)
+      {
+        robot_param.right_left_data.push_back("L");
+      }
+      else if (yaw_sample < 0)
+      {
+        robot_param.right_left_data.push_back("R");
+      }
+      else
+      {
+        robot_param.right_left_data.push_back("M");
+      }
     }
 
     // NUA TODO: Do it for the roll as well.
@@ -855,6 +925,7 @@ class Tentabot
       newt.push_back(tp);
       this -> robot_param.tentacle_data.push_back(newt);
       this -> robot_param.support_vox_data.push_back(voxel_extractor(newt));
+      robot_param.right_left_data.push_back("M");
 
       // ALL OTHER TENTACLES
       for(int y = 0; y < yaw_samples.size(); y++)
@@ -891,6 +962,407 @@ class Tentabot
         arc_extender_voxel_extractor(planar_tentacle_data, yaw_samples[y], pitch_samples, "pitch", yaw_offset);
       }
     }
+
+    void construct_tentacle_extend()
+    {
+      clearTentacleData();
+      clearSupportVoxData();
+
+      // SAMPLE YAW
+      vector<double> yaw_samples;
+      int half_tyaw_cnt = 0.5 * (off_tuning_param.tyaw_cnt + 1);
+      double half_yaw_angle = 0.5 * off_tuning_param.tyaw;
+      double init_yaw_angle = 0;
+
+      if(off_tuning_param.tyaw_cnt > 1)
+      {
+        yaw_samples = sampling_func(init_yaw_angle, half_yaw_angle, half_tyaw_cnt, off_tuning_param.tyaw_samp_type);
+
+        for(int i = 1; i < half_tyaw_cnt; i++)
+        {
+          yaw_samples.push_back(-yaw_samples[i]);
+        }
+      }
+      else
+      {
+        yaw_samples.push_back(init_yaw_angle);
+      }
+
+      // SAMPLE PITCH
+      vector<double> pitch_samples;
+      int half_tpitch_cnt = 0.5 * (off_tuning_param.tpitch_cnt + 1);
+      double half_pitch_angle = 0.5 * off_tuning_param.tpitch;
+      double init_pitch_angle = 0;
+
+      if(off_tuning_param.tpitch_cnt > 1)
+      {
+        pitch_samples = sampling_func(init_pitch_angle, half_pitch_angle, half_tpitch_cnt, off_tuning_param.tpitch_samp_type);
+        for(int i = 1; i < half_tpitch_cnt; i++)
+        {
+          pitch_samples.push_back(-pitch_samples[i]);
+        }
+      }
+      else
+      {
+        pitch_samples.push_back(init_pitch_angle);
+      }
+
+      // CONSTRUCT TENTACLE (SAMPLED TRAJECTORY) DATA
+      int pcount = 0;
+      int tcount = 0;
+      double x;
+      double y;
+      double z;
+      double ds = 1;
+      double delta_dist = 1 * off_tuning_param.pdist;
+
+      // TENTACLE 0 (Contains single sampling point at the center of the robot)
+      vector<geometry_msgs::Point> planar_tentacle_data0;
+      geometry_msgs::Point p0;
+      p0.x = 0;
+      p0.y = 0;
+      p0.z = 0;
+      planar_tentacle_data0.push_back(p0);
+      robot_param.tentacle_data.push_back(planar_tentacle_data0);
+      robot_param.support_vox_data.push_back(voxel_extractor(planar_tentacle_data0));
+      robot_param.right_left_data.push_back("M");
+
+      // ALL OTHER TENTACLES
+      for (int j = 0; j < pitch_samples.size(); ++j)
+      {
+        for (int i = 0; i < yaw_samples.size(); ++i)
+        {
+          //ROS_INFO("tentacle %d", tcount);
+
+          vector<geometry_msgs::Point> planar_tentacle_data;
+          pcount = 0;
+          x = 0;
+          y = 0;
+          z = 0;
+
+          while(isInsideTriangle(x, y, off_tuning_param.tlen, half_yaw_angle) && abs(ds*yaw_samples[i]) <= PI)
+          {
+            //ROS_INFO("p %d -> x: %f y: %f", pcount, x, y);
+            
+            if (off_tuning_param.tentacle_type == "circular")
+            {
+              ds = (pcount+1);
+            }
+
+            x += delta_dist * cos(ds*yaw_samples[i]) * cos(pitch_samples[j]);
+            y += delta_dist * sin(ds*yaw_samples[i]) * cos(pitch_samples[j]);
+            z += delta_dist * sin(pitch_samples[j]);
+
+            geometry_msgs::Point p;
+            p.x = x;
+            p.y = y;
+            p.z = z;
+            planar_tentacle_data.push_back(p);
+
+            pcount++;
+          }
+          tcount++;
+
+          // ADD TENTACLE DATA
+          robot_param.tentacle_data.push_back(planar_tentacle_data);
+
+          if (yaw_samples[i] > 0)
+          {
+            robot_param.right_left_data.push_back("L");
+          }
+          else if (yaw_samples[i] < 0)
+          {
+            robot_param.right_left_data.push_back("R");
+          }
+          else
+          {
+            robot_param.right_left_data.push_back("M");
+          }
+
+          // EXTRACT SUPPORT/PRIORITY CELLS
+          robot_param.support_vox_data.push_back(voxel_extractor(planar_tentacle_data));
+        }
+      }
+    }
+
+    /*
+    void construct_tentacle_trajectoryOpt()
+    {
+      // SAMPLE YAW
+      vector<double> yaw_samples;
+      int half_tyaw_cnt = 0.5 * (off_tuning_param.tyaw_cnt + 1);
+      double half_yaw_angle = 0.5 * off_tuning_param.tyaw;
+
+      if(off_tuning_param.tyaw_cnt > 1)
+      {
+        yaw_samples = sampling_func(0, half_yaw_angle, half_tyaw_cnt, off_tuning_param.tyaw_samp_type);
+
+        for(int i = 1; i < half_tyaw_cnt; i++)
+        {
+          yaw_samples.push_back(-yaw_samples[i]);
+        }
+      }
+      else
+      {
+        yaw_samples.push_back(0);
+      }
+
+      // SAMPLE PITCH
+      vector<double> pitch_samples;
+      int half_tpitch_cnt = 0.5 * (off_tuning_param.tpitch_cnt + 1);
+      double half_pitch_angle = 0.5 * off_tuning_param.tpitch;
+
+      if(off_tuning_param.tpitch_cnt > 1)
+      {
+        pitch_samples = sampling_func(0, half_pitch_angle, half_tpitch_cnt, off_tuning_param.tpitch_samp_type);
+        for(int i = 1; i < half_tpitch_cnt; i++)
+        {
+          pitch_samples.push_back(-pitch_samples[i]);
+        }
+      }
+      else
+      {
+        pitch_samples.push_back(0);
+      }
+
+      // SAMPLE TENTACLE LENGTH
+      vector<double> tlen_samples;
+      tlen_samples = sampling_func(0, off_tuning_param.tlen, half_tyaw_cnt);
+
+      // INITIALIZE TRAJECTORY
+      const Eigen::Vector4d limits(15.0, 10.0, 0, 0);
+
+      // CONSTRUCT TENTACLE (SAMPLED TRAJECTORY) DATA
+      int tcount = 0;
+      int mid_counter = 0;
+      //vector<geometry_msgs::Point> first, last;
+
+      for (int i = 0; i < yaw_samples.size(); ++i)
+      {
+        for (int j = 0; j < pitch_samples.size(); ++j)
+        {
+          ROS_INFO_STREAM("tentacle " << tcount);
+
+          geometry_msgs::Point p_first;
+          p_first.x = off_tuning_param.pdist * cos(yaw_samples[i]) * cos(pitch_samples[j]);
+          p_first.y = off_tuning_param.pdist * sin(yaw_samples[i]) * cos(pitch_samples[j]);
+          p_first.z = off_tuning_param.pdist * sin(pitch_samples[j]);
+
+          //tmp_marker.points.push_back(p_first);
+          //first.push_back(p_first);
+
+          geometry_msgs::Point p_last;
+          p_last.x = off_tuning_param.tlen * cos(yaw_samples[i]) * cos(pitch_samples[j]);
+          p_last.y = off_tuning_param.tlen * sin(yaw_samples[i]) * cos(pitch_samples[j]);
+          p_last.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+          
+          if (off_tuning_param.tentacle_type == "parametric")
+          {
+            ROS_INFO_STREAM("TENTACLE IS PARAMETRIC");
+            /*
+            geometry_msgs::Point p_middle;
+            p_middle.x = off_tuning_param.tlen * cos(yaw_samples[0]) * cos(pitch_samples[j]);
+            p_middle.y = off_tuning_param.tlen * sin(yaw_samples[0]) * cos(pitch_samples[j]);
+            p_middle.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+            * /
+
+            geometry_msgs::Point p_left_first;
+            p_left_first.x = off_tuning_param.pdist * cos(yaw_samples[half_tyaw_cnt-1]) * cos(pitch_samples[j]);
+            p_left_first.y = off_tuning_param.pdist * sin(yaw_samples[half_tyaw_cnt-1]) * cos(pitch_samples[j]);
+            p_left_first.z = off_tuning_param.pdist * sin(pitch_samples[j]);
+
+            geometry_msgs::Point p_left_last;
+            p_left_last.x = off_tuning_param.tlen * cos(yaw_samples[half_tyaw_cnt-1]) * cos(pitch_samples[j]);
+            p_left_last.y = off_tuning_param.tlen * sin(yaw_samples[half_tyaw_cnt-1]) * cos(pitch_samples[j]);
+            p_left_last.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+
+            geometry_msgs::Point p_right_first;
+            p_right_first.x = off_tuning_param.pdist * cos(yaw_samples.back()) * cos(pitch_samples[j]);
+            p_right_first.y = off_tuning_param.pdist * sin(yaw_samples.back()) * cos(pitch_samples[j]);
+            p_right_first.z = off_tuning_param.pdist * sin(pitch_samples[j]);
+
+            geometry_msgs::Point p_right_last;
+            p_right_last.x = off_tuning_param.tlen * cos(yaw_samples.back()) * cos(pitch_samples[j]);
+            p_right_last.y = off_tuning_param.tlen * sin(yaw_samples.back()) * cos(pitch_samples[j]);
+            p_right_last.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+
+            if (half_tyaw_cnt % 2 == 0)
+            {
+              int num_btw = 0.5 * (half_tyaw_cnt - 2);
+              ROS_INFO_STREAM("EVEN -> num_btw: " << num_btw);
+              vector<double> yaw_samples_middle = sampling_func(0, half_yaw_angle, num_btw+2, "linear", false);
+
+              if (yaw_samples[i] > 0)
+              {
+                ROS_INFO("EVEN -> >0 yaw_samples[%d]: %f", i, yaw_samples[i]*180/PI);
+                vector<geometry_msgs::Point> tlen_samples_middle = equadistant(p_left_last, p_left_first, num_btw);
+                ROS_INFO_STREAM("mid_counter 1: " << mid_counter);
+
+                if (mid_counter < yaw_samples_middle.size())
+                { 
+                  ROS_INFO_STREAM("EVEN -> 1");
+                  p_last.x = off_tuning_param.tlen * cos(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.y = off_tuning_param.tlen * sin(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+
+                  mid_counter++;
+                }
+                else if (mid_counter >= yaw_samples_middle.size() && mid_counter < (yaw_samples_middle.size() + tlen_samples_middle.size()) )
+                {
+                  ROS_INFO_STREAM("EVEN -> 2");
+                  p_last = tlen_samples_middle[mid_counter - yaw_samples_middle.size()];
+
+                  mid_counter++;
+                }
+                else
+                {
+                  ROS_INFO_STREAM("EVEN -> 3");
+                  p_last = p_left_first;
+                  mid_counter = 0;
+                }
+              }
+              else if (yaw_samples[i] < 0)
+              {
+                ROS_INFO("EVEN -> <0 yaw_samples[%d]: %f", i, yaw_samples[i]*180/PI);
+
+                vector<geometry_msgs::Point> tlen_samples_middle = equadistant(p_right_last, p_right_first, num_btw);
+                ROS_INFO_STREAM("mid_counter 2: " << mid_counter);
+
+                if (mid_counter < yaw_samples_middle.size())
+                {
+                  ROS_INFO_STREAM("EVEN -> 4");
+                  yaw_samples_middle[mid_counter] *= -1;
+                  p_last.x = off_tuning_param.tlen * cos(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.y = off_tuning_param.tlen * sin(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+
+                  mid_counter++;
+                }
+                else if (mid_counter >= yaw_samples_middle.size() && mid_counter < (yaw_samples_middle.size() + tlen_samples_middle.size()) )
+                {
+                  ROS_INFO_STREAM("EVEN -> 5");
+                  p_last = tlen_samples_middle[mid_counter - yaw_samples_middle.size()];
+
+                  mid_counter++;
+                }
+                else
+                {
+                  ROS_INFO_STREAM("EVEN -> 6");
+                  p_last = p_right_first;
+                  mid_counter = 0;
+                }
+                
+                ROS_INFO_STREAM("mid_counter 2 END ");
+              }
+            }
+            else
+            {
+              int num_btw = 0.5 * (half_tyaw_cnt - 3);
+              ROS_INFO_STREAM("ODD -> num_btw: " << num_btw);
+              vector<double> yaw_samples_middle = sampling_func(0, half_yaw_angle, num_btw+2, "linear", false);
+
+              if (yaw_samples[i] > 0)
+              {
+                vector<geometry_msgs::Point> tlen_samples_middle = equadistant(p_left_first, p_left_last, num_btw);
+
+                if (mid_counter < yaw_samples_middle.size())
+                { 
+                  p_last.x = off_tuning_param.tlen * cos(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.y = off_tuning_param.tlen * sin(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+
+                  mid_counter++;
+                }
+                else if (mid_counter == yaw_samples_middle.size())
+                {
+                  p_last = p_left_last;
+                }
+                else if (mid_counter > yaw_samples_middle.size() && mid_counter < (yaw_samples_middle.size() + tlen_samples_middle.size()) )
+                {
+                  p_last = tlen_samples_middle[mid_counter - yaw_samples_middle.size()];
+
+                  mid_counter++;
+                }
+
+                if (mid_counter >= (yaw_samples_middle.size() + tlen_samples_middle.size()))
+                {
+                  mid_counter = 0;
+                }
+              }
+              else if (yaw_samples[i] < 0)
+              {
+                vector<geometry_msgs::Point> tlen_samples_middle = equadistant(p_right_last, p_right_first, num_btw);
+
+                if (mid_counter < yaw_samples_middle.size())
+                { 
+                  yaw_samples_middle[mid_counter] *= -1;
+                  p_last.x = off_tuning_param.tlen * cos(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.y = off_tuning_param.tlen * sin(yaw_samples_middle[mid_counter]) * cos(pitch_samples[j]);
+                  p_last.z = off_tuning_param.tlen * sin(pitch_samples[j]);
+
+                  mid_counter++;
+                }
+                else if (mid_counter == yaw_samples_middle.size())
+                {
+                  p_last = p_right_last;
+                }
+                else if (mid_counter >= yaw_samples_middle.size() && mid_counter < (yaw_samples_middle.size() + tlen_samples_middle.size()) )
+                {
+                  p_last = tlen_samples_middle[mid_counter - yaw_samples_middle.size()];
+
+                  mid_counter++;
+                }
+                
+                if (mid_counter >= (yaw_samples_middle.size() + tlen_samples_middle.size()))
+                {
+                  mid_counter = 0;
+                }
+              }
+            }
+          }
+          //last.push_back(p_last);
+
+          ROS_INFO_STREAM("tcount: " << tcount);
+
+          ewok::Polynomial3DOptimization<10> po(limits);
+          typename ewok::Polynomial3DOptimization<10>::Vector3Array path;
+          path.push_back(Eigen::Vector3d(0, 0, 0));
+          path.push_back(Eigen::Vector3d(p_first.x, p_first.y, p_first.z));
+          path.push_back(Eigen::Vector3d(p_last.x, p_last.y, p_last.z));
+
+          if(tcount = 1)
+          {
+            //tmp_marker.points.push_back(p_first);
+            tmp_marker.points.push_back(p_last);
+          }
+
+          ewok::PolynomialTrajectory3D<10>::Ptr polynomial_trajectory = po.computeTrajectory(path);
+
+          ROS_INFO("trajectory end point -> x: %f y: %f z: %f", p_last.x, p_last.y, p_last.z);
+          
+          vector<geometry_msgs::Point> single_tentacle = polynomial_trajectory -> getSegmentsPoints(0, process_param.nav_dt);
+          vector<geometry_msgs::Point> single_tentacle_pruned;
+
+          double total_tpath = 0;
+          int k = 0;
+          while(total_tpath < off_tuning_param.tlen && k < single_tentacle.size()-2)
+          {
+            total_tpath += find_Euclidean_distance(single_tentacle[k], single_tentacle[k+1]);
+            single_tentacle_pruned.push_back(single_tentacle[k+1]);
+            k++;
+          }
+
+          robot_param.tentacle_data.push_back(single_tentacle);
+          robot_param.support_vox_data.push_back(voxel_extractor(single_tentacle));
+          ROS_INFO("---------------------------------------------------------------------");
+
+          tcount++;
+          //single_tentacle_pruned.clear();
+          //path.clear();
+        }
+      }
+    }
+    */
 
     void fillRobotVisu()
     {
@@ -1126,6 +1598,8 @@ class Tentabot
       double p_norm = find_norm(p);
       double m;
 
+      //ROS_INFO_STREAM("pnorm: " << p_norm);
+
       if (p_norm == 0)
       {
         m = 0.0;
@@ -1178,6 +1652,25 @@ class Tentabot
       return pm;
     }
 
+    vector<geometry_msgs::Point> equadistant(geometry_msgs::Point p1, geometry_msgs::Point p2, int num_btw)
+    {
+      vector<geometry_msgs::Point> p_vector;
+      double t;
+      double delta_t = find_Euclidean_distance(p1, p2) / (10 * (num_btw + 1));
+
+      for (int i = 0; i < num_btw; ++i)
+      {
+        t = delta_t * (i+1);
+
+        geometry_msgs::Point p;
+        p.x = p1.x + (p2.x - p1.x) * t;
+        p.y = p1.y + (p2.y - p1.y) * t;
+        p.z = p1.z + (p2.z - p1.z) * t;
+        p_vector.push_back(p);
+      }
+      return p_vector;
+    }
+
   public:
     Tentabot(NodeHandle& nh, tf::TransformListener* listener, ProcessParams& pp, RobotParams& rp, OffTuningParams& offtp, OnTuningParams& ontp, MapUtility& mu, GoalUtility& gu)                                                    // constructor
     {
@@ -1198,7 +1691,9 @@ class Tentabot
       this -> goal_util = gu;
 
       ros::Time t3 = ros::Time::now();
-      this -> construct_tentacle_pitchExt();
+      construct_tentacle_extend();
+      //construct_tentacle_pitchExt();
+      //construct_tentacle_trajectoryOpt();
       ros::Time t4 = ros::Time::now();
       //this -> optimizeTentacles();
       //this -> initializeBSplineOptimization();
@@ -1215,13 +1710,14 @@ class Tentabot
       this -> status_param.navigability_flag = false;
       this -> status_param.best_tentacle = -1;
       this -> status_param.ex_best_tentacle = -1;
+      this -> status_param.ex_best_sample = -1;
       this -> status_param.nav_result = 8;
       this -> status_param.nav_length = 0;
       this -> status_param.command_pub = nh.advertise<geometry_msgs::PoseStamped>("command/pose", 10);
       this -> status_param.command_point_pub = nh.advertise<geometry_msgs::Point>("command/point", 10);
       this -> status_param.nav_duration = 0;
       this -> status_param.speed_counter = 0;
-      this -> status_param.dummy_current_speed = 0;
+      this -> status_param.dummy_current_speed = 1.0;
 
       if(this -> process_param.visu_flag == true)
       {
@@ -1385,6 +1881,7 @@ class Tentabot
       this -> robot_param.robot_frame_name = new_robot_param.robot_frame_name;
       this -> robot_param.robot_name = new_robot_param.robot_name;
       this -> robot_param.tentacle_data = new_robot_param.tentacle_data;
+      this -> robot_param.right_left_data = new_robot_param.right_left_data;
       this -> robot_param.support_vox_data = new_robot_param.support_vox_data;
       this -> robot_param.nav_sensor.freq = new_robot_param.nav_sensor.freq;
       this -> robot_param.nav_sensor.resolution = new_robot_param.nav_sensor.resolution;
@@ -1455,6 +1952,7 @@ class Tentabot
       this -> status_param.tcrash_bin = new_status_param.tcrash_bin;
       this -> status_param.navigability_flag = new_status_param.navigability_flag;
       this -> status_param.ex_best_tentacle = new_status_param.ex_best_tentacle;
+      this -> status_param.ex_best_sample = new_status_param.ex_best_sample;
       this -> status_param.nav_result = new_status_param.nav_result;
       this -> status_param.nav_length = new_status_param.nav_length;
       this -> status_param.prev_action_time = new_status_param.prev_action_time;
@@ -1548,6 +2046,8 @@ class Tentabot
       }
 
       this -> robot_param.tentacle_data.clear();
+
+      robot_param.right_left_data.clear();
     }
 
     void clearSupportVoxData()
@@ -1572,7 +2072,7 @@ class Tentabot
 
         map_util.publishRecentPCMsg();
 
-        //this -> publishRobot();
+        publishRobot();
 
         publishTentacleTsampSupportvox();
 
@@ -1601,9 +2101,9 @@ class Tentabot
 
       int vox_index;
 
-      double radx = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumx;
-      double rady = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumy;
-      double radz = 0.5 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumz;
+      double radx = 0.25 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumx;
+      double rady = 0.25 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumy;
+      double radz = 0.25 * off_tuning_param.egrid_vdim * off_tuning_param.egrid_vnumz;
 
       octomap::point3d octmap_min(status_param.robot_pose.position.x - radx, status_param.robot_pose.position.y - rady, status_param.robot_pose.position.z - radz);
       octomap::point3d octmap_max(status_param.robot_pose.position.x + radx, status_param.robot_pose.position.y + rady, status_param.robot_pose.position.z + radz);
@@ -1655,8 +2155,13 @@ class Tentabot
       geometry_msgs::Pose active_goal = goal_util.getActiveGoal();
       int tentacle_cnt = robot_param.tentacle_data.size();
       int tsamp_cnt;
+      double delta_len = off_tuning_param.pdist;
+      double crash_dist_new;
+      double tlen_k;
 
-      geometry_msgs::Point p_wrt_world;
+      double dist2goal = find_Euclidean_distance(active_goal.position, status_param.robot_pose.position);
+      int sindex;
+      double crash_tlen_k;
 
       vector<int> tentacle_bin;
       double total_weight;
@@ -1665,33 +2170,37 @@ class Tentabot
       double temp_len;
       double clutterness_value_avg;
       
-      int tentacle_crash_index;
-      geometry_msgs::Point crash_po_wrt_global;
+      /*geometry_msgs::Point ex_best_point_wrt_world;
+      /if(status_param.ex_best_tentacle > 0 && status_param.ex_best_sample > 0)
+      {
+        transformPoint(robot_param.robot_frame_name, robot_param.tentacle_data[status_param.ex_best_tentacle][status_param.ex_best_sample], map_util.getFrameName(), ex_best_point_wrt_world);
+      }
+      */
+      double right_left_weight;
 
       double max_closeness = 0;
-
       double max_smoothness_dist = 0;
 
       // CLEAR NAVIGABILITY, CLEARANCE, clutterness AND CLOSENESS SETS
-      this -> heuristic_param.navigability_set.clear();  
-      this -> heuristic_param.navigability_set.resize(tentacle_cnt);
+      heuristic_param.navigability_set.clear();  
+      heuristic_param.navigability_set.resize(tentacle_cnt);
       
-      this -> heuristic_param.clearance_set.clear();
-      this -> heuristic_param.clearance_set.resize(tentacle_cnt);
+      heuristic_param.clearance_set.clear();
+      heuristic_param.clearance_set.resize(tentacle_cnt);
 
-      this -> heuristic_param.clutterness_set.clear();
-      this -> heuristic_param.clutterness_set.resize(tentacle_cnt);
+      heuristic_param.clutterness_set.clear();
+      heuristic_param.clutterness_set.resize(tentacle_cnt);
         
-      this -> heuristic_param.closeness_set.clear();
-      this -> heuristic_param.closeness_set.resize(tentacle_cnt);
+      heuristic_param.closeness_set.clear();
+      heuristic_param.closeness_set.resize(tentacle_cnt);
 
-      this -> heuristic_param.smoothness_set.clear();
-      this -> heuristic_param.smoothness_set.resize(tentacle_cnt);
+      heuristic_param.smoothness_set.clear();
+      heuristic_param.smoothness_set.resize(tentacle_cnt);
 
       // FOR EACH TENTACLE
       for(int k = 0; k < tentacle_cnt; k++)
       {     
-        tsamp_cnt = this -> robot_param.tentacle_data[k].size();
+        tsamp_cnt = robot_param.tentacle_data[k].size();
 
         // CALCULATE TOTAL WEIGHT AND TOTAL WEIGHTED OCCUPANCY FOR EACH TENTACLE
         total_weight = 0;
@@ -1699,142 +2208,175 @@ class Tentabot
         tentacle_bin.clear();
         tentacle_bin.resize(tsamp_cnt);
 
-        for(int s = 0; s < this -> robot_param.support_vox_data[k].size(); s++)
+        for(int s = 0; s < robot_param.support_vox_data[k].size(); s++)
         {
-          total_weight += this -> robot_param.support_vox_data[k][s].weight;
-          total_weighted_occupancy += this -> robot_param.support_vox_data[k][s].weight * this -> status_param.ego_grid_data.ovox_value[this -> robot_param.support_vox_data[k][s].index];
+          total_weight += robot_param.support_vox_data[k][s].weight;
+          total_weighted_occupancy += robot_param.support_vox_data[k][s].weight * status_param.ego_grid_data.ovox_value[robot_param.support_vox_data[k][s].index];
             
-          if(this -> robot_param.support_vox_data[k][s].flag && this -> status_param.ego_grid_data.ovox_value[this -> robot_param.support_vox_data[k][s].index] > 0)
+          if(robot_param.support_vox_data[k][s].flag && status_param.ego_grid_data.ovox_value[robot_param.support_vox_data[k][s].index] > 0)
           {
-            tentacle_bin[this -> robot_param.support_vox_data[k][s].histbin] += 1;       
+            tentacle_bin[robot_param.support_vox_data[k][s].histbin] += 1;       
           }
         }
 
         // DETERMINE NAVIGABILITY OF THE TENTACLE, 1: NAVIGABLE, 0: NON-NAVIGABLE, -1: TEMPORARILY NAVIGABLE
         int b = 0;
         bool navigability_end_flag = false;
-
-        this -> heuristic_param.navigability_set[k] = 1;
-
-        if(this -> process_param.visu_flag == true)
+        tlen_k = robot_param.tentacle_data[k].size() * delta_len;
+        crash_dist_new = tlen_k * (on_tuning_param.crash_dist * status_param.dummy_current_speed / robot_param.dummy_max_lat_velo);
+        if (crash_dist_new < 3*delta_len)
         {
-          this -> visu_param.tentacle_visu.markers[k].color.r = 0.0;
-          this -> visu_param.tentacle_visu.markers[k].color.g = 1.0;
-          this -> visu_param.tentacle_visu.markers[k].color.b = 0.0;
+          crash_dist_new = 3*delta_len;
+        }
+        else if (crash_dist_new > tlen_k)
+        {
+          crash_dist_new = tlen_k;
         }
 
-        temp_len = this -> off_tuning_param.tlen;
-        this -> status_param.tcrash_bin[k] = tsamp_cnt - 1;
+        heuristic_param.navigability_set[k] = 1;
+
+        if(process_param.visu_flag == true)
+        {
+          visu_param.tentacle_visu.markers[k].color.r = 0.0;
+          visu_param.tentacle_visu.markers[k].color.g = 1.0;
+          visu_param.tentacle_visu.markers[k].color.b = 0.0;
+        }
+
+        temp_len = off_tuning_param.tlen;
+        status_param.tcrash_bin[k] = tsamp_cnt - 1;
 
         while (!navigability_end_flag && (b < tsamp_cnt))
         {
-          if (tentacle_bin[b] >= this -> on_tuning_param.tbin_obs_cnt_threshold)
+          if (tentacle_bin[b] >= on_tuning_param.tbin_obs_cnt_threshold)
           {
-            temp_len = (this -> off_tuning_param.tlen * (b + 1)) / tsamp_cnt;
+            temp_len = delta_len * (b + 1);
 
-            if(temp_len >= this -> on_tuning_param.crash_dist)
+            //if(temp_len >= on_tuning_param.crash_dist)
+            if (temp_len > crash_dist_new)
             {
-              this -> heuristic_param.navigability_set[k] = -1;
+              heuristic_param.navigability_set[k] = -1;
 
-              if(this -> process_param.visu_flag == true)
+              if(process_param.visu_flag == true)
               {
-                this -> visu_param.tentacle_visu.markers[k].color.r = 0.0;
-                this -> visu_param.tentacle_visu.markers[k].color.g = 0.0;
-                this -> visu_param.tentacle_visu.markers[k].color.b = 1.0;
+                visu_param.tentacle_visu.markers[k].color.r = 0.0;
+                visu_param.tentacle_visu.markers[k].color.g = 0.0;
+                visu_param.tentacle_visu.markers[k].color.b = 1.0;
               }
             }
             else
             {
-              this -> heuristic_param.navigability_set[k] = 0;
+              heuristic_param.navigability_set[k] = 0;
 
-              if(this -> process_param.visu_flag == true)
+              if(process_param.visu_flag == true)
               {
-                this -> visu_param.tentacle_visu.markers[k].color.r = 1.0;
-                this -> visu_param.tentacle_visu.markers[k].color.g = 0.0;
-                this -> visu_param.tentacle_visu.markers[k].color.b = 0.0;
+                visu_param.tentacle_visu.markers[k].color.r = 1.0;
+                visu_param.tentacle_visu.markers[k].color.g = 0.0;
+                visu_param.tentacle_visu.markers[k].color.b = 0.0;
               }
             }
 
             if (b == 0)
             {
-              this -> status_param.tcrash_bin[k] = 0;
+              status_param.tcrash_bin[k] = b;
             }
             else
             {
-              this -> status_param.tcrash_bin[k] = b - 1;
+              status_param.tcrash_bin[k] = b-1;
             }
-            
             navigability_end_flag = true;
           }
           b++;
         }
 
-        if(this -> heuristic_param.navigability_set[0] == 0)
+        if(heuristic_param.navigability_set[0] == 0)
         {
-          this -> heuristic_param.navigability_set[k] == 0;
+          heuristic_param.navigability_set[k] == 0;
         }
 
         // DETERMINE CLEARANCE VALUE
-        if(this -> heuristic_param.navigability_set[k] == 1)
+        if(heuristic_param.navigability_set[k] == 1)
         {
-          this -> heuristic_param.clearance_set[k] = 0;
+          heuristic_param.clearance_set[k] = 0;
         }
         else
         {
-          this -> heuristic_param.clearance_set[k] = 1 - temp_len / this -> off_tuning_param.tlen;
+          heuristic_param.clearance_set[k] = 1 - temp_len / (delta_len * tsamp_cnt);
         }
 
         // DETERMINE NEARBY CLUTTERNESS VALUE
         clutterness_value_avg = total_weighted_occupancy / total_weight;
-        this -> heuristic_param.clutterness_set[k] = (2 / (1 + exp(-1 * clutterness_value_avg))) - 1;
+        heuristic_param.clutterness_set[k] = (2 / (1 + exp(-1 * clutterness_value_avg))) - 1;
 
         // DETERMINE TARGET CLOSENESS VALUE
-        if (k == 0)
+        crash_tlen_k = status_param.tcrash_bin[k] * delta_len;
+        if (dist2goal > crash_tlen_k)
         {
-          tentacle_crash_index = 0;
+          sindex = status_param.tcrash_bin[k];
         }
         else
         {
-          tentacle_crash_index = (this -> off_tuning_param.tsamp_cnt - 1) * this -> on_tuning_param.crash_dist / this -> off_tuning_param.tlen;
+          sindex = (robot_param.tentacle_data[k].size()-1) * dist2goal / crash_tlen_k;
         }
 
-        transformPoint(robot_param.robot_frame_name, robot_param.tentacle_data[k][tentacle_crash_index], map_util.getFrameName(), crash_po_wrt_global);
-        
-        this -> heuristic_param.closeness_set[k] = find_Euclidean_distance(active_goal.position, crash_po_wrt_global);
+        geometry_msgs::Point crash_po_wrt_global;
+        transformPoint(robot_param.robot_frame_name, robot_param.tentacle_data[k][sindex], map_util.getFrameName(), crash_po_wrt_global);
+        //ROS_INFO_STREAM("Tentacle " << k);
+        //print(robot_param.tentacle_data[k][0]);
+        //cout << "" << endl;
 
-        if(max_closeness < this -> heuristic_param.closeness_set[k])
+        heuristic_param.closeness_set[k] = find_Euclidean_distance(active_goal.position, crash_po_wrt_global);
+
+        if(max_closeness < heuristic_param.closeness_set[k])
         {
-          max_closeness = this -> heuristic_param.closeness_set[k];
+          max_closeness = heuristic_param.closeness_set[k];
         }
 
         //DETERMINE SMOOTHNESS VALUE
-        if(this -> status_param.ex_best_tentacle >= 0)
-        {
-          this -> heuristic_param.smoothness_set[k] = find_Euclidean_distance(this -> robot_param.tentacle_data[this -> status_param.ex_best_tentacle][tentacle_crash_index], this -> robot_param.tentacle_data[k][tentacle_crash_index]);
+        //geometry_msgs::Point tmp_best_point_wrt_world;
+        //transformPoint(robot_param.robot_frame_name, robot_param.tentacle_data[k][0], map_util.getFrameName(), tmp_best_point_wrt_world);
 
-          if(max_smoothness_dist < this -> heuristic_param.smoothness_set[k])
+        //if(status_param.ex_best_tentacle > 0 && status_param.ex_best_sample > 0)
+        
+        if(status_param.ex_best_tentacle > 0)
+        {
+          heuristic_param.smoothness_set[k] = find_Euclidean_distance(robot_param.tentacle_data[status_param.ex_best_tentacle][0], robot_param.tentacle_data[k][0]);
+
+          if (robot_param.right_left_data[k] == "R" && robot_param.right_left_data[status_param.ex_best_tentacle] == "L")
           {
-            max_smoothness_dist = this -> heuristic_param.smoothness_set[k];
+            heuristic_param.smoothness_set[k] *= on_tuning_param.smooth_scale;
+          }
+          else if (robot_param.right_left_data[k] == "L" && robot_param.right_left_data[status_param.ex_best_tentacle] == "R")
+          {
+            heuristic_param.smoothness_set[k] *= on_tuning_param.smooth_scale;
+          }
+
+          if(max_smoothness_dist < heuristic_param.smoothness_set[k])
+          {
+            max_smoothness_dist = heuristic_param.smoothness_set[k];
           }
         }
         else
         {
           max_smoothness_dist = 1;
-          this -> heuristic_param.smoothness_set[k] = 0;
+          heuristic_param.smoothness_set[k] = 0;
         }
+
+        // RIGHT-LEFT 
+        //ROS_INFO_STREAM("tentacle " << k << ": " << robot_param.right_left_data[k]);
+
       }
 
       for(int k = 0; k < tentacle_cnt; k++)
       {
-        this -> heuristic_param.closeness_set[k] = this -> heuristic_param.closeness_set[k] / max_closeness;
-        this -> heuristic_param.smoothness_set[k] = this -> heuristic_param.smoothness_set[k] / max_smoothness_dist;
+        heuristic_param.closeness_set[k] = heuristic_param.closeness_set[k] / max_closeness;
+        heuristic_param.smoothness_set[k] = heuristic_param.smoothness_set[k] / max_smoothness_dist;
       }
     }
 
     // DESCRIPTION: SELECT THE BEST TENTACLE
     void selectBestTentacle()
     {
-      int tentacle_cnt = this -> robot_param.tentacle_data.size();
+      int tentacle_cnt = robot_param.tentacle_data.size();
       double tentacle_value;
       double weighted_clearance_value;
       double weighted_clutterness_value;
@@ -1845,19 +2387,42 @@ class Tentabot
 
       for(int k = 1; k < tentacle_cnt; k++)
       {
-        if( this -> heuristic_param.navigability_set[k] != 0 )
+        if( heuristic_param.navigability_set[k] != 0 )
         {
-          weighted_clearance_value = this -> on_tuning_param.clear_scale * this -> heuristic_param.clearance_set[k];
-          weighted_clutterness_value = this -> on_tuning_param.clutter_scale * this -> heuristic_param.clutterness_set[k];
-          weighted_closeness_value = this -> on_tuning_param.close_scale * this -> heuristic_param.closeness_set[k];
-          weighted_smoothness_value = this -> on_tuning_param.smooth_scale * this -> heuristic_param.smoothness_set[k];
+          weighted_clearance_value = on_tuning_param.clear_scale * heuristic_param.clearance_set[k];
+          weighted_clutterness_value = on_tuning_param.clutter_scale * heuristic_param.clutterness_set[k];
+          weighted_closeness_value = on_tuning_param.close_scale * heuristic_param.closeness_set[k];
+          weighted_smoothness_value = on_tuning_param.smooth_scale * heuristic_param.smoothness_set[k];
 
           tentacle_value = weighted_clearance_value + weighted_clutterness_value + weighted_closeness_value + weighted_smoothness_value;
+
+          /*
+          ROS_INFO_STREAM("Tentacle " << k);
+          ROS_INFO_STREAM("tentacle_value: " << tentacle_value);
+          cout << "" << endl;
+          ROS_INFO_STREAM("clear_scale: " << on_tuning_param.clear_scale);
+          ROS_INFO_STREAM("clearance: " << heuristic_param.clearance_set[k]);
+          ROS_INFO_STREAM("weighted_clearance_value: " << weighted_clearance_value);
+          cout << "" << endl;
+          ROS_INFO_STREAM("clutter_scale: " << on_tuning_param.clutter_scale);
+          ROS_INFO_STREAM("clutterness: " << heuristic_param.clutterness_set[k]);
+          ROS_INFO_STREAM("weighted_clutterness_value: " << weighted_clutterness_value);
+          cout << "" << endl;
+          ROS_INFO_STREAM("close_scale: " << on_tuning_param.close_scale);
+          ROS_INFO_STREAM("closeness: " << heuristic_param.closeness_set[k]);
+          ROS_INFO_STREAM("weighted_closeness_value: " << weighted_closeness_value);
+          cout << "" << endl;
+          ROS_INFO_STREAM("smooth_scale: " << on_tuning_param.smooth_scale);
+          ROS_INFO_STREAM("smoothness: " << heuristic_param.smoothness_set[k]);
+          ROS_INFO_STREAM("weighted_smoothness_value: " << weighted_smoothness_value);
+          cout << "-----------------------------------------" << endl;
+          cout << "" << endl;
+          */
 
           if(no_drivable_tentacle == true)
           {
               best_tentacle_value = tentacle_value;
-              this -> status_param.best_tentacle = k;
+              status_param.best_tentacle = k;
               no_drivable_tentacle = false;
           }
           else
@@ -1865,7 +2430,7 @@ class Tentabot
             if(best_tentacle_value > tentacle_value)
             {
               best_tentacle_value = tentacle_value;
-              this -> status_param.best_tentacle = k;   
+              status_param.best_tentacle = k;   
             }
           }
         }
@@ -1875,59 +2440,82 @@ class Tentabot
       {
       	cout << "No drivable tentacle!" << endl;
 
-        this -> status_param.navigability_flag = false;
+        status_param.navigability_flag = false;
         
         for(int k = 1; k < tentacle_cnt; k++)
         {
-          tentacle_value = this -> on_tuning_param.clear_scale * this -> heuristic_param.clearance_set[k] + 
-                           this -> on_tuning_param.clutter_scale * this -> heuristic_param.clutterness_set[k] + 
-                           this -> on_tuning_param.close_scale * this -> heuristic_param.closeness_set[k] + 
-                           this -> on_tuning_param.smooth_scale * this -> heuristic_param.smoothness_set[k];
+          tentacle_value = on_tuning_param.clear_scale * heuristic_param.clearance_set[k] + 
+                           on_tuning_param.clutter_scale * heuristic_param.clutterness_set[k] + 
+                           on_tuning_param.close_scale * heuristic_param.closeness_set[k] + 
+                           on_tuning_param.smooth_scale * heuristic_param.smoothness_set[k];
 
           if(k == 1)
           {
               best_tentacle_value = tentacle_value;
-              this -> status_param.best_tentacle = 1;
+              status_param.best_tentacle = 1;
           }
           else
           {
             if(best_tentacle_value > tentacle_value)
             {
               best_tentacle_value = tentacle_value;
-              this -> status_param.best_tentacle = k;   
+              status_param.best_tentacle = k;   
             }
           }
         }
       }
       else
       {
-        this -> status_param.navigability_flag = true;
+        status_param.navigability_flag = true;
       }
 
-      if(this -> process_param.visu_flag == true)
+      if(process_param.visu_flag == true)
       {
-        this -> visu_param.tentacle_visu.markers[this -> status_param.best_tentacle].color.r = 0.0;
-        this -> visu_param.tentacle_visu.markers[this -> status_param.best_tentacle].color.g = 1.0;
-        this -> visu_param.tentacle_visu.markers[this -> status_param.best_tentacle].color.b = 1.0;
+        visu_param.tentacle_visu.markers[status_param.best_tentacle].color.r = 0.0;
+        visu_param.tentacle_visu.markers[status_param.best_tentacle].color.g = 1.0;
+        visu_param.tentacle_visu.markers[status_param.best_tentacle].color.b = 1.0;
       }
+
+      /*
+      ROS_INFO_STREAM("best tentacle " << status_param.best_tentacle);
+      ROS_INFO_STREAM("tentacle_value: " << best_tentacle_value);
+      cout << "" << endl;
+      ROS_INFO_STREAM("clear_scale: " << on_tuning_param.clear_scale);
+      ROS_INFO_STREAM("clearance: " << heuristic_param.clearance_set[status_param.best_tentacle]);
+      ROS_INFO_STREAM("weighted_clearance_value: " << on_tuning_param.clear_scale * heuristic_param.clearance_set[status_param.best_tentacle]);
+      cout << "" << endl;
+      ROS_INFO_STREAM("clutter_scale: " << on_tuning_param.clutter_scale);
+      ROS_INFO_STREAM("clutterness: " << heuristic_param.clutterness_set[status_param.best_tentacle]);
+      ROS_INFO_STREAM("weighted_clutterness_value: " << on_tuning_param.clutter_scale * heuristic_param.clutterness_set[status_param.best_tentacle]);
+      cout << "" << endl;
+      ROS_INFO_STREAM("close_scale: " << on_tuning_param.close_scale);
+      ROS_INFO_STREAM("closeness: " << heuristic_param.closeness_set[status_param.best_tentacle]);
+      ROS_INFO_STREAM("weighted_closeness_value: " << on_tuning_param.close_scale * heuristic_param.closeness_set[status_param.best_tentacle]);
+      cout << "" << endl;
+      ROS_INFO_STREAM("smooth_scale: " << on_tuning_param.smooth_scale);
+      ROS_INFO_STREAM("smoothness: " << heuristic_param.smoothness_set[status_param.best_tentacle]);
+      ROS_INFO_STREAM("weighted_smoothness_value: " << on_tuning_param.smooth_scale * heuristic_param.smoothness_set[status_param.best_tentacle]);
+      cout << "-----------------------------------------" << endl;
+      cout << "" << endl;
+      */
         
-      this -> status_param.ex_best_tentacle = this -> status_param.best_tentacle;
+      status_param.ex_best_tentacle = status_param.best_tentacle;
     }
 
     void hoverTentabotAtZ1(double x, double y)
     {
-      this -> status_param.robot_pose_command.pose.position.x = x;
-      this -> status_param.robot_pose_command.pose.position.y = y;
-      this -> status_param.robot_pose_command.pose.position.z = 1.0;
+      status_param.robot_pose_command.pose.position.x = x;
+      status_param.robot_pose_command.pose.position.y = y;
+      status_param.robot_pose_command.pose.position.z = 1.0;
 
       geometry_msgs::Point opiti;
-      opiti.x = this -> status_param.robot_pose_command.pose.position.x;
-      opiti.y = this -> status_param.robot_pose_command.pose.position.y;
-      opiti.z = this -> status_param.robot_pose_command.pose.position.z;
+      opiti.x = status_param.robot_pose_command.pose.position.x;
+      opiti.y = status_param.robot_pose_command.pose.position.y;
+      opiti.z = status_param.robot_pose_command.pose.position.z;
 
-      this -> visu_param.command_visu.points.push_back(opiti);
+      visu_param.command_visu.points.push_back(opiti);
 
-      this -> status_param.nav_duration += this -> process_param.nav_dt;
+      status_param.nav_duration += process_param.nav_dt;
     }
 
     /*
@@ -1953,6 +2541,8 @@ class Tentabot
     {
       geometry_msgs::Pose active_goal = goal_util.getActiveGoal();
       double dist2goal = find_Euclidean_distance(active_goal.position, status_param.robot_pose.position);
+      double first_sample_dist = find_norm(status_param.robot_pose.position);
+      //double first_sample_dist = find_norm(robot_param.tentacle_data[status_param.best_tentacle][0]);
       bool isSwitched;
       double dt;
 
@@ -1970,13 +2560,15 @@ class Tentabot
         {
           cout << "Cawabunga! The goal has reached!" << endl;
           process_param.navexit_flag = true;
+          status_param.nav_result = 1;
         }
         else
         {
           cout << "Yey! Waypoint #" << goal_util.getActiveGoalIndex()-1 << " has reached!" << endl;
-        }
 
-        status_param.nav_result = 1;
+          active_goal = goal_util.getActiveGoal();
+          dist2goal = find_Euclidean_distance(active_goal.position, status_param.robot_pose.position);
+        }
       }
       else if(status_param.nav_duration > process_param.time_limit)     // time-out
       {
@@ -1985,7 +2577,8 @@ class Tentabot
         process_param.navexit_flag = true;
         status_param.nav_result = 0;
       }
-      else
+
+      if(!process_param.navexit_flag)
       {
         double next_yaw;
         
@@ -1997,27 +2590,23 @@ class Tentabot
         geometry_msgs::Point goal_wrt_robot;
         transformPoint(map_util.getFrameName(), active_goal.position, robot_param.robot_frame_name, goal_wrt_robot);
 
-        status_param.dummy_current_speed = robot_param.dummy_max_lat_velo;
-
-        if(dist2goal < 2 || status_param.navigability_flag == false)
-        {
-          status_param.dummy_current_speed = 0.25 * this -> robot_param.dummy_max_lat_velo;
-        }
-        
-        double max_dist_dt = status_param.dummy_current_speed * process_param.nav_dt;
         double max_yaw_angle_dt = robot_param.dummy_max_yaw_velo * process_param.nav_dt;
-        double angular_velocity_weight = 3;
-        double first_sample_dist = find_norm(robot_param.tentacle_data[status_param.best_tentacle][0]);
+        double angular_velocity_weight = 1;
 
         if (process_param.counter == 0)
         {
           status_param.robot_pose_command.pose = robot_param.init_robot_pose;
         }
 
+        /*
         if (dist2goal < first_sample_dist)
         {
+          double min_speed = 1.0;
+
           cout << "Goal is close..." << endl;
           next_yaw = atan2(goal_wrt_robot.y, goal_wrt_robot.x);
+
+          status_param.dummy_current_speed = min_speed;
 
           if(abs(next_yaw) > max_yaw_angle_dt)
           {
@@ -2026,56 +2615,151 @@ class Tentabot
 
           next_yaw *= angular_velocity_weight;
 
-          transformOrientation(robot_param.robot_frame_name, 0, 0, next_yaw, map_util.getFrameName(), status_param.robot_pose_command.pose.orientation);
+          if (status_param.navigability_flag == false)
+          {
+
+            next_yaw = -0.2;
+
+            transformPoint(robot_param.robot_frame_name, next_point_wrt_robot, map_util.getFrameName(), status_param.robot_pose_command.pose.position);
+
+            if (status_param.robot_pose_command.pose.position.z < off_tuning_param.pdist)
+            {
+              status_param.robot_pose_command.pose.position.z = 1.2 * off_tuning_param.pdist;
+            }
+          }
+
+          transformOrientation(robot_param.robot_frame_name, 0, 0, next_yaw, map_util.getFrameName(), status_param.robot_pose_command.pose.orientation); 
         }
-        else if (status_param.navigability_flag == false)
+        */
+        //else
         {
-          //status_param.dummy_current_speed = 0.1 * this -> robot_param.dummy_max_lat_velo;
-
-          next_yaw = -0.2;
-
-          transformOrientation(robot_param.robot_frame_name, 0, 0, next_yaw, map_util.getFrameName(), status_param.robot_pose_command.pose.orientation);
-        }
-        else
-        {
-          next_point_wrt_robot = interpol(robot_param.tentacle_data[status_param.best_tentacle][status_param.tcrash_bin[status_param.best_tentacle]], max_dist_dt);
-          //next_point_wrt_robot = interpol(robot_param.tentacle_data[status_param.best_tentacle][0], max_dist_dt);
-
+          double min_speed = 2.0;
+          double ds = (robot_param.dummy_max_lat_velo - min_speed) / off_tuning_param.tyaw_cnt;
+          double speed_index = off_tuning_param.tyaw_cnt - (abs(next_yaw) / (0.5 * off_tuning_param.tyaw)) * (off_tuning_param.tyaw_cnt - 1);
+          double speed_inc_dec = 1.0;
+          // CALCULATE NEXT YAW ANGLE
+          next_point_wrt_robot = robot_param.tentacle_data[status_param.best_tentacle][0];
           next_yaw = atan2(next_point_wrt_robot.y, next_point_wrt_robot.x);
 
-          //ROS_INFO_STREAM("next_yaw: " << next_yaw*180/PI);
-          //ROS_INFO_STREAM("max_yaw_angle_dt: " << max_yaw_angle_dt*180/PI);
+          /*
+          ROS_INFO_STREAM("best_tentacle: " << status_param.best_tentacle);
+          ROS_INFO_STREAM("x: " << next_point_wrt_robot.x);
+          ROS_INFO_STREAM("y: " << next_point_wrt_robot.y);
+          */
 
           if (abs(next_yaw) > max_yaw_angle_dt)
           {
             next_yaw *= max_yaw_angle_dt / abs(next_yaw);
           }
 
-          next_yaw *= angular_velocity_weight;
+          //ROS_INFO_STREAM("next_yaw: " << next_yaw*180/PI);
+          //ROS_INFO_STREAM("max_yaw_angle_dt: " << max_yaw_angle_dt*180/PI);
 
-          transformPoint(robot_param.robot_frame_name, next_point_wrt_robot, map_util.getFrameName(), status_param.robot_pose_command.pose.position);
+          // CALCULATE NEXT POINT
+          
+          //ROS_INFO_STREAM("ds: " << ds);
+          //ROS_INFO_STREAM("speed_index: " << speed_index);
+
+          if (min_speed + speed_index * ds >= status_param.dummy_current_speed)
+          {
+            if (min_speed + speed_index * ds - status_param.dummy_current_speed > speed_inc_dec)
+            {
+              status_param.dummy_current_speed += speed_inc_dec;
+            }
+            else
+            {
+              status_param.dummy_current_speed += min_speed + speed_index * ds - status_param.dummy_current_speed;
+            }
+          }
+          else
+          {
+            if (status_param.dummy_current_speed - min_speed + speed_index * ds > speed_inc_dec)
+            {
+              status_param.dummy_current_speed -= speed_inc_dec;
+            }
+            else
+            {
+              status_param.dummy_current_speed -= status_param.dummy_current_speed - min_speed + speed_index * ds;
+            }
+          }
+          
+          //status_param.dummy_current_speed = robot_param.dummy_max_lat_velo;
+
+          if(dist2goal < 0.25*off_tuning_param.tlen || status_param.navigability_flag == false)
+          //if(status_param.navigability_flag == false)
+          {
+            //status_param.dummy_current_speed -= (status_param.dummy_current_speed - 0.25 * robot_param.dummy_max_lat_velo) * exp(0.25 * robot_param.dummy_max_lat_velo - status_param.dummy_current_speed);
+            status_param.dummy_current_speed -= 2*speed_inc_dec;
+          }
+
+          if(status_param.dummy_current_speed > robot_param.dummy_max_lat_velo)
+          {
+            status_param.dummy_current_speed = robot_param.dummy_max_lat_velo;
+          }
+          else if(status_param.dummy_current_speed < min_speed)
+          {
+            status_param.dummy_current_speed = min_speed;
+          }
+
+          //ROS_INFO_STREAM("dist2goal:" << dist2goal);
+          //ROS_INFO_STREAM("dummy_current_speed: " << status_param.dummy_current_speed);
+          
+          double max_dist_dt = status_param.dummy_current_speed * process_param.nav_dt;
+
+          //ROS_INFO_STREAM("max_dist_dt: " << max_dist_dt);
+          //cout << "" << endl;
+
+          int max_idx = 4;
+          if(status_param.tcrash_bin[status_param.best_tentacle] > max_idx)
+          {
+            status_param.tcrash_bin[status_param.best_tentacle] = max_idx;
+          }
+
+          /*
+          if (robot_param.tentacle_data[status_param.best_tentacle].size() > status_param.tcrash_bin[status_param.best_tentacle] + 1)
+          {
+            status_param.ex_best_sample = status_param.tcrash_bin[status_param.best_tentacle] + 1;
+          }
+          else
+          {
+            status_param.ex_best_sample = robot_param.tentacle_data[status_param.best_tentacle].size() - 1;
+          }
+          */
+          
+          //ROS_INFO_STREAM("tcrash_bin[status_param.best_tentacle]: " << status_param.tcrash_bin[status_param.best_tentacle]);
+          next_point_wrt_robot = interpol(robot_param.tentacle_data[status_param.best_tentacle][status_param.tcrash_bin[status_param.best_tentacle]], max_dist_dt);
+          //next_point_wrt_robot = interpol(robot_param.tentacle_data[status_param.best_tentacle][0], max_dist_dt);
+
+          next_yaw *= angular_velocity_weight;
           transformOrientation(robot_param.robot_frame_name, 0, 0, next_yaw, map_util.getFrameName(), status_param.robot_pose_command.pose.orientation);
+          transformPoint(robot_param.robot_frame_name, next_point_wrt_robot, map_util.getFrameName(), status_param.robot_pose_command.pose.position);
+
+          if (status_param.robot_pose_command.pose.position.z < off_tuning_param.pdist)
+          {
+            status_param.robot_pose_command.pose.position.z = 1.1 * off_tuning_param.pdist;
+          }
         }
 
         //ROS_INFO_STREAM("final next_yaw: " << next_yaw*180/PI);
-
-        this -> status_param.robot_pose_command.header.seq++;
-        this -> status_param.robot_pose_command.header.stamp = ros::Time::now();
-        this -> status_param.robot_pose_command.header.frame_id = this -> map_util.getFrameName();
-        this -> status_param.command_pub.publish(this -> status_param.robot_pose_command);
+        
+        status_param.robot_pose_command.header.seq++;
+        status_param.robot_pose_command.header.stamp = ros::Time::now();
+        status_param.robot_pose_command.header.frame_id = map_util.getFrameName();
+        status_param.command_pub.publish(status_param.robot_pose_command);
         
         if (process_param.counter == 0)
         {
-          dt = this -> process_param.nav_dt;
-          this -> status_param.prev_action_time = ros::Time::now();
+          dt = process_param.nav_dt;
+          status_param.prev_action_time = ros::Time::now();
         }
         else
         {
-          dt = (ros::Time::now() - this -> status_param.prev_action_time).toSec();
-          this -> status_param.prev_action_time = ros::Time::now();
+          dt = (ros::Time::now() - status_param.prev_action_time).toSec();
+          status_param.prev_action_time = ros::Time::now();
+          process_param.nav_dt = dt;
           //ROS_INFO_STREAM("dt: " << dt);
-
-          double delta_dist = find_Euclidean_distance(this -> status_param.prev_robot_pose.position, this -> status_param.robot_pose.position);
+   
+          double delta_dist = find_Euclidean_distance(status_param.prev_robot_pose.position, status_param.robot_pose.position);
           double speedo = delta_dist / dt;
           
           tf::Quaternion previous_q(status_param.prev_robot_pose.orientation.x, status_param.prev_robot_pose.orientation.y, status_param.prev_robot_pose.orientation.z, status_param.prev_robot_pose.orientation.w);
@@ -2108,16 +2792,18 @@ class Tentabot
           }
           */
 
-          this -> status_param.nav_length += delta_dist;
-          this -> status_param.prev_robot_pose = this -> status_param.robot_pose;
+          status_param.nav_length += delta_dist;
+          status_param.prev_robot_pose = status_param.robot_pose;
         }
-        this -> status_param.nav_duration += dt;
+        status_param.nav_duration += dt;
 
-        geometry_msgs::Point opiti = this -> status_param.robot_pose_command.pose.position;
+        geometry_msgs::Point opiti = status_param.robot_pose_command.pose.position;
+        visu_param.command_visu.points.push_back(opiti);
         command_history.push_back(opiti);
       }
     }
 
+    /*
     void initializeBSplineOptimization()
     {
       ROS_INFO_STREAM("START OPTIMIZATION INIT");
@@ -2332,26 +3018,31 @@ class Tentabot
         
       }
     }
+    */
 
     void sendCommandCallback(const ros::TimerEvent& e) 
     {
       if(process_param.navexit_flag == false)
       {
+        //ROS_INFO_STREAM("HELLO START");
         auto t1 = std::chrono::high_resolution_clock::now();
 
         // UPDATE OCCUPANCY VOXELS
         updateOccupancyVox();
 
+        //ROS_INFO_STREAM("HELLO 1");
         auto t2 = std::chrono::high_resolution_clock::now();
 
         // UPDATE HEURISTIC FUNCTIONS
         updateHeuristicFunctions();
 
+        //ROS_INFO_STREAM("HELLO 2");
         auto t3 = std::chrono::high_resolution_clock::now();
 
         // SELECT THE BEST TENTACLE
         selectBestTentacle();
 
+        //ROS_INFO_STREAM("HELLO 3");
         auto t4 = std::chrono::high_resolution_clock::now();
 
         // MOVE THE TENTABOT
@@ -2359,12 +3050,14 @@ class Tentabot
         //this -> moveOptimizedTentabot();
         //this -> hoverTentabotAtZ1(-15, 15);
 
+        //ROS_INFO_STREAM("HELLO 4");
         auto t5 = std::chrono::high_resolution_clock::now();
 
         nav_process_bench <<  std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count() << "," << 
                                       std::chrono::duration_cast<std::chrono::nanoseconds>(t3-t2).count() << "," << 
                                       std::chrono::duration_cast<std::chrono::nanoseconds>(t4-t3).count() << "," << 
                                       std::chrono::duration_cast<std::chrono::nanoseconds>(t5-t4).count() << std::endl;
+        //ROS_INFO_STREAM("HELLO END");
       }
       else
       {
@@ -2473,15 +3166,15 @@ class Tentabot
       this -> visu_param.path_visu.points.push_back(opiti);
 
       // PUBLISH THE ROBOT, TENTACLES, SAMPLING POINTS AND SUPPORT VOXELS
-      this -> publishTentabot();
+      publishTentabot();
       //traj_marker_pub.publish(global_trajectory_marker);
       //current_traj_pub.publish(current_trajectory_marker);
       tmp_pub.publish(tmp_marker);
 
-      if(this -> status_param.robot_pose.position.z < 0.1)
+      if(status_param.robot_pose.position.z < 0.1)
       {
         cout << "Did I fall?" << endl;
-        this -> status_param.nav_result = -1;
+        status_param.nav_result = -1;
       }
     }
 }; // end of class Tentabot
