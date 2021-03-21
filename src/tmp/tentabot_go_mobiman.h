@@ -53,8 +53,8 @@
 #include <pcl/filters/statistical_outlier_removal.h>
 
 // CUSTOM LIBRARIES:
-#include "/home/akmandor/catkin_ws/src/tentabot/src/map_utility.h"
-#include "/home/akmandor/catkin_ws/src/tentabot/src/goal_utility.h"
+#include "map_utility.h"
+#include "goal_utility.h"
 
 // GLOBAL VARIABLES:
 #define PI 3.141592653589793

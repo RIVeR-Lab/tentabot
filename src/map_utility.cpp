@@ -1,12 +1,12 @@
-// LAST UPDATE: 2021.02.19
+// LAST UPDATE: 2021.03.20
 //
 // AUTHOR: Neset Unver Akmandor
 //
 // E-MAIL: akmandor.n@northeastern.edu
 //
-// DESCRIPTION:
+// DESCRIPTION: TODO...
 
-// LOCAL LIBRARIES:
+// --CUSTOM LIBRARIES--
 #include "map_utility.h"
 
 double MapUtility::randdouble(double from, double to)

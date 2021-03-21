@@ -6,11 +6,13 @@
   <arg name="paused" value="true"/>
 
   <arg name="world_frame_name" default="world"/>
+  <arg name="world_resolution" value="0.15"/>
+  <arg name="world_name" value="cylinders0"/>
 
   <arg name="start_x" value="-15.0"/>
   <arg name="start_y" value="15.0"/>
   <arg name="start_z" value="1.0"/>
-  <arg name="start_yaw" value="$(eval -pi/4)"/>
+  <arg name="start_yaw" value="$(eval 0)"/>
 
   <arg name="goal1_x" value="5.0"/>
   <arg name="goal1_y" value="0.0"/>
@@ -21,38 +23,35 @@
   <arg name="goal2_y" value="-15.0"/>
   <arg name="goal2_z" value="1.0"/>
   <arg name="goal2_yaw" value="$(eval -pi/4)"/>
-
-  <arg name="resolution" value="0.15"/>
-  <arg name="world_name" value="cylinders0"/>
   
   <arg name="time_limit" value="90" />
-  <arg name="dt" value="0.05" />
+  <arg name="dt" value="0.1" />
 
-  <arg name="max_lat_velo" value="15" />
-  <arg name="max_yaw_velo" value="5" />
+  <arg name="dummy_max_lat_velo" value="18" />
+  <arg name="dummy_max_yaw_velo" value="10" />
   
-  <!--arg name="tyaw_cnt" value="11" />
-  <arg name="tpitch_cnt" value="5" />
-  <arg name="tsamp_cnt" value="5" /-->
   <arg name="tyaw_cnt" value="31" />
   <arg name="tpitch_cnt" value="21" />
-  <arg name="tsamp_cnt" value="30" />
+  <arg name="tsamp_cnt" value="25" />
+  
   <arg name="tlen" value="10" />
   <arg name="tyaw" value="0.942" />
   <arg name="tpitch" value="0.628" />
   <arg name="tentacle_type" value="linear" />
-  <arg name="pdist" value="0.4" />
-  <arg name="sdist" value="1" />
-  <arg name="egrid_vdim" value="0.1" />
-  <arg name="egrid_vnumx" value="200" />
-  <arg name="egrid_vnumy" value="200" />
-  <arg name="egrid_vnumz" value="200" />
+  
+  <arg name="pdist" value="0.35" />
+  <arg name="sdist" value="0.5" />
 
-  <arg name="crash_dist" value="8" />
-  <arg name="clear_scale" value="50" />
-  <arg name="flat_scale" value="100" />
-  <arg name="close_scale" value="80" />
-  <arg name="smooth_scale" value="0.5" />
+  <arg name="egrid_vdim" value="0.1" />
+  <arg name="egrid_vnumx" value="220" />
+  <arg name="egrid_vnumy" value="220" />
+  <arg name="egrid_vnumz" value="220" />
+
+  <arg name="crash_dist_scale" value="0.3" />
+  <arg name="clear_scale" value="0" />
+  <arg name="clutter_scale" value="20" />
+  <arg name="close_scale" value="120" />
+  <arg name="smooth_scale" value="2.0" />
 
   <env name="GAZEBO_MODEL_PATH" value="$(find rotors_gazebo)/models:$(find ewok_simulation)/models"/>
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -84,6 +83,8 @@
     <node name="tentabot_go" pkg="tentabot" type="tentabot_go" output="screen">
 
       <param name="world_frame_name" value="$(arg world_frame_name)" />
+      <param name="world_resolution" value="$(arg world_resolution)" />
+      <param name="world_name" value="$(arg world_name)"/>
       <param name="start_x" value="$(arg start_x)" />
       <param name="start_y" value="$(arg start_y)" />
       <param name="start_z" value="$(arg start_z)" />
@@ -96,12 +97,10 @@
       <param name="goal2_y" value="$(arg goal2_y)" />
       <param name="goal2_z" value="$(arg goal2_z)" />
       <param name="goal2_yaw" value="$(arg goal2_yaw)" />
-      <param name="resolution" value="$(arg resolution)" />
-      <param name="world_name" value="$(arg world_name)"/>
       <param name="time_limit" value="$(arg time_limit)" />
       <param name="dt" value="$(arg dt)" />
-      <param name="max_lat_velo" value="$(arg max_lat_velo)" />
-      <param name="max_yaw_velo" value="$(arg max_yaw_velo)" />
+      <param name="dummy_max_lat_velo" value="$(arg dummy_max_lat_velo)" />
+      <param name="dummy_max_yaw_velo" value="$(arg dummy_max_yaw_velo)" />
       <param name="tyaw_cnt" value="$(arg tyaw_cnt)" />
       <param name="tpitch_cnt" value="$(arg tpitch_cnt)" />
       <param name="tsamp_cnt" value="$(arg tsamp_cnt)" />
@@ -115,11 +114,11 @@
       <param name="egrid_vnumx" value="$(arg egrid_vnumx)" />
       <param name="egrid_vnumy" value="$(arg egrid_vnumy)" />
       <param name="egrid_vnumz" value="$(arg egrid_vnumz)" />
-      <param name="crash_dist" value="$(arg crash_dist)" />
+      <param name="crash_dist_scale" value="$(arg crash_dist_scale)" />
       <param name="clear_scale" value="$(arg clear_scale)" />
-      <param name="flat_scale" value="$(arg flat_scale)" />
+      <param name="clutter_scale" value="$(arg clutter_scale)" />
       <param name="close_scale" value="$(arg close_scale)" />
-      <param name="smooth_scale" value="$(arg smooth_scale)" /> <!---->
+      <param name="smooth_scale" value="$(arg smooth_scale)" />
     </node>
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
