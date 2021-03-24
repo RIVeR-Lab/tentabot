@@ -25,17 +25,6 @@ Follow the tutorials to
 ```
 cd ~/catkin_ws/src
 ```
-
-Install [octomap_ros](https://wiki.ros.org/octomap_ros) based on the ROS branch (Kinetic or Melodic).
-```
-git clone https://github.com/OctoMap/octomap_ros.git
-```
-
-Install [octomap_msgs](http://wiki.ros.org/octomap_msgs) based on the ROS branch (Kinetic or Melodic).
-```
-git clone https://github.com/OctoMap/octomap_msgs.git
-```
-
 Follow the instructions and install [ewok](https://github.com/VladyslavUsenko/ewok/tree/master) based on the ROS branch (Kinetic or Melodic).
 
 #### 3.b Install tentabot into the src folder and build the catkin workspace:
