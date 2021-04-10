@@ -183,8 +183,8 @@ add_library(tentabot src/tentabot.cpp)
 add_executable(tentabot_go src/tentabot_go.cpp)
 target_link_libraries(tentabot_go ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} goal_utility map_utility tentabot ${OCTOMAP_LIBRARIES})
 
-add_executable(tentabot_go_mobiman src/tmp/tentabot_go_mobiman.cpp)
-target_link_libraries(tentabot_go_mobiman ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} goal_utility map_utility ${OCTOMAP_LIBRARIES})
+#add_executable(tentabot_go_mobiman src/tmp/tentabot_go_mobiman.cpp)
+#target_link_libraries(tentabot_go_mobiman ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} goal_utility map_utility ${OCTOMAP_LIBRARIES})
 
 #add_executable(tentabot_go_extend src/tmp/tentabot_go_extend.cpp)
 #target_link_libraries(tentabot_go_extend  ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${TF_LIBRARIES} goal_utility map_utility tentabot ${OCTOMAP_LIBRARIES})

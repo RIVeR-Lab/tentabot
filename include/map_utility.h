@@ -1,4 +1,4 @@
-// LAST UPDATE: 2021.03.20
+// LAST UPDATE: 2021.04.10
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -7,16 +7,15 @@
 // DESCRIPTION: TODO...
 
 // --OUTSOURCE LIBRARIES--
-#include <pcl_conversions/pcl_conversions.h>
 #include <tf/transform_listener.h>
 #include <octomap_msgs/conversions.h>
 #include <iostream>
 #include <fstream>
+#include <boost/algorithm/string.hpp>
 
 // --NAMESPACES--
 using namespace std;
 using namespace ros;
-using namespace pcl;
 using namespace octomap;
 
 // DESCRIPTION: TODO...

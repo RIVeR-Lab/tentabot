@@ -1,4 +1,4 @@
-// LAST UPDATE: 2021.03.20
+// LAST UPDATE: 2021.04.10
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -237,7 +237,7 @@ MapUtility::MapUtility(const MapUtility& mu)
   oct_resolution = mu.oct_resolution;
   pc_resolution_factor = mu.pc_resolution_factor;
   max_occupancy_belief_value = mu.max_occupancy_belief_value;
-  history_size = mu.history_size;    
+  history_size = mu.history_size;
   octmap = mu.octmap;
   octmap_msg = mu.octmap_msg;
   recent_pc_msg = mu.recent_pc_msg;
@@ -256,7 +256,7 @@ MapUtility::~MapUtility()
 }
 
 MapUtility& MapUtility::operator = (const MapUtility& mu) 
-{ 
+{
   map_name = mu.map_name;
   frame_name = mu.frame_name;
   x_range = mu.x_range;
@@ -265,7 +265,7 @@ MapUtility& MapUtility::operator = (const MapUtility& mu)
   oct_resolution = mu.oct_resolution;
   pc_resolution_factor = mu.pc_resolution_factor;
   max_occupancy_belief_value = mu.max_occupancy_belief_value;
-  history_size = mu.history_size;    
+  history_size = mu.history_size;
   octmap = mu.octmap;
   octmap_msg = mu.octmap_msg;
   recent_pc_msg = mu.recent_pc_msg;
@@ -275,6 +275,7 @@ MapUtility& MapUtility::operator = (const MapUtility& mu)
   recent_pc_msg_pub = mu.recent_pc_msg_pub;
   history_pc_msg_pub = mu.history_pc_msg_pub;
   local_pc_msg_pub = mu.local_pc_msg_pub;
+  return *this;
 }
 
 string MapUtility::getMapName()

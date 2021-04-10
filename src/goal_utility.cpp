@@ -1,4 +1,4 @@
-// LAST UPDATE: 2021.03.20
+// LAST UPDATE: 2021.04.10
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -58,6 +58,7 @@ GoalUtility& GoalUtility::operator = (const GoalUtility& gu)
   fillGoalVisu();
   setActiveGoalIndex(gu.active_goal_index);
   goal_visu_pub = gu.goal_visu_pub;
+  return *this;
 } 
 
 string GoalUtility::getFrameName()

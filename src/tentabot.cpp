@@ -36,12 +36,12 @@ Tentabot::Tentabot(NodeHandle& nh,
   setRobotParams(rp);
   setOffTuningParams(offtp);
   setOnTuningParams(ontp);
+
   ros::Time t1 = ros::Time::now();
   setEgoGridData();
   ros::Time t2 = ros::Time::now();
   map_util = mu;
   goal_util = gu;
-
   ros::Time t3 = ros::Time::now();
   construct_tentacle_extend(false);
   ros::Time t4 = ros::Time::now();
@@ -84,8 +84,8 @@ Tentabot::Tentabot(NodeHandle& nh,
     visu_param.next_pub = nh.advertise<visualization_msgs::Marker>("nextPub", 100);
   }
 
-    string rand_filename = createFileName();
-  
+  string rand_filename = createFileName();
+
   // WRITE PARAMETERS
   string bench_param_filename = "/home/akmandor/catkin_ws/src/tentabot/benchmark/tnav/" + rand_filename + "_param_" + map_util.getMapName() + ".csv";
   nav_param_bench.open(bench_param_filename);
@@ -328,7 +328,7 @@ void Tentabot::setVisuParams(Tentabot::VisuParams new_visu_param)
 void Tentabot::setEgoGridData()
 {
   int total_voxel_cnt = off_tuning_param.egrid_vnumx * off_tuning_param.egrid_vnumy * off_tuning_param.egrid_vnumz;
-  
+
   status_param.ego_grid_data.ovox_pos.resize(total_voxel_cnt);
   
   for(int v = 0; v < total_voxel_cnt; v++)
