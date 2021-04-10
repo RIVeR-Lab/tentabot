@@ -25,7 +25,7 @@ Follow the tutorials to
 
 Follow the instructions and [install ewok if the ROS version is either Melodic or Noetic](https://github.com/VladyslavUsenko/ewok/tree/master). Changing the branch, [install ewok if the ROS version is Kinetic](https://github.com/VladyslavUsenko/ewok/tree/ubuntu_16_04_kinetic).
 
-#### 3.b Install tentabot into the src folder:
+#### 3.b Install tentabot package into the src folder:
 ```
 cd ~/catkin_ws/src
 git clone https://github.com/RIVeR-Lab/tentabot.git
@@ -53,6 +53,11 @@ cd ~/catkin_ws
 catkin build
 ```
 
+#### 3.e Source the workspace, after successfully built:
+```
+source devel/setup.bash
+```
+
 ### 4. Simulation example
 
 In separate terminal windows:
@@ -77,5 +82,22 @@ OR
 roslaunch tentabot tentabot_go_forest.launch
 ```
 
-### 5. Credentials
+### 5. Notes
+#### 5.1
+In the Noetic version, there is a [know issue](https://github.com/ros/geometry2/issues/467) which causes flood of warning messages in terminal screen. The issue does not cause a problem for navigation but if you want to eliminate those warnings:
+
+Install [geometry2 package](https://github.com/ros/geometry2) into the src folder:
+```
+cd ~/catkin_ws
+git clone https://github.com/ros/geometry2.git
+```
+
+Comment out the warning message in tf2/src/buffer_core.cpp (~line 278):
+```
+//CONSOLE_BRIDGE_logWarn((error_string+" for frame %s at time %lf according to authority %s").c_str(), stripped.child_frame_id.c_str(), stripped.header.stamp.toSec(), authority.c_str());
+```
+
+Then, build and source the workspace.
+
+### 6. Credentials
 Tentabot was developed at the [RIVeR Lab, Northeastern University](http://robot.neu.edu/).
