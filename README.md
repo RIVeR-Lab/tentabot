@@ -15,21 +15,40 @@
 
 ### 3 Installation
 
-The system has been tested with both Ubuntu 16.04 (ROS Kinetic) and 18.04 (ROS Melodic).
+The system has been tested with Ubuntu 16.04 (ROS Kinetic), 18.04 (ROS Melodic) and 20.04 (ROS Noetic).
 
 Follow the tutorials to
-- either [install ROS Kinetic](http://wiki.ros.org/ROS/Installation) or [install ROS Melodic](http://wiki.ros.org/ROS/Installation),
+- [install ROS](http://wiki.ros.org/ROS/Installation) based on the Ubuntu version.
 - [set up catkin workspace](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
 
 #### 3.a Install required packages into the src folder:
+
+Follow the instructions and [install ewok if the ROS version is either Melodic or Noetic](https://github.com/VladyslavUsenko/ewok/tree/master). Changing the branch, [install ewok if the ROS version is Kinetic](https://github.com/VladyslavUsenko/ewok/tree/ubuntu_16_04_kinetic).
+
+#### 3.b Install tentabot into the src folder:
 ```
 cd ~/catkin_ws/src
-```
-Follow the instructions and install [ewok](https://github.com/VladyslavUsenko/ewok/tree/master) based on the ROS branch (Kinetic or Melodic).
-
-#### 3.b Install tentabot into the src folder and build the catkin workspace:
-```
 git clone https://github.com/RIVeR-Lab/tentabot.git
+```
+
+#### 3.c (optional) Install dependencies using rosdep tool:
+
+Follow the Prerequisites instructions and install rosdep tool based on the ROS version: [Melodic rosdep](http://wiki.ros.org/melodic/Installation/Source) or [Noetic rosdep](http://wiki.ros.org/noetic/Installation/Source).
+
+ROS Melodic example of installing dependencies using rosdep tools:
+```
+cd ~/catkin_ws
+rosdep install --from-paths src --ignore-src --rosdistro melodic -y
+```
+
+ROS Noetic example of installing dependencies using rosdep tools:
+```
+cd ~/catkin_ws
+rosdep install --from-paths ./src --ignore-packages-from-source --rosdistro noetic -y
+```
+
+#### 3.d Build the catkin workspace:
+```
 cd ~/catkin_ws
 catkin build
 ```
