@@ -1,4 +1,4 @@
-# Coming soon: Tentabot-RL!
+# Coming soon: Tentabot-DRL!
 
 # Tentabot: Reactive Navigation Framework for Mobile Robots by Heuristically Evaluated Pre-sampled Trajectories (Tentacles)
 
