@@ -1,0 +1,466 @@
+<sdf version='1.7'>
+  <model name='tentabot'>
+    <link name='turtlebot1/base_footprint'>
+      <inertial>
+        <pose>-0.00498 0.000142 0.033157 0 -0 0</pose>
+        <mass>0.962535</mass>
+        <inertia>
+          <ixx>1.01139</ixx>
+          <ixy>-6.14881e-06</ixy>
+          <ixz>0.000666858</ixz>
+          <iyy>1.00807</iyy>
+          <iyz>-2.81274e-05</iyz>
+          <izz>1.00805</izz>
+        </inertia>
+      </inertial>
+      <collision name='turtlebot1/base_footprint_fixed_joint_lump__turtlebot1/base_link_collision'>
+        <pose>-0.032 0 0.08 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.14 0.14 0.143</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='turtlebot1/base_footprint_fixed_joint_lump__bumper_collision_collision_1'>
+        <pose>-0.035 0 0.13 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.1</length>
+            <radius>0.11</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='turtlebot1/base_footprint_fixed_joint_lump__d435_cam1camera_link_collision_2'>
+        <pose>-0.05 0 0.2025 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02505 0.09 0.025</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='turtlebot1/base_footprint_fixed_joint_lump__turtlebot1/caster_back_link_collision_3'>
+        <pose>-0.081 1e-06 0.005 -1.57 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.03 0.009 0.02</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>1</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0.1</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='turtlebot1/base_footprint_fixed_joint_lump__turtlebot1/base_scan_collision_4'>
+        <pose>-0.017 0 0.1755 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.0315</length>
+            <radius>0.055</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='turtlebot1/base_footprint_fixed_joint_lump__turtlebot1/base_link_visual'>
+        <pose>-0.032 0 0.01 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://turtlebot3_description/meshes/bases/burger_base.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGrey</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='turtlebot1/base_footprint_fixed_joint_lump__turtlebot1/bumper_link_visual_1'>
+        <pose>-0.035 0 0.13 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.1</length>
+            <radius>0.11</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Red</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='turtlebot1/base_footprint_fixed_joint_lump__d435_cam1camera_link_visual_2'>
+        <pose>-0.0351 0 0.2025 1.5708 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://tentabot_devel/meshes/d435.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Grey</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='turtlebot1/base_footprint_fixed_joint_lump__turtlebot1/base_scan_visual_3'>
+        <pose>-0.032 0 0.182 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://turtlebot3_description/meshes/sensors/lds.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <velocity_decay/>
+      <velocity_decay/>
+      <self_collide>0</self_collide>
+      <sensor name='turtlebot1/bumper_sensor' type='contact'>
+        <visualize>1</visualize>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <contact>
+          <collision>turtlebot0/base_footprint_fixed_joint_lump__bumper_collision_collision_1</collision>
+          <topic>__default_topic__</topic>
+        </contact>
+        <plugin name='gazebo_ros_bumper_controller' filename='libgazebo_ros_bumper.so'>
+          <robotNamespace>turtlebot1</robotNamespace>
+          <bumperTopicName>bumper_status</bumperTopicName>
+          <frameName>turtlebot1/bumper_link</frameName>
+        </plugin>
+        <pose>-0.035 0 0.13 0 -0 0</pose>
+      </sensor>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <sensor name='d435_cam1d435' type='depth'>
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>1.59174</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>6</far>
+          </clip>
+        </camera>
+        <plugin name='camera_plugin' filename='libgazebo_ros_openni_kinect.so'>
+          <robotNamespace>/</robotNamespace>
+          <visualize>1</visualize>
+          <baseline>0.05</baseline>
+          <alwaysOn>1</alwaysOn>
+          <updateRate>0.0</updateRate>
+          <cameraName>d435_cam1d435</cameraName>
+          <imageTopicName>/d435_cam1d435/camera/color/image_raw</imageTopicName>
+          <cameraInfoTopicName>/d435_cam1d435/camera/color/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>/d435_cam1d435/camera/depth/image_raw</depthImageTopicName>
+          <depthImageInfoTopicName>/d435_cam1d435/camera/depth/camera_info</depthImageInfoTopicName>
+          <pointCloudTopicName>/d435_cam1d435/camera/depth/color/points</pointCloudTopicName>
+          <frameName>d435_cam1camera_depth_frame_gazebo</frameName>
+          <pointCloudCutoff>0.02</pointCloudCutoff>
+          <distortionK1>0</distortionK1>
+          <distortionK2>0</distortionK2>
+          <distortionK3>0</distortionK3>
+          <distortionT1>0</distortionT1>
+          <distortionT2>0</distortionT2>
+          <CxPrime>0</CxPrime>
+          <Cx>0</Cx>
+          <Cy>0</Cy>
+          <focalLength>0</focalLength>
+          <hackBaseline>0</hackBaseline>
+        </plugin>
+        <pose>-0.05 0.0175 0.2025 0 -0 0</pose>
+      </sensor>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <velocity_decay/>
+      <gravity>1</gravity>
+      <velocity_decay/>
+      <sensor name='imu' type='imu'>
+        <always_on>1</always_on>
+        <visualize>0</visualize>
+        <pose>-0.032 0 0.078 0 -0 0</pose>
+      </sensor>
+      <gravity>1</gravity>
+      <velocity_decay/>
+      <sensor name='lds_lfcd_sensor' type='gpu_ray'>
+        <visualize>1</visualize>
+        <update_rate>50</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>6.28319</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.12</min>
+            <max>3.5</max>
+            <resolution>0.015</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_lds_lfcd_controller' filename='libgazebo_ros_gpu_laser.so'>
+          <topicName>turtlebot1/scan</topicName>
+          <frameName>turtlebot1/base_scan</frameName>
+        </plugin>
+        <pose>-0.032 0 0.182 0 -0 0</pose>
+      </sensor>
+    </link>
+    <joint name='turtlebot1/wheel_left_joint' type='revolute'>
+      <pose relative_to='turtlebot1/base_footprint'>0 0.08 0.033 -1.57 0 0</pose>
+      <parent>turtlebot1/base_footprint</parent>
+      <child>turtlebot1/wheel_left_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='turtlebot1/wheel_left_link'>
+      <pose relative_to='turtlebot1/wheel_left_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.0284989</mass>
+        <inertia>
+          <ixx>1.11756e-05</ixx>
+          <ixy>-4.23698e-11</ixy>
+          <ixz>-5.93817e-09</ixz>
+          <iyy>1.11924e-05</iyy>
+          <iyz>-1.44001e-11</iyz>
+          <izz>2.07126e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='turtlebot1/wheel_left_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.018</length>
+            <radius>0.033</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>500000</kp>
+              <kd>10</kd>
+              <max_vel>0.1</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0.1</mu2>
+              <fdir1>1 0 0</fdir1>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='turtlebot1/wheel_left_link_visual'>
+        <pose>0 0 0 1.57 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://turtlebot3_description/meshes/wheels/left_tire.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay/>
+    </link>
+    <joint name='turtlebot1/wheel_right_joint' type='revolute'>
+      <pose relative_to='turtlebot1/base_footprint'>0 -0.08 0.033 -1.57 0 0</pose>
+      <parent>turtlebot1/base_footprint</parent>
+      <child>turtlebot1/wheel_right_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='turtlebot1/wheel_right_link'>
+      <pose relative_to='turtlebot1/wheel_right_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.0284989</mass>
+        <inertia>
+          <ixx>1.11756e-05</ixx>
+          <ixy>-4.23698e-11</ixy>
+          <ixz>-5.93817e-09</ixz>
+          <iyy>1.11924e-05</iyy>
+          <iyz>-1.44001e-11</iyz>
+          <izz>2.07126e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='turtlebot1/wheel_right_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.018</length>
+            <radius>0.033</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>500000</kp>
+              <kd>10</kd>
+              <max_vel>0.1</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0.1</mu2>
+              <fdir1>1 0 0</fdir1>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='turtlebot1/wheel_right_link_visual'>
+        <pose>0 0 0 1.57 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://turtlebot3_description/meshes/wheels/right_tire.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay/>
+    </link>
+    <plugin name='turtlebot3_burger_controller' filename='libgazebo_ros_diff_drive.so'>
+      <commandTopic>turtlebot1/cmd_vel</commandTopic>
+      <odometryTopic>turtlebot1/odom</odometryTopic>
+      <odometryFrame>turtlebot1/odom</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>1</publishOdomTF>
+      <robotBaseFrame>turtlebot1/base_footprint</robotBaseFrame>
+      <publishWheelTF>0</publishWheelTF>
+      <publishTf>1</publishTf>
+      <publishWheelJointState>1</publishWheelJointState>
+      <legacyMode>0</legacyMode>
+      <updateRate>30</updateRate>
+      <leftJoint>turtlebot1/wheel_left_joint</leftJoint>
+      <rightJoint>turtlebot1/wheel_right_joint</rightJoint>
+      <wheelSeparation>0.160</wheelSeparation>
+      <wheelDiameter>0.066</wheelDiameter>
+      <wheelAcceleration>1</wheelAcceleration>
+      <wheelTorque>10</wheelTorque>
+      <rosDebugLevel>na</rosDebugLevel>
+    </plugin>
+    <static>0</static>
+    <plugin name='imu_plugin' filename='libgazebo_ros_imu.so'>
+      <alwaysOn>1</alwaysOn>
+      <topicName>turtlebot1/imu</topicName>
+      <serviceName>turtlebot1/imu_service</serviceName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <updateRate>0</updateRate>
+      <imu>
+        <noise>
+          <type>gaussian</type>
+          <rate>
+            <mean>0.0</mean>
+            <stddev>2e-4</stddev>
+            <bias_mean>0.0000075</bias_mean>
+            <bias_stddev>0.0000008</bias_stddev>
+          </rate>
+          <accel>
+            <mean>0.0</mean>
+            <stddev>1.7e-2</stddev>
+            <bias_mean>0.1</bias_mean>
+            <bias_stddev>0.001</bias_stddev>
+          </accel>
+        </noise>
+      </imu>
+      <bodyName>turtlebot1/base_footprint</bodyName>
+      <frameName>turtlebot1/base_footprint</frameName>
+      <xyzOffset>0.064 0 -0.156</xyzOffset>
+      <rpyOffset>0 -0 0</rpyOffset>
+    </plugin>
+  </model>
+</sdf>

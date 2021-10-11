@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- Load parameters -->
+    <rosparam command="load" file="$(find tentabot)/config/tentabot_drl/drl_testing_result_plot_params.yaml" />
+    
+    <!-- Launch the script -->
+    <node pkg="tentabot" name="plot_drl_testing_result" type="plot_drl_testing_result.py" output="screen"/>
+</launch>

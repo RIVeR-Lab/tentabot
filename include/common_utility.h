@@ -1,4 +1,7 @@
-// LAST UPDATE: 2021.03.20
+#ifndef COMMON_UTILITY_H
+#define COMMON_UTILITY_H
+
+// LAST UPDATE: 2021.09.24
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -10,18 +13,49 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <numeric>      // std::iota
+#include <algorithm>    // std::sort, std::stable_sort
+#include <std_msgs/Float64MultiArray.h>
+#include <octomap_msgs/conversions.h>
 
 // --NAMESPACES--
 using namespace std;
 
+// --GLOBAL VARIABLES--
+#define PI 3.141592653589793
+#define INF std::numeric_limits<double>::infinity()
+#define INFINT std::numeric_limits<int>::max()
+#define FMAX std::numeric_limits<float>::max()
+#define FMIN std::numeric_limits<float>::min()
+
+// DESCRIPTION: TODO...
+double randdouble(double from, double to)
+{
+  double f = (double)rand() / RAND_MAX;
+  return from + f * (to - from);  
+}
+
 // DESCRIPTION: TODO...
 vector<double> sampling_func(double mini, 
                              double maxi, 
-                             int snum, 
-                             string stype="linear", 
-                             bool included=true)
+                             int snum,
+                             bool included=true,
+                             string stype="linear")
 {
-  if(snum <= 2)
+  if(snum < 2)
+  { 
+    vector<double> v;
+    if (included)
+    {
+      v.push_back(maxi);
+    }
+    else
+    {
+      v.push_back(mini);
+    }
+    return v;
+  }
+  else if(snum == 2)
   { 
     vector<double> v;
     if (included)
@@ -128,6 +162,67 @@ vector<double> sampling_func(double mini,
 }
 
 // DESCRIPTION: TODO...
+template <class T>
+vector<T> subsample(vector<T> v, int scount)
+{
+  vector<T> vsub;
+  int dv;
+  int vsize = v.size();
+  if(vsize % scount == 0)
+  {
+    dv = vsize / scount;
+  }
+  else
+  {
+    dv = vsize / scount + 1;
+  }
+
+  for (int i = 0; i < scount-1; ++i)
+  {
+    vsub.push_back(v[i*dv]);
+  }
+  vsub.push_back(v.back());
+  return vsub;
+}
+
+// DESCRIPTION: TODO...
+int find_min(vector<double> v)
+{
+  if (v.size() > 0)
+  {
+    int min_index = 0;
+    double min = v[0];
+
+    for (int i = 0; i < v.size(); ++i)
+    {
+      if (v[i] < min)
+      {
+        min = v[i];
+        min_index = i;
+      }
+    }
+    return min_index;
+  }
+  return -1;
+}
+
+// DESCRIPTION: TODO...
+vector<double> sort_indices(vector<double>& v) 
+{
+  // initialize original index locations
+  vector<double> idx(v.size());
+  iota(idx.begin(), idx.end(), 0);
+
+  // sort indexes based on comparing values in v
+  // using std::stable_sort instead of std::sort
+  // to avoid unnecessary index re-orderings
+  // when v contains elements of equal values 
+  stable_sort(idx.begin(), idx.end(),[&v](double i1, double i2) {return v[i1] < v[i2];});
+
+  return idx;
+}
+
+// DESCRIPTION: TODO...
 vector<double> find_limits(vector<geometry_msgs::Point>& archy)
 {
   vector<double> v(6);  // [0]: min_x, [1]: max_x, [2]: min_y, [3]: max_y, [4]: min_z, [5]: max_z
@@ -180,6 +275,12 @@ double find_norm(geometry_msgs::Point p)
 }
 
 // DESCRIPTION: TODO...
+double find_Euclidean_distance(geometry_msgs::Point p1, tf::Vector3 p2)
+{
+  return ( sqrt( pow(p1.x - p2.x(), 2) + pow(p1.y - p2.y(), 2) + pow(p1.z - p2.z(), 2) ) );
+}
+
+// DESCRIPTION: TODO...
 double find_Euclidean_distance(geometry_msgs::Point p1, geometry_msgs::Point p2)
 {
   return ( sqrt( pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2) + pow(p1.z - p2.z, 2) ) );
@@ -209,6 +310,36 @@ vector<double> find_closest_dist(vector<geometry_msgs::Point>& archy,
     }
   }
   return v;
+}
+
+// DESCRIPTION: TODO...
+bool isInBBx(double px, double py, double pz, double min_x, double max_x, double min_y, double max_y, double min_z, double max_z)
+{
+  return (px >= min_x) && (px < max_x) && (py >= min_y) && (py < max_y) && (pz >= min_z) && (pz < max_z);
+}
+
+// DESCRIPTION: TODO...
+bool isInBBx(geometry_msgs::Point po, double min_x, double max_x, double min_y, double max_y, double min_z, double max_z)
+{
+  return (po.x >= min_x) && (po.x < max_x) && (po.y >= min_y) && (po.y < max_y) && (po.z >= min_z) && (po.z < max_z);
+}
+
+// DESCRIPTION: TODO...
+bool isInBBx(tf::Vector3 po, double min_x, double max_x, double min_y, double max_y, double min_z, double max_z)
+{
+  return (po.x() >= min_x) && (po.x() < max_x) && (po.y() >= min_y) && (po.y() < max_y) && (po.z() >= min_z) && (po.z() < max_z);
+}
+
+// DESCRIPTION: TODO...
+bool isInBBx(tf::Vector3 po, tf::Vector3 mini, tf::Vector3 maxi)
+{
+  return (po.x() >= mini.x()) && (po.x() < maxi.x()) && (po.y() >= mini.y()) && (po.y() < maxi.y()) && (po.z() >= mini.z()) && (po.z() < maxi.z());
+}
+
+// DESCRIPTION: TODO...
+bool isInBBx(tf::Vector3 po, octomap::point3d mini, octomap::point3d maxi)
+{
+  return (po.x() >= mini.x()) && (po.x() < maxi.x()) && (po.y() >= mini.y()) && (po.y() < maxi.y()) && (po.z() >= mini.z()) && (po.z() < maxi.z());
 }
 
 // DESCRIPTION: TODO...
@@ -262,7 +393,7 @@ void print(vector< vector<int> >& vecvec)
 }
 
 // DESCRIPTION: TODO...
-void print(vector<geometry_msgs::Point> vec)
+void print(vector<geometry_msgs::Point>& vec)
 {
   int vsize = vec.size();
   for(int i = 0; i < vsize; i++)
@@ -272,7 +403,7 @@ void print(vector<geometry_msgs::Point> vec)
 }
 
 // DESCRIPTION: TODO...
-void print(vector<geometry_msgs::Point32> vec)
+void print(vector<geometry_msgs::Point32>& vec)
 {
   int vsize = vec.size();
   for(int i = 0; i < vsize; i++)
@@ -285,6 +416,54 @@ void print(vector<geometry_msgs::Point32> vec)
 void print(geometry_msgs::Point po)
 {
   cout << "(" << po.x << ", " << po.y << ", " << po.z << ")" << endl; 
+}
+
+// DESCRIPTION: TODO...
+void print(geometry_msgs::Point32 po)
+{
+  cout << "(" << po.x << ", " << po.y << ", " << po.z << ")" << endl; 
+}
+
+// DESCRIPTION: TODO...
+void print(vector< vector<double> >& vecvec)
+{
+  int count = 0;
+  int vsize1 = vecvec.size();
+  for(int i = 0; i < vsize1; i++)
+  {
+    int vsize2 = vecvec[i].size();
+    for(int j = 0; j < vsize2; j++)
+    {
+      cout << count << ") " << vecvec[i][j] << endl;
+      count++;
+    }
+  }
+}
+
+// DESCRIPTION: TODO...
+void print(vector< vector<geometry_msgs::Point> >& vecvec)
+{
+  int count = 0;
+  int vsize1 = vecvec.size();
+  for(int i = 0; i < vsize1; i++)
+  {
+    int vsize2 = vecvec[i].size();
+    for(int j = 0; j < vsize2; j++)
+    {
+      cout << count << ": (" << vecvec[i][j].x << ", " << vecvec[i][j].y << ", " << vecvec[i][j].z << ")" << endl;
+      count++;
+    }
+  }
+}
+
+// DESCRIPTION: TODO...
+void clear_vector(vector< vector<double> >& vecvec)
+{
+  int vsize1 = vecvec.size();
+  for(int i = 0; i < vsize1; i++)
+  {
+    vecvec.clear();
+  }
 }
 
 // DESCRIPTION: TODO...
@@ -326,3 +505,5 @@ string createFileName()
 
   return str;
 }
+
+#endif

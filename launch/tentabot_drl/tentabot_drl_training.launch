@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- Load parameters 
+    tentabot_drl_turtlebot3_training_params
+    -->
+    <rosparam command="load" 
+        file="$(find tentabot)/config/tentabot_drl/tentabot_drl_turtlebot3_training_params.yaml" />
+    
+    <!-- Launch the training system 
+    tentabot_drl_training_turtlebot3
+    -->
+    <node pkg="tentabot" 
+        name="tentabot_drl_training_turtlebot3" 
+        type="tentabot_drl_training_turtlebot3.py" 
+        output="screen"/>
+</launch>

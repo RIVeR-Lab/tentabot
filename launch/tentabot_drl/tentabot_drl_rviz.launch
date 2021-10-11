@@ -1,0 +1,7 @@
+<launch>
+
+  <arg name="rvizconfig"    default="$(find tentabot)/rviz/tentabot_turtlebot3.rviz" />
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+</launch>

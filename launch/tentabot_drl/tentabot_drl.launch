@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    
+    <!-- Launch the training system -->
+    <node pkg="tentabot" name="tentabot_drl" type="tentabot_drl.py" output="screen"/>
+
+</launch>

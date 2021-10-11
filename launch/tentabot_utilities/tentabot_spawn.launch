@@ -1,0 +1,37 @@
+<launch>
+
+  <arg name="ns"    default=""/>
+  <arg name="model" default="burger" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find tentabot)/urdf/tentabot.urdf.xacro'"/>
+  <arg name="gui" default="false" />
+
+  <arg name="x"     default="0.0"/>
+  <arg name="y"     default="0.0"/>
+  <arg name="z"     default="0.0"/>
+  <arg name="roll"  default="0"/>
+	<arg name="pitch" default="0"/>
+	<arg name="yaw"   default="0"/>
+
+  <param name="$(arg ns)/robot_description" command="$(arg urdf_file) ns:=$(arg ns) model:=$(arg model)"/>
+
+  <node name="$(arg ns)_spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+      args="-urdf 
+            -param $(arg ns)/robot_description 
+            -model $(arg ns) 
+            -x $(arg x) -y $(arg y) -z $(arg z) 
+            -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" ns="$(arg ns)">
+		<param name="tf_prefix"         value="$(arg ns)"/>
+		<param name="publish_frequency" type="double" value="30.0" />
+	</node>
+
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" ns="$(arg ns)">
+    <param name="/use_gui" value="$(arg gui)"/>
+  </node>
+
+  <include file="$(find jackal_control)/launch/control_with_ns.launch" if="$(eval model == 'jackal')">
+    <arg name="ns"            value="$(arg ns)"/>
+  </include>
+
+</launch>

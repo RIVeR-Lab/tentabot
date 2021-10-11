@@ -1,0 +1,58 @@
+## General Parameters
+mode: "training"
+deep_learning_algorithm: "PPO"
+motion_planning_algorithm: "tentabot_drl"
+
+# lidar_FC                                  -> FC(laser_data + target + prev_action)
+# lidar_1DCNN_FC                            -> 1DCNN(Channel: time, Length: laser_data) + FC(CNN_output + target + prev_action)
+# Tentabot_FC                               -> FC(occupancy_set + target + prev_action)
+# Tentabot_1DCNN_FC                         -> 1DCNN(Channel: time, Length: occupancy_set) + FC(CNN_output + target + prev_action), if cit_flag = True 
+# Tentabot_1DCNN_FC                         -> 1DCNN(Channel: occupancy_set, Length: time) + FC(CNN_output + target + prev_action), if cit_flag = False 
+# Tentabot_2DCNN_FC                         -> 2DCNN(Channel: 1, Height: occupancy_set, Width: time) + FC(CNN_output + target + prev_action)
+observation_space_type: "Tentabot_FC"
+
+# training_garden_static_0
+# training_garden_dynamic_0 
+# training_4robot3D1P
+world_name: "training_garden_static_0"
+
+task_and_robot_environment_name: "TurtleBot3tentabot_drl-v0"
+number_of_robots: 1
+data_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/training/"
+learning_rate: 0.0002
+n_steps: 1000
+batch_size: 50
+ent_coef: 0.001
+training_timesteps: 50000
+max_episode_steps: 2000
+initial_trained_model_path: ""
+#initial_trained_model_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/training/Tentabot_FC/20210911_001724_PPO_tentabot/"
+plot_title: "Learning Curve"
+plot_moving_average_window_size: 20
+world_frame_name: "world"
+mantissa_precision: 2
+
+## Sensors
+laser_size_downsampled: 0
+laser_normalize_flag: True
+
+## Robot
+velocity_control_data_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/trajectory_sampling/20211011_150548/"
+
+## Algorithm: Tentabot-RL Parameters
+goal_close_threshold: 0.25
+obs_min_range: 0.25
+
+n_obs_stack: 5
+n_skip_obs_stack: 10
+
+cit_flag: True # cit = channel is time
+
+n_wp: 8
+
+# Reward:
+reward_success: 200
+penalty_failure: -150
+safety_range_threshold: 0.5
+penalty_safety_scale: -1.0
+reward_goal_scale: 10.0

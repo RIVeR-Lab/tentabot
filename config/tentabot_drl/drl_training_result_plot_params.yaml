@@ -1,0 +1,18 @@
+## General Parameters
+plot_flag: True
+plot_path: ""
+#plot_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/"
+plot_title: "Learning Curve"
+plot_moving_average_window_size: 20
+print_data: False
+
+data_cnt: 1
+data_path1: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/Tentabot_FC/20210911_001724_PPO_tentabot/"
+
+#data_cnt: 6
+#data_path1: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/laser_FC/20210914_093720_PPO_tentabot/"
+#data_path2: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/laser_1DCNN_FC_v1/20210908_215135_PPO_tentabot/"
+#data_path3: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/laser_1DCNN_FC_v2/20210913_230718_PPO_tentabot/"
+#data_path4: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/Tentabot_FC/20210914_095714_PPO_tentabot/"
+#data_path5: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/Tentabot_1DCNN_FC/20210913_231432_PPO_tentabot/"
+#data_path6: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/training_data/Tentabot_2DCNN_FC/20210913_172759_PPO_tentabot/"

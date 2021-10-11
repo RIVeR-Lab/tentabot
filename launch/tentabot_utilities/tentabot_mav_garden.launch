@@ -1,0 +1,67 @@
+<launch>
+
+  <!-- General Parameters -->
+  <arg name="world_frame_name" value="world"/>
+
+  <!-- Robot Parameters -->
+
+  <!--cylinders0
+      training_mav_garden_static_0-->
+  <arg name="world_name" value="training_mav_garden_static_0"/>
+  <arg name="robot_name" value="firefly"/>
+  <arg name="robot_frame_name" value="firefly/base_link"/>
+  <arg name="robot_init_pos_x" value="0.0"/>                <!--NUA: Unnecessary? Use TF? -->
+  <arg name="robot_init_pos_y" value="0.0"/>                 <!--NUA: Unnecessary? Use TF? -->
+  <arg name="robot_init_pos_z" value="1.0"/>                  <!--NUA: Unnecessary? Use TF? -->
+  <arg name="robot_init_yaw" value="$(eval 2*pi)"/>           <!--NUA: Unnecessary? Use TF? -->
+  <arg name="odometry_msg" value="/firefly/odometry_sensor1/pose"/>
+
+  <!-- Simulation Parameters -->
+  <arg name="enable_logging" default="false" />
+  <arg name="enable_ground_truth" default="true" />
+  <arg name="log_file" default="$(arg robot_name)" />
+  <arg name="paused" value="false" />
+  <arg name="dt" value="0.1" />
+
+  <!--mav_r200
+      mav_d435/-->
+  <arg name="robot_model" value="$(find tentabot)/urdf/mav_d435.gazebo" />
+
+  <!-- START SIMULATION -->
+  <env name="GAZEBO_MODEL_PATH" value="$(find rotors_gazebo)/models:$(find ewok_simulation)/models"/>
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!--arg name="world_name" value="$(find ewok_simulation)/worlds/$(arg world_name).world" /-->
+    <arg name="world_name" value="$(find tentabot)/worlds/$(arg world_name).world" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="verbose" default="false"/>
+    <arg name="gui" default="true"/>
+  </include>
+
+  <!--node pkg="tf" type="static_transform_publisher" name="world" args="0 0 0 0 0 0 1 world $(arg robot_name)/odometry_sensor1/odometry 100" /-->
+
+  <group ns="$(arg robot_name)">
+
+    <!-- ADD ROBOT INTO SIMULATION -->
+    <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
+      <arg name="mav_name" value="$(arg robot_name)" />
+      <arg name="model" value="$(arg robot_model)" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" value="$(arg robot_init_pos_x)"/>
+      <arg name="y" value="$(arg robot_init_pos_y)"/>
+    </include>
+
+    <!-- START THE POSITION CONTROLLER -->
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg robot_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg robot_name).yaml" />
+      <param name="dt" value="$(arg dt)" />
+      <remap from="odometry" to="odometry_sensor1/odometry" />
+    </node>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+</launch>

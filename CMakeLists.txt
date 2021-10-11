@@ -1,52 +1,61 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(tentabot)
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
-add_definitions(-std=c++11 -g -O3 -ftree-vectorize -march=native)
+add_compile_options(-std=c++14)
+add_definitions(-std=c++14 -g -O3 -ftree-vectorize -march=native)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-
-#list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
+  roscpp 
+  rospy 
   std_msgs
-  geometry_msgs
-  pcl_conversions
-  pcl_ros
+  message_generation
+  geometry_msgs 
+  pcl_msgs 
+  pcl_conversions 
+  pcl_ros 
   octomap_ros
   octomap_msgs
-  message_generation
   sensor_msgs
-  catkin_simple
   mav_msgs
   eigen_conversions
   tf
   tf_conversions
   cv_bridge
-  ewok_optimization
-  ewok_poly_spline
-  ewok_ring_buffer
+  #ewok_optimization
+  #ewok_poly_spline
+  #ewok_ring_buffer
   forest_gen
   rotors_control
+  laser_geometry
 )
 
 ## System dependencies are found with CMake's conventions
-find_package(catkin_simple REQUIRED)
+# find_package(Boost REQUIRED COMPONENTS system)
+find_package(PCL REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(SuiteSparse REQUIRED)
 find_package(octomap REQUIRED)
+find_package(CCD REQUIRED)
+
+find_library(EIGEN_CDDLIB_LIB eigen-cddlib)
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/cmake/FindFCL.cmake")
+  find_package(FCL REQUIRED)
+else()
+  set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/cmake/")
+  find_package(FCL REQUIRED)
+endif()
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+#catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -73,17 +82,19 @@ find_package(octomap REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-#  add_message_files(   
-#  FILES
+# add_message_files(
+#   FILES
+#   Message1.msg
 #   Message2.msg
-#)
+# )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+   FILES
+   rl_step.srv
+   update_goal.srv
+   reset_map_utility.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -93,7 +104,7 @@ find_package(octomap REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
+generate_messages(
    DEPENDENCIES
    std_msgs
    geometry_msgs
@@ -131,10 +142,10 @@ find_package(octomap REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-   #INCLUDE_DIRS include
-   LIBRARIES tentabot pcl mat
-   CATKIN_DEPENDS roscpp rospy std_msgs geometry_msgs pcl_conversions pcl_ros octomap_ros octomap_msgs message_runtime sensor_msgs
-   #DEPENDS
+#  INCLUDE_DIRS include
+   LIBRARIES tentabot mat
+   CATKIN_DEPENDS roscpp rospy message_runtime std_msgs geometry_msgs octomap_ros octomap_msgs sensor_msgs pcl_conversions
+   DEPENDS FCL
 )
 
 ###########
@@ -144,27 +155,49 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include/
-  ${EIGEN3_INCLUDE_DIRS}
-  ${CHOLMOD_INCLUDE_DIR}
+  include
+  ${PYTHON_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
-  ${OCTOMAP_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
+  ${FCL_INCLUDE_DIRS}
+  ${CHOLMOD_INCLUDE_DIR}
+  ${octomap_INCLUDE_DIRS}
   mav_comm/
   rotors_simulator/
 )
 
 ## Declare a C++ library
+# add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/tentabot.cpp
-#)
+# )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+add_library(trajectory_sampling_utility src/utilities/trajectory_sampling_utility.cpp)
+add_library(goal_utility src/utilities/goal_utility.cpp)
+add_library(map_utility src/utilities/map_utility.cpp)
+add_library(tentabot src/utilities/tentabot.cpp)
+
+add_executable(map_utility_server src/utilities/map_utility_server.cpp)
+target_link_libraries(map_utility_server ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} map_utility ${FCL_LIBRARIES} )
+
+add_executable(tentabot_drl_service src/utilities/tentabot_drl_service.cpp)
+target_link_libraries(tentabot_drl_service ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} trajectory_sampling_utility goal_utility tentabot)
+
+add_executable(tentabot_heuristic_firefly src/examples/tentabot_heuristic_firefly.cpp)
+target_link_libraries(tentabot_heuristic_firefly ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} trajectory_sampling_utility goal_utility tentabot)
+
+add_executable(tentabot_heuristic_turtlebot3 src/examples/tentabot_heuristic_turtlebot3.cpp)
+target_link_libraries(tentabot_heuristic_turtlebot3 ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} trajectory_sampling_utility goal_utility tentabot)
+
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_node src/tentabot_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -174,20 +207,12 @@ include_directories(
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-#add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_library(goal_utility src/goal_utility.cpp)
-add_library(map_utility src/map_utility.cpp)
-add_library(tentabot src/tentabot.cpp)
-
-add_executable(tentabot_go src/tentabot_go.cpp)
-target_link_libraries(tentabot_go ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} goal_utility map_utility tentabot ${OCTOMAP_LIBRARIES})
-
-#add_executable(tentabot_go_mobiman src/tmp/tentabot_go_mobiman.cpp)
-#target_link_libraries(tentabot_go_mobiman ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} goal_utility map_utility ${OCTOMAP_LIBRARIES})
-
-#add_executable(tentabot_go_extend src/tmp/tentabot_go_extend.cpp)
-#target_link_libraries(tentabot_go_extend  ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${TF_LIBRARIES} goal_utility map_utility tentabot ${OCTOMAP_LIBRARIES})
+## Specify libraries to link a library or executable target against
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -198,16 +223,23 @@ target_link_libraries(tentabot_go ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt $
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
+# catkin_install_python(PROGRAMS
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
+## Mark executables for installation
+## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
+# install(TARGETS ${PROJECT_NAME}_node
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
+
+## Mark libraries for installation
+## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
+# install(TARGETS ${PROJECT_NAME}
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 # )
 
 ## Mark cpp header files for installation

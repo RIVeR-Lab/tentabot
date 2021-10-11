@@ -1,4 +1,7 @@
-// LAST UPDATE: 2021.03.20
+#ifndef GOAL_UTILITY_H
+#define GOAL_UTILITY_H
+
+// LAST UPDATE: 2021.10.05
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -9,6 +12,7 @@
 // --OUTSOURCE LIBRARIES--
 #include "ros/ros.h"
 #include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/PoseStamped.h>
 
 // --NAMESPACES--
 using namespace std;
@@ -23,10 +27,10 @@ class GoalUtility
     GoalUtility();
 
     // DESCRIPTION: TODO...
-    GoalUtility(NodeHandle nh, string new_frame_name, string new_goal_name);
+    GoalUtility(NodeHandle& nh, string new_frame_name, string new_goal_name, string new_goal_msg="/goal");
 
     // DESCRIPTION: TODO...
-    GoalUtility(NodeHandle nh, string new_frame_name, vector<geometry_msgs::Pose> new_goal, string new_goal_name);
+    GoalUtility(NodeHandle& nh, string new_frame_name, vector<geometry_msgs::Pose> new_goal, string new_goal_name, string new_goal_msg="/goal");
 
     // DESCRIPTION: TODO...
     GoalUtility(const GoalUtility& gu);
@@ -35,10 +39,13 @@ class GoalUtility
     ~GoalUtility();
 
     // DESCRIPTION: TODO...
-    GoalUtility& operator = (const GoalUtility &gu);
+    GoalUtility& operator = (const GoalUtility& gu);
 
     // DESCRIPTION: TODO...
     string getFrameName();
+
+    // DESCRIPTION: TODO...
+    string getGoalMsg();
 
     // DESCRIPTION: TODO...
     string getGoalName();
@@ -62,6 +69,9 @@ class GoalUtility
     void setFrameName(string new_frame_name);
 
     // DESCRIPTION: TODO...
+    void setGoalMsg(string new_goal_msg);
+
+    // DESCRIPTION: TODO...
     void setGoalName(string new_goal_name);
 
     // DESCRIPTION: TODO...
@@ -83,7 +93,7 @@ class GoalUtility
     void addGoalPoint(double gpx, double gpy, double gpz);
 
     // DESCRIPTION: TODO...
-    void setRandomGoal(vector<double> x_range, vector<double> y_range, vector<double> z_range, int num);
+    void setRandomGoal(vector<double> x_range, vector<double> y_range, vector<double> z_range, int num, bool duplicate_check=false);
 
     // DESCRIPTION: TODO...
     void setActiveGoalIndex(int new_active_goal_index);
@@ -112,6 +122,9 @@ class GoalUtility
     // DESCRIPTION: TODO...
     void printGoal();
 
+    // DESCRIPTION: TODO...
+    void goalCallback(const geometry_msgs::PoseStamped msg);
+
   private:
     
     string goal_name;
@@ -120,6 +133,7 @@ class GoalUtility
     visualization_msgs::MarkerArray goal_visu;
     ros::Publisher goal_visu_pub;
     string frame_name;
+    string goal_msg;
 
     // DESCRIPTION: TODO...
     double randdouble(double from, double to);
@@ -129,4 +143,7 @@ class GoalUtility
 
     // DESCRIPTION: TODO...
     bool isVecContainPoint(vector<geometry_msgs::Pose> vec, geometry_msgs::Pose p);
+
 }; //END of class GoalUtility
+
+#endif

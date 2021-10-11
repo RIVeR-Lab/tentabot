@@ -1,0 +1,524 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 0
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /TF1/Frames1
+        - /MarkerArray3/Namespaces1
+        - /MarkerArray5/Namespaces1
+        - /Marker1/Namespaces1
+      Splitter Ratio: 0.56623375415802
+    Tree Height: 763
+  - Class: rviz/Selection
+    Name: Selection
+  - Class: rviz/Tool Properties
+    Expanded:
+      - /2D Pose Estimate1
+      - /2D Nav Goal1
+      - /Publish Point1
+    Name: Tool Properties
+    Splitter Ratio: 0.586667001247406
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz/Time
+    Experimental: false
+    Name: Time
+    SyncMode: 0
+    SyncSource: ""
+Preferences:
+  PromptSaveOnExit: true
+Toolbars:
+  toolButtonStyle: 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.10000000149011612
+      Cell Size: 1
+      Class: rviz/Grid
+      Color: 0; 0; 0
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 20
+      Reference Frame: firefly/base_link
+      Value: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        firefly/base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/base_link_inertia:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/bracket:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/bracket_end_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/bracket_end_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/camera:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/camera_rgb_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/camera_rgb_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/imugt_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/odometry_sensor1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/odometry_sensorgt_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        firefly/rotor_0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/rotor_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/rotor_2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/rotor_3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/rotor_4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly/rotor_5:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly_laser:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        firefly_laser_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: firefly/robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz/Image
+      Enabled: false
+      Image Topic: /firefly/camera/rgb/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: false
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        firefly/base_link:
+          Value: true
+        firefly/base_link_inertia:
+          Value: false
+        firefly/bracket:
+          Value: false
+        firefly/bracket_end_left:
+          Value: false
+        firefly/bracket_end_right:
+          Value: false
+        firefly/camera:
+          Value: false
+        firefly/camera_depth_frame:
+          Value: false
+        firefly/camera_depth_optical_frame:
+          Value: false
+        firefly/camera_rgb_frame:
+          Value: false
+        firefly/camera_rgb_optical_frame:
+          Value: false
+        firefly/imu_link:
+          Value: false
+        firefly/imugt_link:
+          Value: false
+        firefly/odometry_sensor1:
+          Value: false
+        firefly/odometry_sensor1_link:
+          Value: false
+        firefly/odometry_sensorgt_link:
+          Value: false
+        firefly/rotor_0:
+          Value: false
+        firefly/rotor_1:
+          Value: false
+        firefly/rotor_2:
+          Value: false
+        firefly/rotor_3:
+          Value: false
+        firefly/rotor_4:
+          Value: false
+        firefly/rotor_5:
+          Value: false
+        firefly_laser:
+          Value: false
+        firefly_laser_mount:
+          Value: false
+        world:
+          Value: true
+      Marker Alpha: 1
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: false
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          firefly/base_link:
+            firefly/base_link_inertia:
+              {}
+            firefly/bracket_end_right:
+              firefly/bracket:
+                firefly/bracket_end_left:
+                  {}
+                firefly/camera:
+                  firefly/camera_rgb_frame:
+                    firefly/camera_depth_frame:
+                      firefly/camera_depth_optical_frame:
+                        {}
+                    firefly/camera_rgb_optical_frame:
+                      {}
+            firefly/imu_link:
+              {}
+            firefly/imugt_link:
+              {}
+            firefly/odometry_sensor1_link:
+              {}
+            firefly/odometry_sensorgt_link:
+              {}
+            firefly/rotor_0:
+              {}
+            firefly/rotor_1:
+              {}
+            firefly/rotor_2:
+              {}
+            firefly/rotor_3:
+              {}
+            firefly/rotor_4:
+              {}
+            firefly/rotor_5:
+              {}
+            firefly_laser_mount:
+              firefly_laser:
+                {}
+          firefly/odometry_sensor1:
+            {}
+      Update Interval: 0
+      Value: true
+    - Alpha: 1
+      Class: rviz/Axes
+      Enabled: false
+      Length: 1
+      Name: Axes
+      Radius: 0.10000000149011612
+      Reference Frame: world
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /firefly/twoGoal
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 0.05682551860809326
+        Min Value: -0.21155768632888794
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud
+      Color: 193; 125; 17
+      Color Transformer: AxisColor
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 193; 125; 17
+      Min Color: 193; 125; 17
+      Name: PointCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.10000000149011612
+      Style: Boxes
+      Topic: /firefly/ego_occupancy_pc
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: false
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 0.0629960298538208
+        Min Value: 0.06298589706420898
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: AxisColor
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /firefly/camera/depth/points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 2.9987685680389404
+        Min Value: 0.050001323223114014
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /firefly/Tentabot_recentPC2
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Class: octomap_rviz_plugin/ColorOccupancyGrid
+      Enabled: true
+      Max. Height Display: 3.4028234663852886e+38
+      Max. Octree Depth: 16
+      Min. Height Display: -3.4028234663852886e+38
+      Name: ColorOccupancyGrid
+      Octomap Topic: /server_octomap
+      Queue Size: 1
+      Value: true
+      Voxel Alpha: 1
+      Voxel Coloring: Z-Axis
+      Voxel Rendering: Occupied Voxels
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /firefly/best_tentacle
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /firefly/tentacles
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /firefly/sampling_points
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /firefly/support_voxels
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/Marker
+      Enabled: false
+      Marker Topic: /firefly/tentabot
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /firefly/path2glory
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: false
+      Marker Topic: /firefly/commandante
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+  Enabled: true
+  Global Options:
+    Background Color: 255; 255; 255
+    Default Light: true
+    Fixed Frame: world
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/FocusCamera
+    - Class: rviz/Measure
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: /robocremers1/initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: /robocremers1/move_base_simple/goal
+    - Class: rviz/PublishPoint
+      Single click: true
+      Topic: /clicked_point
+  Value: true
+  Views:
+    Current:
+      Class: rviz/Orbit
+      Distance: 37.93639373779297
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Field of View: 0.7853981852531433
+      Focal Point:
+        X: 10.134380340576172
+        Y: -0.990178644657135
+        Z: 2.665295362472534
+      Focal Shape Fixed Size: false
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 1.469796061515808
+      Target Frame: firefly/base_link
+      Yaw: 6.240242958068848
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1043
+  Hide Left Dock: false
+  Hide Right Dock: true
+  Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd00000004000000000000015600000338fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d00000338000000c900fffffffb0000000a0049006d006100670065000000027b000000fa0000001600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d0061006700650100000337000000cd0000000000000000fb0000000a0049006d0061006700650100000369000000d0000000000000000000000001000001600000034bfc0200000008fb0000000a0049006d0061006700650000000041000001290000000000000000fb0000000a0049006d00610067006501000000410000021e0000000000000000fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730000000047000001440000005c00fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000a30000000000000000fb0000000a0049006d00610067006500000000ab000000fa0000000000000000fb0000000a0049006d00610067006501000000d80000017b0000000000000000fb0000000a00560069006500770073000000019200000200000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000461000000bcfc0100000002fb0000000a0049006d0061006700650100000000000004610000000000000000fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000007bfc0100000002fb0000000800540069006d0065010000000000000780000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000006240000033800000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: false
+  Time:
+    collapsed: false
+  Tool Properties:
+    collapsed: true
+  Views:
+    collapsed: true
+  Width: 1920
+  X: 1920
+  Y: 0

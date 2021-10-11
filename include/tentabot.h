@@ -1,4 +1,7 @@
-// LAST UPDATE: 2021.03.20
+#ifndef TENTABOT_H
+#define TENTABOT_H
+
+// LAST UPDATE: 2021.10.08
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -16,48 +19,30 @@
 //     sensing and motion. Journal of Field Robotics, 25(9):640–673, 2008.
 
 // --OUTSOURCE LIBRARIES--
-#include <tf/transform_broadcaster.h>
-#include <octomap_msgs/conversions.h>
 #include <std_msgs/Float64MultiArray.h>
-#include <iostream>
-#include <fstream>
 #include <thread>
-#include <chrono>
-#include <map>
-#include <Eigen/Core>
-#include <mav_msgs/conversions.h>
-#include <mav_msgs/default_topics.h>
-#include <ros/ros.h>
-#include <ros/package.h>
 #include <std_srvs/Empty.h>
 #include <sensor_msgs/Image.h>
 #include <cv_bridge/cv_bridge.h>
-#include <tf/transform_listener.h>
 #include <tf_conversions/tf_eigen.h>
 #include <tf/message_filter.h>
 #include <message_filters/subscriber.h>
-#include <trajectory_msgs/MultiDOFJointTrajectory.h>
-#include <visualization_msgs/MarkerArray.h>
-#include <std_msgs/ColorRGBA.h>
-
-#include <ewok/polynomial_3d_optimization.h>
-#include <ewok/uniform_bspline_3d_optimization.h>
+#include <nav_msgs/Odometry.h>
+#include <octomap_msgs/conversions.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl_ros/transforms.h>
 
 // --CUSTOM LIBRARIES--
 #include "common_utility.h"
-#include "map_utility.h"
 #include "goal_utility.h"
+#include "tentabot/rl_step.h"
+#include "tentabot/update_goal.h"
 
 // --NAMESPACES--
 using namespace std;
 using namespace ros;
-
-// --GLOBAL VARIABLES--
-#define PI 3.141592653589793
-#define INF std::numeric_limits<double>::infinity()
-#define INFINT std::numeric_limits<int>::max()
-#define FMAX std::numeric_limits<float>::max()
-#define FMIN std::numeric_limits<float>::min()
+using namespace octomap;
 
 // DESCRIPTION: TODO...
 class Tentabot
@@ -87,89 +72,73 @@ class Tentabot
       bool online_tuning_flag;                      // TODO: Review: flag to auto-tune online parameters
       double time_limit;                            // TODO: Review: time limit for the navigation, unit: s, range: 0 < time_limit, E R+
       double nav_dt;                                // TODO: Review: frequency of ROS loop
-      bool navexit_flag;                            // TODO: Review: flag to exit from the navigation loop  
       double goal_close_threshold;                  // TODO: Review: threshold distance from goal to robot position in the global coordinate frame, range: 0 <= goal_close_threshold, E R+
-      int counter;
-    };
-
-    // DESCRIPTION: TODO...
-    struct NavSensor
-    {
-      vector<string> name = vector<string>(5);
-      double freq;                                  // TODO: Review: robot's navigation sensor (lidar, camera, etc.) sampling time, unit: s, range: 0 < nav_sensor_freq, E R+
-      double resolution;                            // TODO: Review: resolution of robot's navigation sensor (lidar, camera, etc.), unit: m, range: 0 < nav_sensor_resolution, E R+
-      vector<double> range_x = vector<double>(2);   // TODO: Review: maximum range of robot's navigation sensor (lidar, camera, etc.) in x, unit: m, range: 0 < nav_sensor_max_range_x, E R+
-      vector<double> range_y = vector<double>(2);   // TODO: Review: maximum range of robot's navigation sensor (lidar, camera, etc.) in y, unit: m, range: 0 < nav_sensor_max_range_y, E R+
-      vector<double> range_z = vector<double>(2);   // TODO: Review: maximum range of robot's navigation sensor (lidar, camera, etc.) in z, unit: m, range: 0 < nav_sensor_max_range_z, E R+
-      geometry_msgs::Pose pose_wrt_robot;           // TODO: Review: position and orientation of the navigation sensor of the robot with respect to the robot's coordinate system
-      string frame_name;                            // TODO: Review: name of the navigation sensor frame
     };
 
     // DESCRIPTION: TODO...
     struct RobotParams
     {
-      double width;                                             // TODO: Review: width of the robot, unit: m, range: 0 < width, E R+
-      double length;                                            // TODO: Review: length of the robot, unit: m, range: 0 < length, E R+
-      double height;                                            // TODO: Review: height of the robot, unit: m, range: 0 < height, E R+
+      string world_name;
+      string robot_name;                                        // TODO: Review: name of the robot
+      string robot_frame_name;                                  // TODO: Review: name of the robot frame
+      string sensor_frame_name;
+      double robot_bbx_x_max;                                   // TODO: Review: width of the robot, unit: m, range: 0 < width, E R+
+      double robot_bbx_x_min;                                   // TODO: Review: width of the robot, unit: m, range: 0 < width, E R+
+      double robot_bbx_y_max;                                   // TODO: Review: length of the robot, unit: m, range: 0 < length, E R+
+      double robot_bbx_y_min;                                   // TODO: Review: length of the robot, unit: m, range: 0 < length, E R+
+      double robot_bbx_z_max;                                   // TODO: Review: height of the robot, unit: m, range: 0 < height, E R+
+      double robot_bbx_z_min;                                   // TODO: Review: height of the robot, unit: m, range: 0 < height, E R+
       double dummy_max_lat_velo;                                // TODO: Review: max forward lateral velocity of the robot, unit: m/s, range: 0 < dummy_max_lat_velo, E R+
       double dummy_max_lat_acc;                                 // TODO: Review: max forward lateral acceleration of the robot, unit: m/s^2, range: 0 < dummy_max_lat_acc, E R+
       double dummy_max_yaw_velo;                                // TODO: Review: max yaw angle velocity of the robot, unit: rad/s, range: 0 < dummy_max_yaw_velo, E R+
       double dummy_max_yaw_acc;                                 // TODO: Review: max yaw angle acceleration of the robot, unit: rad/s^2, range: 0 < dummy_max_yaw_acc, E R+
-      double dummy_max_pitch_velo;                              // TODO: Review: max pitch angle velocity of the robot, unit: rad/s, range: 0 < dummy_max_pitch_velo, E R+
-      double dummy_max_roll_velo;                               // TODO: Review: max roll angle velocity of the robot, unit: rad/s, range: 0 < dummy_max_roll_velo, E R+
       geometry_msgs::Pose init_robot_pose;                      // TODO: Review: position and orientation of the robot's initial pose with respect to global coordinate system
-      string robot_frame_name;                                  // TODO: Review: name of the robot frame
-      string robot_name;                                        // TODO: Review: name of the robot
-      vector< vector<geometry_msgs::Point> > tentacle_data;
-      vector<string> right_left_data;
-      vector< vector<OccupancyVoxel> > support_vox_data;
-      NavSensor nav_sensor;
+      string robot_pose_control_msg;
+      string robot_velo_control_msg;
+      string odometry_msg;
+      string map_msg;
     };
 
     // DESCRIPTION: TODO...
     struct OffTuningParams
     {
-      int tyaw_cnt;                                 // TODO: Review: number of tentacles along yaw direction, range: 1 <= tyaw_cnt, E Z+
-      int tpitch_cnt;                               // TODO: Review: number of tentacles along pitch direction, range: 1 <= tpitch_cnt, E Z+
-      int troll_cnt;                                // TODO: Review: number of tentacles along roll direction, range: 1 <= troll_cnt, E Z+
-      int tsamp_cnt;                                // TODO: Review: number of sample points on the tentacle, range: 1 <= tsamp_cnt, E Z+
-      int tlat_velo_cnt;                            // TODO: Review: number of sample between zero to max lateral velocity, range: 1 <= tlat_velo_cnt, E Z+
-      int tyaw_velo_cnt;                            // TODO: Review: number of sample between zero to max yaw angle velocity, range: 1 <= tyaw_velo_cnt, E Z+
-      int tpitch_velo_cnt;                          // TODO: Review: number of sample between zero to max pitch angle velocity, range: 1 <= tpitch_velo_cnt, E Z+
-      int troll_velo_cnt;                           // TODO: Review: number of sample between zero to max roll angle velocity, range: 1 <= troll_velo_cnt, E Z+
-      double tlen;
-      double tyaw;
-      double tpitch;
-      double troll;
-      string tentacle_type;       
-      string tyaw_samp_type;                        // parameter to adjust yaw angle sampling type of tentacles  
-      string tpitch_samp_type;                      // parameter to adjust pitch angle sampling type of tentacles 
-      string troll_samp_type;                       // parameter to adjust roll angle sampling type of tentacles
-      double pdist;                                 // priority distance, unit: m, range: 0 < cdist, E R+
-      double sdist;                                 // support distance, unit: m, range: cdist < sdist, E R+
-      double sweight_max;                           // max weight of support cells (= for priority cells) which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_max, E R+ 
-      double sweight_scale;                         // parameter to adjust weight of support cells which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_scale, E R+ 
-      double egrid_vdim;                            // dimension of the voxel in the ego-grid, unit: m, range: 0 < cdim, E R+
-      int egrid_vnumx;                              // number of voxel in the ego-grid along x direction, range: 1 <= cnumx, E Z+
-      int egrid_vnumy;                              // number of voxel in the ego-grid along y direction, range: 1 <= cnumy, E Z+  
-      int egrid_vnumz;                              // number of voxel in the ego-grid along z direction, range: 1 <= cnumz, E Z+ 
+      string tentacle_data_path;
+      vector<vector<geometry_msgs::Point>> tentacle_data;
+      vector<vector<double>> velocity_control_data;
+      double max_occupancy_belief_value;
+      double pdist_x_max;                                 // priority distance, unit: m, range: 0 < cdist, E R+
+      double pdist_x_min;                                 // priority distance, unit: m, range: 0 < cdist, E R+
+      double pdist_y_max;                                 // priority distance, unit: m, range: 0 < cdist, E R+
+      double pdist_y_min;                                 // priority distance, unit: m, range: 0 < cdist, E R+
+      double pdist_z_max;                                 // priority distance, unit: m, range: 0 < cdist, E R+
+      double pdist_z_min;                                 // priority distance, unit: m, range: 0 < cdist, E R+
+      double sdist_x_max;                                 // support distance, unit: m, range: cdist < sdist, E R+
+      double sdist_x_min;                                 // support distance, unit: m, range: cdist < sdist, E R+
+      double sdist_y_max;                                 // support distance, unit: m, range: cdist < sdist, E R+
+      double sdist_y_min;                                 // support distance, unit: m, range: cdist < sdist, E R+
+      double sdist_z_max;                                 // support distance, unit: m, range: cdist < sdist, E R+
+      double sdist_z_min;                                 // support distance, unit: m, range: cdist < sdist, E R+
+      double sweight_max;                                 // max weight of support cells (= for priority cells) which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_max, E R+ 
+      double sweight_scale;                               // parameter to adjust weight of support cells which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_scale, E R+ 
+      double egrid_vdim;                                  // dimension of the voxel in the ego-grid, unit: m, range: 0 < cdim, E R+
     };
 
     // DESCRIPTION: TODO...
     struct OnTuningParams
     {
-      int tbin_window;                              // number of tentacle bins in sliding window to decide whether the number of obstacles (histogram) correlate within consecutive bins, range: 1 <= bin_window, E Z+
       int tbin_obs_cnt_threshold;                   // threshold of number of obstacle on the tentacle bin, range: 0 <= obs_num_threshold, E Z+
+      double crash_dist_scale;                      // crash distance on the selected tentacle, range: 0 <= crash_dist, E R+
       double clear_scale;                           // parameter to adjust the weight of the clearance value while selecting best tentacle, range: 0 <= clear_scale, E R+
       double clutter_scale;                         // parameter to adjust the weight of the clutterness value while selecting best tentacle, range: 0 <= clutter_scale, E R+,
       double close_scale;                           // parameter to adjust the weight of the closeness value while selecting best tentacle, range: 0 <= close_scale, E R+
       double smooth_scale;                          // parameter to adjust the weight of the smoothness value while selecting best tentacle, range: 0 <= smooth_scale, E R+
-      double crash_dist_scale;                      // crash distance on the selected tentacle, range: 0 <= crash_dist, E R+
+      
     };
 
     // DESCRIPTION: TODO...
     struct HeuristicParams
     {
+      vector<double> occupancy_set;
       vector<int> navigability_set;
       vector<double> clearance_set;
       vector<double> clutterness_set;
@@ -180,24 +149,58 @@ class Tentabot
     // DESCRIPTION: TODO...
     struct StatusParams
     {
-      geometry_msgs::Pose prev_robot_pose;                      // TODO: Review: previous position and orientation of the robot with respect to global coordinate system
-      geometry_msgs::Pose robot_pose;                           // TODO: Review: position and orientation of the robot with respect to global coordinate system
-      geometry_msgs::PoseStamped robot_pose_command;            // TODO: Review: position and orientation command of the robot with respect to global coordinate system
+      vector<double> tentacle_length_data;
+      geometry_msgs::Point tentacle_bbx_min;
+      geometry_msgs::Point tentacle_bbx_max;
+      int egrid_vnum_x_max;                               // number of voxel in the ego-grid along x direction, range: 1 <= cnumx, E Z+
+      int egrid_vnum_x_min;                               // number of voxel in the ego-grid along -x direction, range: 1 <= cnumx, E Z+
+      int egrid_vnum_y_max;                               // number of voxel in the ego-grid along y direction, range: 1 <= cnumy, E Z+  
+      int egrid_vnum_y_min;                               // number of voxel in the ego-grid along -y direction, range: 1 <= cnumy, E Z+  
+      int egrid_vnum_z_max;                               // number of voxel in the ego-grid along z direction, range: 1 <= cnumz, E Z+ 
+      int egrid_vnum_z_min;                               // number of voxel in the ego-grid along -z direction, range: 1 <= cnumz, E Z+
+      double egrid_dist_x_max;
+      double egrid_dist_x_min;
+      double egrid_dist_y_max;
+      double egrid_dist_y_min;
+      double egrid_dist_z_max;
+      double egrid_dist_z_min;
       EgoGrid ego_grid_data;
+      vector<vector<OccupancyVoxel>> support_vox_data;
+      vector<vector<double>> sample_weight_data;
+      vector<double> tentacle_weight_data;
+
+      octomap_msgs::Octomap measured_map_msg;
+      geometry_msgs::Pose measured_robot_pose;            // TODO: Review: most recent position and orientation of the robot with respect to global coordinate system
+
+      string map_frame_name;
+      std::shared_ptr<octomap::ColorOcTree> tmap;
+      tf::StampedTransform transform_robot_wrt_world;
+      geometry_msgs::Pose robot_pose;                      // TODO: Review: previous position and orientation of the robot with respect to global coordinate system
+      geometry_msgs::Pose prev_robot_pose;                 // TODO: Review: position and orientation of the robot with respect to global coordinate system
+      ros::Time prev_time;
+      double dt;
+      double lat_speed;
+      double desired_lat_speed;
+      double lat_speed_weight;
+      double yaw_velo;
+      geometry_msgs::PoseStamped command_pose;       // TODO: Review: position and orientation command of the robot with respect to global coordinate system
+      geometry_msgs::Twist command_velo;
+
       std::vector<int> tcrash_bin;
       bool navigability_flag;
       int best_tentacle;
       int ex_best_tentacle;
       int ex_best_sample;
+      
       int nav_result;
       double nav_length;
       double nav_duration;                                      // TODO: Review: navigation duration
-      ros::Time prev_action_time;
-      ros::Publisher command_pub;
-      ros::Publisher command_point_pub;
-      ros::Time tmp_time;
-      int speed_counter;
-      double dummy_current_speed;
+      
+      ros::Publisher command_pose_pub;
+      ros::Publisher command_velo_pub;
+
+      int counter;
+      bool navexit_flag;                                        // TODO: Review: flag to exit from the navigation loop  
     };
 
     // DESCRIPTION: TODO...
@@ -205,32 +208,36 @@ class Tentabot
     {
       ros::Publisher robot_visu_pub;                            // TODO: Review: publisher for robot visualization 
       ros::Publisher tentacle_visu_pub;
+      ros::Publisher best_tentacle_visu_pub;
       ros::Publisher tsamp_visu_pub;
       ros::Publisher support_vox_visu_pub;
       ros::Publisher occupancy_pc_pub;
-      ros::Publisher command_visu_pub;
       ros::Publisher path_visu_pub;
-      ros::Publisher next_pub;
+      ros::Publisher command_visu_pub;
+      ros::Publisher debug_visu_pub;
+      ros::Publisher debug_array_visu_pub;
 
       visualization_msgs::Marker robot_visu;                    // TODO: Review: marker for robot visualization
       visualization_msgs::MarkerArray tentacle_visu;
-      visualization_msgs::MarkerArray opt_tentacle_visu;
+      visualization_msgs::MarkerArray best_tentacle_visu;
       visualization_msgs::MarkerArray tsamp_visu;
       visualization_msgs::MarkerArray support_vox_visu;
       sensor_msgs::PointCloud occupancy_pc;
       visualization_msgs::Marker path_visu;
       visualization_msgs::Marker command_visu;
+      visualization_msgs::Marker debug_visu;
+      visualization_msgs::MarkerArray debug_array_visu;
     };
 
     // DESCRIPTION: Constructor
-    Tentabot(NodeHandle& nh, 
-             tf::TransformListener* listener, 
-             ProcessParams& pp, 
-             RobotParams& rp, 
-             OffTuningParams& offtp, 
-             OnTuningParams& ontp, 
-             MapUtility& mu, 
-             GoalUtility& gu);
+    Tentabot( NodeHandle& nh,
+              tf::TransformListener* listener,
+              GoalUtility& gu,
+              RobotParams& rp,
+              ProcessParams& pp,
+              OffTuningParams& offtp,
+              OnTuningParams& ontp,
+              string data_path);
     
     // DESCRIPTION: Destructor
     ~Tentabot();
@@ -257,21 +264,6 @@ class Tentabot
     VisuParams getVisuParams();
 
     // DESCRIPTION: TODO...
-    ofstream& getNavParamBench();
-
-    // DESCRIPTION: TODO...
-    ofstream& getNavPreBench();
-
-    // DESCRIPTION: TODO...
-    ofstream& getNavProcessBench();
-
-    // DESCRIPTION: TODO...
-    ofstream& getNavResultBench();
-
-    // DESCRIPTION: TODO...
-    ofstream& getRLBench();
-
-    // DESCRIPTION: TODO...
     void setProcessParams(ProcessParams new_process_param);
 
     // DESCRIPTION: TODO...
@@ -293,16 +285,7 @@ class Tentabot
     void setVisuParams(VisuParams new_visu_param);
 
     // DESCRIPTION: TODO...
-    void setEgoGridData();
-
-    // DESCRIPTION: TODO...
-    void setOnTuning(bool flag);
-
-    // DESCRIPTION: TODO...
-    void print_vecvecd(vector< vector<double> > vecvec);
-
-    // DESCRIPTION: TODO...
-    void print_vecvecPoint(vector< vector<geometry_msgs::Point> > vecvec);
+    void setDataPath(string data_path);
 
     // DESCRIPTION: TODO...
     void clearTentacleData();
@@ -313,48 +296,31 @@ class Tentabot
     // DESCRIPTION: TODO...
     void publishTentabot();
 
-    // DESCRIPTION: TODO...UPDATE OCCUPANCY GRID CELL FOR THE ROBOT
-    void updateOccupancyVox();
+    // DESCRIPTION: TODO...
+    void publishRobot();
 
     // DESCRIPTION: TODO...
-    void updateHeuristicFunctions();
-
-    // DESCRIPTION: TODO...SELECT THE BEST TENTACLE
-    void selectBestTentacle();
+    void publishTentacleTsampSupportvox();
 
     // DESCRIPTION: TODO...
-    void hoverTentabotAtZ1(double x, double y);
-
-    // DESCRIPTION: TODO...MOVE THE ROBOT
-    void moveTentabot_extend();
+    void publishOccupancy();
 
     // DESCRIPTION: TODO...
-    void sendCommandCallback(const ros::TimerEvent& e);
+    void publishPath();
 
     // DESCRIPTION: TODO...
-    void depthImageCallback(const sensor_msgs::Image::ConstPtr& msg);
+    void publishCommand();
 
     // DESCRIPTION: TODO...
-    void odometryCallback(const geometry_msgs::Pose::ConstPtr& msg);
+    void publishDebugVisu();
 
-  private:
+    // DESCRIPTION: TODO...
+    void publishDebugArrayVisu();
 
-    ProcessParams process_param;
-    RobotParams robot_param;
-    OffTuningParams off_tuning_param;
-    OnTuningParams on_tuning_param;
-    HeuristicParams heuristic_param;
-    StatusParams status_param;
-    GoalUtility goal_util;
-    MapUtility map_util;
-    VisuParams visu_param;
-    ofstream nav_param_bench;
-    ofstream nav_pre_bench;
-    ofstream nav_process_bench;
-    ofstream nav_result_bench;
-    ofstream rl_bench;
-    tf::TransformListener* tflistener;
-    vector<geometry_msgs::Point> command_history;
+    // DESCRIPTION: TODO...
+    void transformPoint(string frame_from,
+                        string frame_to,
+                        geometry_msgs::Point& p_to_msg);
 
     // DESCRIPTION: TODO...
     void transformPoint(string frame_from, 
@@ -383,7 +349,56 @@ class Tentabot
                               geometry_msgs::Quaternion& q_to_msg);
 
     // DESCRIPTION: TODO...
+    void transformPC2(const sensor_msgs::PointCloud2& pc2_from, sensor_msgs::PointCloud2& pc2_to);
+
+    // DESCRIPTION: TODO...
+    void mapCallback(const octomap_msgs::Octomap::ConstPtr& msg);
+
+    // DESCRIPTION: TODO...
+    //void pc2Callback(const sensor_msgs::PointCloud2::ConstPtr& msg);
+
+    // DESCRIPTION: TODO...
+    void robotPoseCallback(const geometry_msgs::Pose::ConstPtr& msg);
+
+    // DESCRIPTION: TODO...
+    void odometryCallback(const nav_msgs::Odometry& msg);
+
+    // DESCRIPTION: TODO...
+    void mainCallback(const ros::TimerEvent& e);
+
+    // DESCRIPTION: TODO...
+    bool rl_step(tentabot::rl_step::Request &req, tentabot::rl_step::Response &res);
+
+    // DESCRIPTION: TODO...
+    bool update_goal(tentabot::update_goal::Request &req, tentabot::update_goal::Response &res);
+
+  private:
+
+    tf::TransformListener* tflistener;
+    //MapUtility map_util;
+    GoalUtility goal_util;
+    RobotParams robot_param;
+    ProcessParams process_param;
+    OffTuningParams off_tuning_param;
+    OnTuningParams on_tuning_param;
+    HeuristicParams heuristic_param;
+    StatusParams status_param;
+    VisuParams visu_param;
+    string data_path;
+    string data_tag;
+    ofstream input_data_stream;
+    ofstream pre_data_stream;
+    ofstream mid_data_stream;
+    ofstream post_data_stream;
+    
+    // DESCRIPTION: TODO...
     int toIndex(double pos, int grid_vnum);
+
+    // DESCRIPTION: TODO...
+    int toIndex(double pos, int grid_vnum_min, int grid_vnum_max);
+
+    // DESCRIPTION: TODO...
+    int toLinIndex(tf::Vector3 po);
 
     // DESCRIPTION: TODO...
     int toLinIndex(geometry_msgs::Point po);
@@ -398,62 +413,43 @@ class Tentabot
     void toPoint(int ind, geometry_msgs::Point32& po);
 
     // DESCRIPTION: TODO...
-    bool isInsideRectCuboid(geometry_msgs::Point32 po);
+    void initialize(NodeHandle& nh);
 
     // DESCRIPTION: TODO...
-    bool isInsideRectCuboid(geometry_msgs::Point32 po, geometry_msgs::Point center);
+    vector<OccupancyVoxel> extract_priority_support_voxels_by_bbx(vector<geometry_msgs::Point>& traj);
 
     // DESCRIPTION: TODO...
-    bool isInsideTriangle(double x, double y, double edge_length, double half_angle);
+    vector<OccupancyVoxel> extract_priority_support_voxels_by_radius(vector<geometry_msgs::Point>& traj);
 
     // DESCRIPTION: TODO...
-    vector<geometry_msgs::Point> arc_by_radi_ang(geometry_msgs::Point from, 
-                                                 double radius, 
-                                                 double angle, 
-                                                 int sample_cnt);
+    void calculate_tentacle_length_and_bbx_data();
 
     // DESCRIPTION: TODO...
-    vector<geometry_msgs::Point> line_by_len_ang(geometry_msgs::Point from, 
-                                                 double length, 
-                                                 double angle, 
-                                                 int sample_cnt);
+    void construct_ego_grid_data();
 
     // DESCRIPTION: TODO...
-    geometry_msgs::Point rotate3d(geometry_msgs::Point po, 
-                                  double ang, 
-                                  string rot_type);
+    void construct_priority_support_voxel_data();
 
     // DESCRIPTION: TODO...
-    vector<OccupancyVoxel> voxel_extractor(vector<geometry_msgs::Point>& archy);
+    void construct_sample_weight_data();
 
     // DESCRIPTION: TODO...
-    void arc_extender_voxel_extractor(vector<geometry_msgs::Point>& planar_tentacle_data, 
-                                      double yaw_sample, 
-                                      vector<double> extend_ang_samples, 
-                                      string rot_type, 
-                                      double yaw_offset=0);
-
-    // TODO: Do it for the roll as well.
-    // DESCRIPTION: TODO...CONSTRUCT TENTACLES AND EXTRACT SUPPORT/PRIORITY VOXELS (DEPRECATED)
-    void construct_tentacle_pitchExt();
+    void construct_tentacle_weight_data();
 
     // DESCRIPTION: TODO...
-    void construct_tentacle_extend(bool no_restriction=false);
+    double calculate_between_tentacle_closeness(vector<geometry_msgs::Point>& tentacle1, vector<geometry_msgs::Point>& tentacle2);
+
+    // DESCRIPTION: TODO...
+    void sort_tentacles(string sort_type="y");
 
     // DESCRIPTION: TODO...
     void fillRobotVisu();
 
     // DESCRIPTION: TODO...
-    void publishRobot();
-
-    // DESCRIPTION: TODO...
     void fillTentacleTsampSupportvoxVisu();
 
     // DESCRIPTION: TODO...
-    void publishTentacleTsampSupportvox();
-
-    // DESCRIPTION: TODO...
-    void publishOccupancy();
+    void fillBestTentacleVisu();
 
     // DESCRIPTION: TODO...
     void fillPathVisu();
@@ -462,10 +458,13 @@ class Tentabot
     void fillCommandVisu();
 
     // DESCRIPTION: TODO...
-    void publishPath();
+    void fillDebugVisu(geometry_msgs::Point p, string frame_name);
 
     // DESCRIPTION: TODO...
-    void publishCommand();
+    void fillDebugArrayVisu(vector<geometry_msgs::Point> v, string frame_name);
+
+    // DESCRIPTION: TODO...
+    void interpol(geometry_msgs::Point p, double dist, tf::Vector3& pint);
 
     // DESCRIPTION: TODO...
     geometry_msgs::Point interpol(geometry_msgs::Point p, double dist);
@@ -479,4 +478,34 @@ class Tentabot
     vector<geometry_msgs::Point> equadistant(geometry_msgs::Point p1, 
                                              geometry_msgs::Point p2, 
                                              int num_btw);
+
+    // DESCRIPTION: TODO...UPDATE LOCAL MAP
+    //void update_local_map();
+
+    // DESCRIPTION: TODO...
+    bool isOccupied(double x, double y, double z);
+
+    // DESCRIPTION: TODO...
+    void update_planning_states();
+
+    // DESCRIPTION: TODO...UPDATE OCCUPANCY GRID DATA OF THE ROBOT
+    void update_ego_grid_data();
+
+    // DESCRIPTION: TODO...
+    void update_heuristic_values();
+
+    // DESCRIPTION: TODO...SELECT THE BEST TENTACLE
+    void select_best_tentacle();
+
+    // DESCRIPTION: TODO...MOVE THE ROBOT
+    void debug_rotate();
+
+    // DESCRIPTION: TODO...MOVE THE ROBOT
+    void send_motion_command_by_pose_control();
+
+    // DESCRIPTION: TODO...MOVE THE ROBOT
+    void send_motion_command_by_velocity_control();
+
 }; // END of class Tentabot
+
+#endif

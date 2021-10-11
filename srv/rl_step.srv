@@ -1,0 +1,8 @@
+int64 parity
+---
+float64[] occupancy_set
+int32[] navigability_set
+float64[] clearance_set
+float64[] clutterness_set
+float64[] closeness_set
+float64[] smoothness_set

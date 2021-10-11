@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--This scenario file was created by SGDiCoP on 2014-04-16T15:14:48-->
+<scenario>
+    
+    <!--Obstacles-->
+    <!--obstacle x1="-0.5" y1="-0.5" x2="29.5" y2="-0.5"/>
+    <obstacle x1="-0.5" y1="-0.5" x2="-0.5" y2="29.5"/>
+    <obstacle x1="-0.5" y1="29.5" x2="29.5" y2="29.5"/>
+    <obstacle x1="29.5" y1="29.5" x2="29.5" y2="-0.5"/-->
+
+    <!--obstacle x1="-3.0" y1="-3.0" x2="3.0" y2="-3.0"/>
+    <obstacle x1="-3.0" y1="-3.0" x2="-3.0" y2="3.0"/>
+    <obstacle x1="-3.0" y1="3.5" x2="3.0" y2="3.0"/>
+    <obstacle x1="3.0" y1="3.0" x2="3.0" y2="-3.0"/-->
+
+    <!--Waypoints (incl. WaitingQueues)-->
+    <!--waypoint id="corner0" x="5" y="5" r="2"/>
+    <waypoint id="corner1" x="15" y="5" r="2"/>
+    <waypoint id="corner2" x="15" y="15" r="2"/>
+    <waypoint id="corner3" x="5" y="15" r="2"/-->
+
+    <waypoint id="corner0" x="-3.0" y="3.0" r="1"/>
+    <waypoint id="corner1" x="-1.0" y="3.0" r="1"/>
+    <waypoint id="corner2" x="-1.0" y="0.0" r="1"/>
+    <waypoint id="corner3" x="-4.0" y="0.0" r="1"/>
+
+    <waypoint id="corner4" x="0.0" y="3.0" r="1"/>
+    <waypoint id="corner5" x="0.0" y="-1.0" r="1"/>
+
+    <waypoint id="corner6" x="4.0" y="3.0" r="1"/>
+    <waypoint id="corner7" x="4.0" y="0.0" r="1"/>
+    <waypoint id="corner8" x="1.0" y="0.0" r="1"/>
+
+    <waypoint id="corner9" x="1.0" y="-4.0" r="1"/>
+    <waypoint id="corner10" x="3.0" y="-1.0" r="1"/>
+
+    <queue id="center" x="0" y="0" direction="0"/>
+
+    <!--Agents-->
+    <!--agent x="17" y="11" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="robot_start"/>
+        <addwaypoint id="robot_goal"/>
+    </agent-->
+    
+    <!--AgentClusters-->
+    <agent x="-3.0" y="3.1" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="corner0"/>
+        <addwaypoint id="corner1"/>
+        <addwaypoint id="corner2"/>
+        <addwaypoint id="corner3"/>
+    </agent>
+
+    <agent x="0.0" y="3.1" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="corner4"/>
+        <addwaypoint id="corner5"/>
+    </agent>
+
+    <agent x="4.0" y="3.1" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="corner6"/>
+        <addwaypoint id="corner7"/>
+        <addwaypoint id="corner8"/>
+    </agent>
+    
+    <agent x="1.0" y="-4.1" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="corner9"/>
+        <addwaypoint id="corner10"/>
+        <addwaypoint id="corner8"/>
+    </agent>
+</scenario>

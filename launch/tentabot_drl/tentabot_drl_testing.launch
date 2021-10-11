@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- Load parameters 
+    testing_dwarl_params 
+    testing_tentabot_rl_params
+    testing_tentabot_rl_firefly_params
+    testing_prmtd3_params
+    -->
+    <rosparam command="load" 
+        file="$(find tentabot_devel)/config/testing_tentabot_rl_params.yaml" />
+    
+    <!-- Launch the testing system 
+    testing_dwarl 
+    testing_tentabot_rl
+    testing_tentabot_rl_firefly
+    testing_prmtd3
+    -->
+    <node pkg="tentabot_devel" 
+        name="testing_tentabot_rl" 
+        type="testing_tentabot_rl.py" 
+        output="screen"/>
+</launch>
