@@ -147,7 +147,7 @@ roslaunch tentabot tentabot_heuristic_firefly_forest.launch
 
 ##### Example 3:
 ```
-roslaunch tentabot tentabot_heuristic_firefly_forest.launch
+roslaunch tentabot tentabot_heuristic_turtlebot3.launch
 ```
 
 ### 6. Credentials
