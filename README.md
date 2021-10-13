@@ -44,25 +44,38 @@ Follow the tutorials to
 - [install ROS](http://wiki.ros.org/ROS/Installation) based on the Ubuntu version.
 - [set up catkin workspace](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
 
-#### 3.a Install fcl package following the instructions in [flexible-collision-library/fcl](https://github.com/flexible-collision-library/fcl) using CMake.
+#### 3.1 Install fcl package following the instructions in [flexible-collision-library/fcl](https://github.com/flexible-collision-library/fcl) using CMake.
 
-#### 3.b Install libccd package following the instructions in [libccd](https://github.com/danfis/libccd) using CMake.
+#### 3.2 Install libccd package following the instructions in [libccd](https://github.com/danfis/libccd) using CMake.
 
-#### 3.c (required for Tentabot-DRL) Install stable-baselines3 package following the instructions in [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/guide/install.html#stable-release).
+#### 3.3 Install the [rotors_simulator](https://github.com/ethz-asl/rotors_simulator.git) package into the src folder.
+#### 3.4 Install the 'noetic-akmandor' branch of [turtlebot3](https://github.com/RIVeR-Lab/turtlebot3/tree/noetic-akmandor) package into the src folder.
+#### 3.5 Install the 'noetic-akmandor' branch of [LMS1xx](https://github.com/RIVeR-Lab/LMS1xx/tree/noetic-akmandor) package into the src folder.
+#### 3.6 Install the 'noetic-akmandor' branch of [geometry2](https://github.com/RIVeR-Lab/geometry2/tree/noetic-akmandor) package into the src folder.
+#### 3.7 Install the [catkin-simple](https://github.com/catkin/catkin_simple) package into the src folder.
+#### 3.8 Install the [forest_gen](https://github.com/ethz-asl/forest_gen) package into the src folder.
+#### 3.9 Install the [mav_comm](https://github.com/ethz-asl/mav_comm) package into the src folder.
+#### 3.10 Install the [octomap_rviz_plugins](https://github.com/OctoMap/octomap_rviz_plugins) package into the src folder.
+#### 3.11 Install [openai-ros](https://github.com/RIVeR-Lab/openai_ros) package into the src folder.
+#### 3.12 Install [tentabot](https://github.com/RIVeR-Lab/tentabot) package into the src folder.
 
-#### 3.d Install openai-ros package into the src folder:
 ```
 cd ~/catkin_ws/src
-git clone git@github.com:RIVeR-Lab/openai_ros.git
-```
-
-#### 3.e Install tentabot package into the src folder:
-```
-cd ~/catkin_ws/src
+git clone https://github.com/ethz-asl/rotors_simulator.git
+git clone https://github.com/RIVeR-Lab/turtlebot3.git #'noetic-akmandor' branch
+git clone https://github.com/RIVeR-Lab/LMS1xx.git #'noetic-akmandor' branch
+git clone https://github.com/RIVeR-Lab/geometry2.git #'noetic-akmandor' branch
+git clone https://github.com/catkin/catkin_simple.git
+git clone https://github.com/ethz-asl/forest_gen.git
+git clone https://github.com/ethz-asl/mav_comm.git
+git clone https://github.com/OctoMap/octomap_rviz_plugins.git
+git clone https://github.com/RIVeR-Lab/openai_ros.git
 git clone https://github.com/RIVeR-Lab/tentabot.git
 ```
 
-#### 3.f (optional) Install dependencies using rosdep tool:
+#### 3.13 (Required for Tentabot-DRL) Install stable-baselines3 package following the instructions in [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/guide/install.html#stable-release).
+
+#### 3.14 (Optional) Install all dependencies using rosdep tool:
 
 Follow the Prerequisites instructions and install rosdep tool based on the ROS version: [Noetic rosdep](http://wiki.ros.org/noetic/Installation/Source).
 
@@ -72,57 +85,70 @@ cd ~/catkin_ws
 rosdep install --from-paths ./src --ignore-packages-from-source --rosdistro noetic -y
 ```
 
-#### 3.g Build the catkin workspace:
+#### 3.15 Build the catkin workspace:
 ```
 cd ~/catkin_ws
 catkin build
 ```
 
-#### 3.h Source the workspace, after successfully built:
+#### 3.16 Source the workspace, after successfully built:
 ```
 source devel/setup.bash
 ```
 
-### 4. Simulation example
+### 4. Simulation examples
+
+#### 4.1 Tentabot-DRL:
 
 In separate terminal windows:
 
-Start roscore:
+##### 4.1.1 Start Gazebo simulation:
 ```
-roscore
-```
-
-Start visualization in Rviz:
-```
-roscd tentabot/rviz/
-rviz -d simulation.rviz
+roslaunch tentabot tentabot_mobile_garden.launch
 ```
 
-Launch the system and Gazebo simulator:
+##### 4.1.2 Start Rviz for visualization:
 ```
-roslaunch tentabot tentabot_go_cylinder.launch
+roslaunch tentabot tentabot_drl_rviz.launch
+```
+
+##### 4.1.3 Start map utility:
+```
+roslaunch tentabot map_utility_server_turtlebot3.launch
+```
+
+##### 4.1.4 Start Tentabot-DRL service:
+```
+roslaunch tentabot tentabot_drl_service.launch
+```
+
+##### 4.1.5 Start training:
+```
+roslaunch tentabot tentabot_drl_training.launch
 ```
 OR
+
+##### 4.1.5 Start testing:
 ```
-roslaunch tentabot tentabot_go_forest.launch
+roslaunch tentabot tentabot_drl_testing.launch
 ```
 
-### 5. Notes
-#### 5.1
-In the Noetic version, there is a [know issue](https://github.com/ros/geometry2/issues/467) which causes flood of warning messages in terminal screen. The issue does not cause a problem for navigation but if you want to eliminate those warnings:
+#### 4.2 Tentabot-Heuristic:
 
-Install [geometry2 package](https://github.com/ros/geometry2) into the src folder:
+##### Example 1:
 ```
-cd ~/catkin_ws
-git clone https://github.com/ros/geometry2.git
+roslaunch tentabot tentabot_heuristic_firefly_cylinders.launch
 ```
 
-Comment out the warning message in tf2/src/buffer_core.cpp (~line 278):
+##### Example 2:
 ```
-//CONSOLE_BRIDGE_logWarn((error_string+" for frame %s at time %lf according to authority %s").c_str(), stripped.child_frame_id.c_str(), stripped.header.stamp.toSec(), authority.c_str());
+roslaunch tentabot tentabot_heuristic_firefly_forest.launch
 ```
 
-Then, build and source the workspace.
+##### Example 3:
+```
+roslaunch tentabot tentabot_heuristic_firefly_forest.launch
+```
 
 ### 6. Credentials
 Tentabot was developed at the [RIVeR Lab, Northeastern University](http://robot.neu.edu/).
