@@ -1,5 +1,5 @@
 # Tentabot-DRL: Robot Navigation in Dynamic Environments using Deep Reinforcement Learning with Pre-sampled Trajectory Value Observations
-[![teaser](videos/tentabot_drl_training_static_0.gif)] [![teaser](videos/tentabot_drl_training_static_1.gif)] [![teaser](videos/tentabot_drl_training_dynamic_0.gif)] [![teaser](videos/tentabot_drl_training_dynamic_1.gif)]
+![teaser](videos/tentabot_drl_training_static_0.gif) ![teaser](videos/tentabot_drl_training_static_1.gif) ![teaser](videos/tentabot_drl_training_dynamic_0.gif) ![teaser](videos/tentabot_drl_training_dynamic_1.gif)
 
 # Tentabot-Heuristic: Reactive Navigation Framework for Mobile Robots by Heuristically Evaluated Pre-sampled Trajectories (Tentacles)
 [![teaser](videos/tentabot_heuristic_firefly_cylinders0.gif)](https://youtu.be/5vZSEuWUXe4) [![teaser](videos/tentabot_heuristic_firefly_forest1.gif)](https://youtu.be/5vZSEuWUXe4)
@@ -45,18 +45,18 @@ Follow the tutorials to
 - [install ROS](http://wiki.ros.org/ROS/Installation) based on the Ubuntu version.
 - [set up catkin workspace](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
 
-#### 3.1 Install fcl package following the instructions in [flexible-collision-library/fcl](https://github.com/flexible-collision-library/fcl) using CMake.
+#### 3.1 Install [flexible-collision-library/fcl](https://github.com/flexible-collision-library/fcl) following their instructions using CMake.
 
-#### 3.2 Install libccd package following the instructions in [libccd](https://github.com/danfis/libccd) using CMake.
+#### 3.2 Install [libccd](https://github.com/danfis/libccd) following their instructions using CMake.
 
-#### 3.3 Install the [rotors_simulator](https://github.com/ethz-asl/rotors_simulator.git) package into the src folder.
-#### 3.4 Install the 'noetic-akmandor' branch of [turtlebot3](https://github.com/RIVeR-Lab/turtlebot3/tree/noetic-akmandor) package into the src folder.
-#### 3.5 Install the 'noetic-akmandor' branch of [LMS1xx](https://github.com/RIVeR-Lab/LMS1xx/tree/noetic-akmandor) package into the src folder.
-#### 3.6 Install the 'noetic-akmandor' branch of [geometry2](https://github.com/RIVeR-Lab/geometry2/tree/noetic-akmandor) package into the src folder.
-#### 3.7 Install the [catkin-simple](https://github.com/catkin/catkin_simple) package into the src folder.
-#### 3.8 Install the [forest_gen](https://github.com/ethz-asl/forest_gen) package into the src folder.
-#### 3.9 Install the [mav_comm](https://github.com/ethz-asl/mav_comm) package into the src folder.
-#### 3.10 Install the [octomap_rviz_plugins](https://github.com/OctoMap/octomap_rviz_plugins) package into the src folder.
+#### 3.3 Install [rotors_simulator](https://github.com/ethz-asl/rotors_simulator.git) package into the src folder.
+#### 3.4 Install 'noetic-akmandor' branch of [turtlebot3](https://github.com/RIVeR-Lab/turtlebot3/tree/noetic-akmandor) package into the src folder.
+#### 3.5 Install 'noetic-akmandor' branch of [LMS1xx](https://github.com/RIVeR-Lab/LMS1xx/tree/noetic-akmandor) package into the src folder.
+#### 3.6 Install 'noetic-akmandor' branch of [geometry2](https://github.com/RIVeR-Lab/geometry2/tree/noetic-akmandor) package into the src folder.
+#### 3.7 Install [catkin-simple](https://github.com/catkin/catkin_simple) package into the src folder.
+#### 3.8 Install [forest_gen](https://github.com/ethz-asl/forest_gen) package into the src folder.
+#### 3.9 Install [mav_comm](https://github.com/ethz-asl/mav_comm) package into the src folder.
+#### 3.10 Install [octomap_rviz_plugins](https://github.com/OctoMap/octomap_rviz_plugins) package into the src folder.
 #### 3.11 Install [openai-ros](https://github.com/RIVeR-Lab/openai_ros) package into the src folder.
 #### 3.12 Install [tentabot](https://github.com/RIVeR-Lab/tentabot) package into the src folder.
 
@@ -74,7 +74,7 @@ git clone https://github.com/RIVeR-Lab/openai_ros.git
 git clone https://github.com/RIVeR-Lab/tentabot.git
 ```
 
-#### 3.13 (Required for Tentabot-DRL) Install stable-baselines3 package following the instructions in [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/guide/install.html#stable-release).
+#### 3.13 (Required for Tentabot-DRL) Install [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/guide/install.html#stable-release) Python package following their instructions.
 
 #### 3.14 (Optional) Install all dependencies using rosdep tool:
 
