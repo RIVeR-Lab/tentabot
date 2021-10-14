@@ -1,7 +1,8 @@
 # Tentabot-DRL: Robot Navigation in Dynamic Environments using Deep Reinforcement Learning with Pre-sampled Trajectory Value Observations
-# Tentabot-Heuristic: Reactive Navigation Framework for Mobile Robots by Heuristically Evaluated Pre-sampled Trajectories (Tentacles)
+[![teaser](videos/tentabot_drl_training_static_0.gif)] [![teaser](videos/tentabot_drl_training_static_1.gif)] [![teaser](videos/tentabot_drl_training_dynamic_0.gif)] [![teaser](videos/tentabot_drl_training_dynamic_1.gif)]
 
-[![teaser](tentabot_cylinders0.gif)](https://youtu.be/5vZSEuWUXe4) [![teaser](tentabot_forest1.gif)](https://youtu.be/5vZSEuWUXe4)
+# Tentabot-Heuristic: Reactive Navigation Framework for Mobile Robots by Heuristically Evaluated Pre-sampled Trajectories (Tentacles)
+[![teaser](videos/tentabot_heuristic_firefly_cylinders0.gif)](https://youtu.be/5vZSEuWUXe4) [![teaser](videos/tentabot_heuristic_firefly_forest1.gif)](https://youtu.be/5vZSEuWUXe4)
 
 ### 1. Citation
 ```
@@ -77,7 +78,7 @@ git clone https://github.com/RIVeR-Lab/tentabot.git
 
 #### 3.14 (Optional) Install all dependencies using rosdep tool:
 
-Follow the Prerequisites instructions and install rosdep tool based on the ROS version: [Noetic rosdep](http://wiki.ros.org/noetic/Installation/Source).
+Follow the instructions under 'Prerequisites' and install rosdep tool based on the ROS version: [Noetic rosdep](http://wiki.ros.org/noetic/Installation/Source).
 
 ROS Noetic example of installing dependencies using rosdep tools:
 ```
