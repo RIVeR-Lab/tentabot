@@ -39,7 +39,7 @@ if __name__ == '__main__':
     rospy.init_node("spawn_pedsim_agents")
 
     rospack1 = RosPack()
-    pkg_path = rospack1.get_path('tentabot_devel')
+    pkg_path = rospack1.get_path('tentabot')
     default_actor_model_file = pkg_path + "/models/gazebo_actors/actor_model.sdf"
 
     actor_model_file = rospy.get_param('~actor_model_file', default_actor_model_file)

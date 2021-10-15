@@ -50,47 +50,47 @@
   <!-- this node spawn pedsim actors to gazebo once, then the plugin updates their pose -->
   <group if="$(eval arg('world_name') == 'training_garden_dynamic_0')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_training_garden_dynamic_0.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_training_garden_dynamic_0.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'training_garden_dynamic_1')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_training_garden_dynamic_1.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_training_garden_dynamic_1.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'testing_lvl_2')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_testing_lvl_2.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_lvl_2.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'testing_lvl_3')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_testing_lvl_3.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_lvl_3.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'testing_lvl_5')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_testing_lvl_5.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_lvl_5.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'testing_lvl_6')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_testing_lvl_6.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_lvl_6.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'testing_lvl_7')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_testing_lvl_7.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_lvl_7.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'testing_lvl_9')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_testing_lvl_9.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_lvl_9.launch"/>
   </group>
 
   <group if="$(eval arg('world_name') == 'testing_lvl_10')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents"  output="screen"/>
-    <include file="$(find tentabot)/launch/tentabot_rl/pedsim_testing_lvl_10.launch"/>
+    <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_lvl_10.launch"/>
   </group>
 
   <node pkg="tf" type="static_transform_publisher" name="world" args="0 0 0 0 0 0 1 world $(arg ns0)/odom 100" />
