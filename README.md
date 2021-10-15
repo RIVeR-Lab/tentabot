@@ -57,26 +57,31 @@ Follow the tutorials to
 #### 3.8 Install [forest_gen](https://github.com/ethz-asl/forest_gen) package into the src folder.
 #### 3.9 Install [mav_comm](https://github.com/ethz-asl/mav_comm) package into the src folder.
 #### 3.10 Install [octomap_rviz_plugins](https://github.com/OctoMap/octomap_rviz_plugins) package into the src folder.
-#### 3.11 Install [openai-ros](https://github.com/RIVeR-Lab/openai_ros) package into the src folder.
-#### 3.12 Install [tentabot](https://github.com/RIVeR-Lab/tentabot) package into the src folder.
+#### 3.11 Install [pedsim_ros](https://github.com/srl-freiburg/pedsim_ros.git) package into the src folder.
+#### 3.12 Install [openai-ros](https://github.com/RIVeR-Lab/openai_ros) package into the src folder.
+#### 3.13 Install [tentabot](https://github.com/RIVeR-Lab/tentabot) package into the src folder.
 
 ```
 cd ~/catkin_ws/src
 git clone https://github.com/ethz-asl/rotors_simulator.git
-git clone https://github.com/RIVeR-Lab/turtlebot3.git #'noetic-akmandor' branch
-git clone https://github.com/RIVeR-Lab/LMS1xx.git #'noetic-akmandor' branch
-git clone https://github.com/RIVeR-Lab/geometry2.git #'noetic-akmandor' branch
+git clone https://github.com/RIVeR-Lab/turtlebot3.git #'noetic-akmandor' branch*
+git clone https://github.com/RIVeR-Lab/LMS1xx.git #'noetic-akmandor' branch*
+git clone https://github.com/RIVeR-Lab/geometry2.git #'noetic-akmandor' branch*
 git clone https://github.com/catkin/catkin_simple.git
 git clone https://github.com/ethz-asl/forest_gen.git
 git clone https://github.com/ethz-asl/mav_comm.git
 git clone https://github.com/OctoMap/octomap_rviz_plugins.git
+git clone https://github.com/srl-freiburg/pedsim_ros.git
 git clone https://github.com/RIVeR-Lab/openai_ros.git
 git clone https://github.com/RIVeR-Lab/tentabot.git
 ```
+##### *Switch to 'noetic-akmandor' branch in the package (turtlebot3,LMS1xx,geometry2):
+```
+git checkout noetic-akmandor
+```
+#### 3.14 (Required for Tentabot-DRL) Install [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/guide/install.html#stable-release) Python package following their instructions.
 
-#### 3.13 (Required for Tentabot-DRL) Install [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/guide/install.html#stable-release) Python package following their instructions.
-
-#### 3.14 (Optional) Install all dependencies using rosdep tool:
+#### 3.15 Install other dependencies using rosdep tool:
 
 Follow the instructions under 'Prerequisites' and install rosdep tool based on the ROS version: [Noetic rosdep](http://wiki.ros.org/noetic/Installation/Source).
 
@@ -86,13 +91,13 @@ cd ~/catkin_ws
 rosdep install --from-paths ./src --ignore-packages-from-source --rosdistro noetic -y
 ```
 
-#### 3.15 Build the catkin workspace:
+#### 3.16 Build the catkin workspace:
 ```
 cd ~/catkin_ws
 catkin build
 ```
 
-#### 3.16 Source the workspace, after successfully built:
+#### 3.17 Source the workspace, after successfully built:
 ```
 source devel/setup.bash
 ```
