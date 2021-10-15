@@ -4,12 +4,10 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /TF1/Frames1
-        - /MarkerArray1
         - /MarkerArray3/Namespaces1
+        - /MarkerArray5/Namespaces1
         - /MarkerArray6/Namespaces1
         - /MarkerArray7/Namespaces1
-        - /MarkerArray8/Namespaces1
       Splitter Ratio: 0.6235294342041016
     Tree Height: 627
   - Class: rviz/Selection
@@ -30,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -69,27 +67,27 @@ Visualization Manager:
           Value: false
         turtlebot0/caster_back_link:
           Value: false
-        turtlebot0/d435_cam1camera_bottom_screw_frame:
+        turtlebot0/d435_cam1/camera_bottom_screw_frame:
           Value: false
-        turtlebot0/d435_cam1camera_color_frame:
+        turtlebot0/d435_cam1/camera_color_frame:
           Value: false
-        turtlebot0/d435_cam1camera_color_optical_frame:
+        turtlebot0/d435_cam1/camera_color_optical_frame:
           Value: false
-        turtlebot0/d435_cam1camera_depth_frame:
+        turtlebot0/d435_cam1/camera_depth_frame:
           Value: false
-        turtlebot0/d435_cam1camera_depth_frame_gazebo:
+        turtlebot0/d435_cam1/camera_depth_frame_gazebo:
           Value: false
-        turtlebot0/d435_cam1camera_depth_optical_frame:
+        turtlebot0/d435_cam1/camera_depth_optical_frame:
           Value: false
-        turtlebot0/d435_cam1camera_left_ir_frame:
+        turtlebot0/d435_cam1/camera_left_ir_frame:
           Value: false
-        turtlebot0/d435_cam1camera_left_ir_optical_frame:
+        turtlebot0/d435_cam1/camera_left_ir_optical_frame:
           Value: false
-        turtlebot0/d435_cam1camera_link:
+        turtlebot0/d435_cam1/camera_link:
           Value: false
-        turtlebot0/d435_cam1camera_right_ir_frame:
+        turtlebot0/d435_cam1/camera_right_ir_frame:
           Value: false
-        turtlebot0/d435_cam1camera_right_ir_optical_frame:
+        turtlebot0/d435_cam1/camera_right_ir_optical_frame:
           Value: false
         turtlebot0/imu_link:
           Value: false
@@ -116,21 +114,21 @@ Visualization Manager:
                   {}
                 turtlebot0/caster_back_link:
                   {}
-                turtlebot0/d435_cam1camera_bottom_screw_frame:
-                  turtlebot0/d435_cam1camera_link:
-                    turtlebot0/d435_cam1camera_depth_frame:
-                      turtlebot0/d435_cam1camera_color_frame:
-                        turtlebot0/d435_cam1camera_color_optical_frame:
+                turtlebot0/d435_cam1/camera_bottom_screw_frame:
+                  turtlebot0/d435_cam1/camera_link:
+                    turtlebot0/d435_cam1/camera_depth_frame:
+                      turtlebot0/d435_cam1/camera_color_frame:
+                        turtlebot0/d435_cam1/camera_color_optical_frame:
                           {}
-                      turtlebot0/d435_cam1camera_depth_optical_frame:
+                      turtlebot0/d435_cam1/camera_depth_optical_frame:
                         {}
-                      turtlebot0/d435_cam1camera_left_ir_frame:
-                        turtlebot0/d435_cam1camera_left_ir_optical_frame:
+                      turtlebot0/d435_cam1/camera_left_ir_frame:
+                        turtlebot0/d435_cam1/camera_left_ir_optical_frame:
                           {}
-                      turtlebot0/d435_cam1camera_right_ir_frame:
-                        turtlebot0/d435_cam1camera_right_ir_optical_frame:
+                      turtlebot0/d435_cam1/camera_right_ir_frame:
+                        turtlebot0/d435_cam1/camera_right_ir_optical_frame:
                           {}
-                    turtlebot0/d435_cam1camera_depth_frame_gazebo:
+                    turtlebot0/d435_cam1/camera_depth_frame_gazebo:
                       {}
                 turtlebot0/imu_link:
                   {}
@@ -150,87 +148,87 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        turtlebot0/base_footprint:
+        base_footprint:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        turtlebot0/base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        turtlebot0/base_scan:
+        base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        turtlebot0/caster_back_link:
+        base_scan:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        turtlebot0/d435_cam1camera_bottom_screw_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_color_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_color_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_depth_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_depth_frame_gazebo:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_depth_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_left_ir_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_left_ir_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        turtlebot0/d435_cam1camera_link:
+        caster_back_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        turtlebot0/d435_cam1camera_right_ir_frame:
+        d435_cam1/camera_bottom_screw_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        turtlebot0/d435_cam1camera_right_ir_optical_frame:
+        d435_cam1/camera_color_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        turtlebot0/imu_link:
+        d435_cam1/camera_color_optical_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        turtlebot0/wheel_left_link:
+        d435_cam1/camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        d435_cam1/camera_depth_frame_gazebo:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        d435_cam1/camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        d435_cam1/camera_left_ir_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        d435_cam1/camera_left_ir_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        d435_cam1/camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        turtlebot0/wheel_right_link:
+        d435_cam1/camera_right_ir_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        d435_cam1/camera_right_ir_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wheel_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_right_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
       Name: RobotModel
-      Robot Description: turtlebot0/robot_description
-      TF Prefix: ""
+      Robot Description: robot_description
+      TF Prefix: turtlebot0
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -341,7 +339,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /turtlebot0/d435_cam1d435/camera/depth/color/points
+      Topic: /turtlebot0/d435_cam1/camera/depth/color/points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -351,7 +349,7 @@ Visualization Manager:
       Marker Topic: /turtlebot0/goal
       Name: MarkerArray
       Namespaces:
-        turtlebot0/goal_wp1: true
+        {}
       Queue Size: 100
       Value: true
     - Class: octomap_rviz_plugin/ColorOccupancyGrid
@@ -367,126 +365,19 @@ Visualization Manager:
       Voxel Coloring: Z-Axis
       Voxel Rendering: Occupied Voxels
     - Class: rviz/MarkerArray
-      Enabled: false
+      Enabled: true
       Marker Topic: /best_tentacle
       Name: MarkerArray
       Namespaces:
         {}
       Queue Size: 100
-      Value: false
-    - Class: rviz/MarkerArray
-      Enabled: false
-      Marker Topic: /tentacles
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 300
-      Value: false
+      Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /tentacles
       Name: MarkerArray
       Namespaces:
-        tentacle0: true
-        tentacle1: true
-        tentacle10: true
-        tentacle11: true
-        tentacle12: true
-        tentacle13: true
-        tentacle14: true
-        tentacle15: true
-        tentacle16: true
-        tentacle17: true
-        tentacle18: true
-        tentacle19: true
-        tentacle2: true
-        tentacle20: true
-        tentacle21: true
-        tentacle22: true
-        tentacle23: true
-        tentacle24: true
-        tentacle25: true
-        tentacle26: true
-        tentacle27: true
-        tentacle28: true
-        tentacle29: true
-        tentacle3: true
-        tentacle30: true
-        tentacle31: true
-        tentacle32: true
-        tentacle33: true
-        tentacle34: true
-        tentacle35: true
-        tentacle36: true
-        tentacle37: true
-        tentacle38: true
-        tentacle39: true
-        tentacle4: true
-        tentacle40: true
-        tentacle41: true
-        tentacle42: true
-        tentacle43: true
-        tentacle44: true
-        tentacle45: true
-        tentacle46: true
-        tentacle47: true
-        tentacle48: true
-        tentacle49: true
-        tentacle5: true
-        tentacle50: true
-        tentacle51: true
-        tentacle52: true
-        tentacle53: true
-        tentacle54: true
-        tentacle55: true
-        tentacle56: true
-        tentacle57: true
-        tentacle58: true
-        tentacle59: true
-        tentacle6: true
-        tentacle60: true
-        tentacle61: true
-        tentacle62: true
-        tentacle63: true
-        tentacle64: true
-        tentacle65: true
-        tentacle66: true
-        tentacle67: true
-        tentacle68: true
-        tentacle69: true
-        tentacle7: true
-        tentacle70: true
-        tentacle71: true
-        tentacle72: true
-        tentacle73: true
-        tentacle74: true
-        tentacle75: true
-        tentacle76: true
-        tentacle77: true
-        tentacle78: true
-        tentacle79: true
-        tentacle8: true
-        tentacle80: true
-        tentacle81: true
-        tentacle82: true
-        tentacle83: true
-        tentacle84: true
-        tentacle85: true
-        tentacle86: true
-        tentacle87: true
-        tentacle88: true
-        tentacle89: true
-        tentacle9: true
-        tentacle90: true
-        tentacle91: true
-        tentacle92: true
-        tentacle93: true
-        tentacle94: true
-        tentacle95: true
-        tentacle96: true
-        tentacle97: true
-        tentacle98: true
-        tentacle99: true
+        {}
       Queue Size: 300
       Value: true
     - Class: rviz/MarkerArray
@@ -589,7 +480,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 18.45557403564453
+      Distance: 15.423501014709473
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -597,17 +488,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 4.664576053619385
-        Y: 0.35724586248397827
-        Z: 0.012009025551378727
+        X: 1.2027026414871216
+        Y: -0.518139660358429
+        Z: 1.147101640701294
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5597963333129883
+      Pitch: 1.209796667098999
       Target Frame: firefly/base_link
-      Yaw: 4.711197853088379
+      Yaw: 4.711193084716797
     Saved:
       - Class: rviz/Orbit
         Distance: 8.194913864135742

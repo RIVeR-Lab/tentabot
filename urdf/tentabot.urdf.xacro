@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <robot name="tentabot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:arg name="ns" default="tentabot"/>
-    <xacro:arg name="model" default="burger"/>
+    <xacro:arg name="ns" default=""/>
+    <xacro:arg name="model" default=""/>
 
     <!--xacro:property name="ns" value="$(arg ns)"/-->
     <!--xacro:property name="arm_prefix" value="ur_arm_" /-->
@@ -15,11 +15,12 @@
 
     <!-- Import mobile base -->
     <xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_$(arg model)_with_ns.urdf.xacro"/>
+    <!--xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro"/-->
     <!--xacro:include filename="$(find husky_description)/urdf/husky.urdf.xacro"/-->
     <!--xacro:include filename="$(find jackal_description)/urdf/jackal_with_ns.urdf.xacro"/-->
 
     <!-- Import macro for lidar-->
-    <xacro:include filename="$(find jackal_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro" />
+    <xacro:include filename="$(find lms1xx)/urdf/sick_lms1xx_mount.urdf.xacro" />
 
     <!-- Create lidar instance (jackal)-->
     <!--xacro:sick_lms1xx_mount prefix="$(arg ns)/front"
@@ -40,14 +41,15 @@
     </xacro:realsense-rs200-->
 
     <!-- Create camera instance 1.570796327 (turtlebot3 burger)-->
-    <xacro:realsense-d435 
-        prefix="$(arg ns)/d435_cam1" 
-        parent="$(arg ns)/base_link">
+    <xacro:realsense-d435
+        ns="$(arg ns)"
+        prefix="d435_cam1" 
+        parent="base_link">
         <origin xyz="-0.05 0.0 0.18" rpy="0.0 0.0 0.0" />   
     </xacro:realsense-d435>
 
     <!-- Create macro for collision objects-->
-    <xacro:macro name="bumper" params="link_name radius length x y">
+    <!--xacro:macro name="bumper" params="link_name radius length x y">
         <link name="${link_name}">
             <inertial>
                 <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
@@ -75,7 +77,7 @@
             <parent link="$(arg ns)/base_link"/>
             <child link="${link_name}"/>
         </joint>
-    </xacro:macro>
+    </xacro:macro-->
 
     <!-- Create contact object -->
     <!--xacro:bumper 
@@ -268,7 +270,7 @@
             <geometry>
                 <box size="0.01 0.01 0.01"/>
             </geometry>
-        </visual>
+        </visual>${prefix}
 	</link>
 
     <gazebo reference="theta_link">

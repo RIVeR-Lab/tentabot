@@ -28,7 +28,7 @@
   
   <!-- Instantiate sensors-->
   <xacro:include filename="$(find tentabot)/urdf/r200.urdf.xacro"/>
-  <xacro:include filename="$(find jackal_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro" />
+  <xacro:include filename="$(find lms1xx)/urdf/sick_lms1xx_mount.urdf.xacro" />
 
   <!-- Mount a generic odometry sensor without odometry map (working everywhere). -->
   <xacro:odometry_plugin_macro

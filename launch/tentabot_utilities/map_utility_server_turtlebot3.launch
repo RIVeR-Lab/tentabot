@@ -14,8 +14,8 @@
 
   <!--/firefly/camera/depth/points
       /firefly/d435/camera/depth/color/points
-      /turtlebot0/d435_cam1d435/camera/depth/color/points-->
-  <arg name="sensor_pc2_msg_name" default="/turtlebot0/d435_cam1d435/camera/depth/color/points" />
+      /turtlebot0/d435_cam1/camera/depth/color/points-->
+  <arg name="sensor_pc2_msg_name" default="/turtlebot0/d435_cam1/camera/depth/color/points" />
   <arg name="sensor_pc2_direction" default="z" /> <!--x y z-->
   <arg name="sensor_pc2_min_range" default="0.3" />
   <arg name="sensor_pc2_max_range" default="12.0" />
