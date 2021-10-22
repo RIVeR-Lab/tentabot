@@ -18,7 +18,7 @@ world_name: "training_garden_static_0"
 
 task_and_robot_environment_name: "TurtleBot3tentabot_drl-v0"
 number_of_robots: 1
-data_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/training/"
+data_path: "$(find tentabot)/dataset/training/"
 learning_rate: 0.0002
 n_steps: 1000
 batch_size: 50
@@ -26,7 +26,7 @@ ent_coef: 0.001
 training_timesteps: 50000
 max_episode_steps: 2000
 initial_trained_model_path: ""
-#initial_trained_model_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/training/Tentabot_FC/20210911_001724_PPO_tentabot/"
+#initial_trained_model_path: "$(find tentabot)/dataset/training/Tentabot_FC/20210911_001724_PPO_tentabot/"
 plot_title: "Learning Curve"
 plot_moving_average_window_size: 20
 world_frame_name: "world"
@@ -37,7 +37,7 @@ laser_size_downsampled: 0
 laser_normalize_flag: True
 
 ## Robot
-velocity_control_data_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/trajectory_sampling/20211011_150548/"
+velocity_control_data_path: "$(find tentabot)/dataset/trajectory_sampling/20211011_150548/"
 
 ## Algorithm: Tentabot-RL Parameters
 goal_close_threshold: 0.25

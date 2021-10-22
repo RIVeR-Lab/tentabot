@@ -1,9 +1,9 @@
 ## Testing Parameters
 
 mode: "testing"
-data_path: "/home/akmandor/catkin_ws/src/mp_algorithms/tentabot/data/testing/"
-#initial_trained_model_path: "/home/akmandor/catkin_ws/src/mp_algorithms/tentabot/data/training/20210911_223347_PPO_tentabot/"
-initial_trained_model_path: "/home/akmandor/catkin_ws/src/mp_algorithms/tentabot/data/training/Tentabot_FC/20210914_095714_PPO_tentabot/"
+data_path: "$(find tentabot)/data/testing/"
+#initial_trained_model_path: "$(find tentabot)/data/training/20210911_223347_PPO_tentabot/"
+initial_trained_model_path: "$(find tentabot)/data/training/Tentabot_FC/20210914_095714_PPO_tentabot/"
 
 # SIMULATION: testing_lvl_1
 # EXPERIMENT: 

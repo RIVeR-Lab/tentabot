@@ -45,7 +45,7 @@
   <arg name="goal_close_threshold" value="0.25" />
 
   <!-- turtlebot0 Trajectory Sampling Parameters-->
-  <arg name="trajectory_sampling_dataset_path" value="/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/trajectory_sampling/" />
+  <arg name="trajectory_sampling_dataset_path" value="$(find tentabot)/dataset/trajectory_sampling/" />
   <arg name="trajectory_gen_type" value="kinematic" />
   <arg name="ttime" value="10.0" />
   <arg name="tlen" value="10" />
@@ -58,7 +58,7 @@
 
   <!-- Offline Tuning Parameters -->
   <!--arg name="trajectory_data_path" value="" /-->
-  <arg name="trajectory_data_path" value="/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/trajectory_sampling/20211011_150548/" />
+  <arg name="trajectory_data_path" value="$(find tentabot)/dataset/trajectory_sampling/20211011_150548/" />
 
   <arg name="max_occupancy_belief_value" value="100" />
   <arg name="pdist_x_max" value="0.2" />
@@ -82,7 +82,7 @@
 
   <!-- Data Collection Parameters -->
   <arg name="nav_data_path" value="" />
-  <!--arg name="nav_data_path" value="/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/tnav/" /-->
+  <!--arg name="nav_data_path" value="$(find tentabot)/dataset/tnav/" /-->
 
   <!-- Simulation Parameters -->
   <arg name="ns" default="/" />

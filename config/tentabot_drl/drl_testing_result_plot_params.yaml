@@ -3,13 +3,13 @@ plot_flag: True
 plot_path: ""
 print_data: False
 
-data_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/testing_data/laser_FC/20210914_165515_PPO_tentabot/"
+data_path: "$(find tentabot)/dataset/benchmark/2022_ICRA/testing_data/laser_FC/20210914_165515_PPO_tentabot/"
 
 multi_data_flag: True
-multi_result_path: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/testing_data/"
+multi_result_path: "$(find tentabot)/dataset/benchmark/2022_ICRA/testing_data/"
 
 multi_data_cnt: 4
-multi_data_path1: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/testing_data/laser_FC/"
-multi_data_path2: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/testing_data/Tentabot_FC/"
-multi_data_path3: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/testing_data/Tentabot_1DCNN_FC/"
-multi_data_path4: "/home/akmandor/catkin_ws/src/motion_planning/tentabot/dataset/benchmark/2022_ICRA/testing_data/Tentabot_2DCNN_FC/"
+multi_data_path1: "$(find tentabot)/dataset/benchmark/2022_ICRA/testing_data/laser_FC/"
+multi_data_path2: "$(find tentabot)/dataset/benchmark/2022_ICRA/testing_data/Tentabot_FC/"
+multi_data_path3: "$(find tentabot)/dataset/benchmark/2022_ICRA/testing_data/Tentabot_1DCNN_FC/"
+multi_data_path4: "$(find tentabot)/dataset/benchmark/2022_ICRA/testing_data/Tentabot_2DCNN_FC/"
