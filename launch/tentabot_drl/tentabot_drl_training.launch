@@ -4,7 +4,8 @@
     tentabot_drl_turtlebot3_training_params
     -->
     <rosparam command="load" 
-        file="$(find tentabot)/config/tentabot_drl/tentabot_drl_turtlebot3_training_params.yaml" />
+        file="$(find tentabot)/config/tentabot_drl/tentabot_drl_turtlebot3_training_params.yaml"
+        subst_value="True" />
     
     <!-- Launch the training system 
     tentabot_drl_training_turtlebot3
