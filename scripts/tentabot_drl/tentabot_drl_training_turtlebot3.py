@@ -287,9 +287,8 @@ if __name__ == '__main__':
     env = StartOpenAI_ROS_Environment(task_and_robot_environment_name + str(0), robot_id=0, max_episode_steps=max_episode_steps, data_folder_path=data_folder_path)
     env = Monitor(env, data_folder_path)
 
-    obs_space = env.observation_space
-
-    print("training_tentabot_rl::__main__ -> shape_obs: " + str(obs_space))
+    #obs_space = env.observation_space
+    #print("training_tentabot_rl::__main__ -> shape_obs: " + str(obs_space))
 
     if observation_space_type == "lidar_FC" or observation_space_type == "Tentabot_FC":
         
