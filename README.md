@@ -28,8 +28,8 @@
 ```
 
 ### 2. Related Papers
-* Akmandor, N. Ü. and Padır, T., "**Reactive navigation framework for mobile robots by heuristically evaluated pre-sampled trajectories**," International Journal of Robotic Computing 3.1 (2021): 47-68, [[DOI:10.35708/RC1870-126265]](https://b5589c9e-f1e3-4455-9929-0d78781398a4.filesusr.com/ugd/e49175_ccc84165293e42f79a1d4ad98260e8b9.pdf). [[arXiv:10.35708/RC1870-126265]](https://arxiv.org/abs/2105.08145)
-* Akmandor, N. Ü. and Padır, T., "**A 3D Reactive Navigation Algorithm for Mobile Robots by Using Tentacle-Based Sampling**," 2020 Fourth IEEE International Conference on Robotic Computing (IRC), Taichung, Taiwan, 2020, pp. 9-16, [[DOI:10.1109/IRC.2020.00009]](https://doi.org/10.1109/IRC.2020.00009). [[arXiv:2001.09199]](https://arxiv.org/abs/2001.09199).
+* Akmandor, N. Ü. and Padır, T., "**Reactive navigation framework for mobile robots by heuristically evaluated pre-sampled trajectories**", International Journal of Robotic Computing 3.1 (2021): 47-68, [[DOI:10.35708/RC1870-126265]](https://b5589c9e-f1e3-4455-9929-0d78781398a4.filesusr.com/ugd/e49175_ccc84165293e42f79a1d4ad98260e8b9.pdf). [[arXiv:10.35708/RC1870-126265]](https://arxiv.org/abs/2105.08145)
+* Akmandor, N. Ü. and Padır, T., "**A 3D Reactive Navigation Algorithm for Mobile Robots by Using Tentacle-Based Sampling**", 2020 Fourth IEEE International Conference on Robotic Computing (IRC), Taichung, Taiwan, 2020, pp. 9-16, [[DOI:10.1109/IRC.2020.00009]](https://doi.org/10.1109/IRC.2020.00009). [[arXiv:2001.09199]](https://arxiv.org/abs/2001.09199).
 * Von Hundelshausen, Felix, et al. "**Driving with tentacles: Integral structures for sensing and motion**." Journal of Field Robotics 25.9 (2008): 640-673, [[DOI:10.1002/rob.20256]](https://doi.org/10.1002/rob.20256).
 
 ### 2. Videos
@@ -81,23 +81,35 @@ git checkout noetic-akmandor
 ```
 #### 3.14 (Required for Tentabot-DRL) Install [stable-baselines3](https://stable-baselines3.readthedocs.io/en/master/guide/install.html#stable-release) Python package following their instructions.
 
-#### 3.15 Install other dependencies using rosdep tool:
+#### 3.15 Install ROS dependencies
+```
+sudo apt-get install libsuitesparse-dev
+sudo apt-get install libnlopt-dev
+```
+
+#### 3.16 Install other ROS dependencies using rosdep tool:
 
 Follow the instructions under 'Prerequisites' and install rosdep tool based on the ROS version: [Noetic rosdep](http://wiki.ros.org/noetic/Installation/Source).
 
 ROS Noetic example of installing dependencies using rosdep tools:
 ```
 cd ~/catkin_ws
-rosdep install --from-paths ./src --ignore-packages-from-source --rosdistro noetic -y
+rosdep install --from-paths src --ignore-src -r -y
 ```
 
-#### 3.16 Build the catkin workspace:
+#### 3.17 Install Python dependencies
+```
+pip install GitPython
+pip install squaternion
+```
+
+#### 3.18 Build the catkin workspace:
 ```
 cd ~/catkin_ws
 catkin build
 ```
 
-#### 3.17 Source the workspace, after successfully built:
+#### 3.19 Source the workspace, after successfully built:
 ```
 source devel/setup.bash
 ```
