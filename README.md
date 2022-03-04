@@ -1,4 +1,4 @@
-# Tentabot-DRL: Robot Navigation in Dynamic Environments using Deep Reinforcement Learning with Pre-sampled Trajectory Value Observations
+# Tentabot-DRL: Deep Reinforcement Learning based Robot Navigation in Dynamic Environments using Occupancy Values of Motion Primitives
 ![teaser](videos/tentabot_drl_training_static_0.gif) ![teaser](videos/tentabot_drl_training_static_1.gif) ![teaser](videos/tentabot_drl_training_dynamic_0.gif) ![teaser](videos/tentabot_drl_training_dynamic_1.gif)
 
 # Tentabot-Heuristic: Reactive Navigation Framework for Mobile Robots by Heuristically Evaluated Pre-sampled Trajectories (Tentacles)
