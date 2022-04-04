@@ -43,7 +43,7 @@ Follow the tutorials to
 - [install ROS](http://wiki.ros.org/ROS/Installation) based on the Ubuntu version.
 - [set up catkin workspace](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
 
-To install tentabot, either follow the [manual installation instructions](MANUAL_INSTALLATION.md), or attempt an automated install with the following instructions (experimental):
+To install tentabot, either follow the [manual installation instructions](docs/MANUAL_INSTALLATION.md), or attempt an automated install with the following instructions (experimental):
 
 #### 3.1 Clone the tentabot repository into the src folder of your catkin workspace, and change into the tentabot directory.
 ```
