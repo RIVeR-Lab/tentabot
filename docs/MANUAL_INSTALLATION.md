@@ -1,5 +1,4 @@
 ### Manual Installation
-
 The system has been tested with 20.04 (ROS Noetic).
 
 Follow the tutorials to
@@ -7,9 +6,8 @@ Follow the tutorials to
 - [set up catkin workspace](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
 
 #### Tentabot depends on the following libraries/packages:
-
-- [flexible-collision-library/fcl](https://github.com/flexible-collision-library/fcl)
 - [libccd](https://github.com/danfis/libccd)
+- [flexible-collision-library/fcl](https://github.com/flexible-collision-library/fcl)
 
 - [rotors_simulator](https://github.com/ethz-asl/rotors_simulator.git)
 - [turtlebot3](https://github.com/RIVeR-Lab/turtlebot3/tree/noetic-akmandor) - 'noetic-akmandor' branch
