@@ -1,0 +1,45 @@
+# AUTHOR: Neset Unver Akmandor (NUA)
+#         Gary M. Lvov (GML)
+#         Hongyu Li (LHY)
+# E-MAIL: akmandor.n@northeastern.edu
+#         lvov.g@northeastern.edu
+#         li.hongyu1@northeastern.edu
+
+world_frame_name: "world"
+map_name: "tentabot"
+map_frame_name: "/base_link"
+map_resolution: 0.1
+map_server_dt: 0.1
+
+local_map_flag: true
+dynamic_flag: true
+skip_cnt_reset_sensor_range: 1
+
+sensor_pc2_msg_name: "/camera/depth/color/points"
+sensor_pc2_direction: "z"
+sensor_pc2_min_range: 0.3   # RealSense D435i https://www.intelrealsense.com/depth-camera-d435i/
+sensor_pc2_max_range: 3.0   # https://www.roscomponents.com/en/cameras/281-intel-realsense-d435.html
+sensor_pc2_max_yaw: 1.51    # In radians original 1.51
+sensor_pc2_max_pitch: 1.01  # original 1.01
+
+sensor_laser_msg_name: "/scan"
+sensor_laser_max_range: 12.0
+
+# Based on physical parameters of robot (slightly larger)
+crop_x_min: -0.35
+crop_x_max: 0.1             # https://hello-robot.com/product - Stretch RE1 Specification
+crop_y_min: -0.20
+crop_y_max: 0.20
+crop_z_min: -0.0
+crop_z_max: 1.45
+
+# Based on max sensor range of robot
+bbx_x_min: -10
+bbx_x_max: 10
+bbx_y_min: -10
+bbx_y_max: 10
+bbx_z_min: 0.0
+bbx_z_max: 3.0
+
+filter_ground: true
+filter_ground_threshold: 0.1

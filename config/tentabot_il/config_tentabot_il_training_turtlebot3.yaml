@@ -1,0 +1,69 @@
+## General Parameters
+mode: "training"
+deep_learning_algorithm: "PPO"
+motion_planning_algorithm: "tentabot_drl"
+
+# lidar_FC                                  -> FC(laser_data + target + prev_action)
+# lidar_1DCNN_FC                            -> 1DCNN(Channel: time, Length: laser_data) + FC(CNN_output + target + prev_action)
+# Tentabot_FC                               -> FC(occupancy_set + target + prev_action)
+# Tentabot_1DCNN_FC                         -> 1DCNN(Channel: time, Length: occupancy_set) + FC(CNN_output + target + prev_action), if cit_flag = True 
+# Tentabot_1DCNN_FC                         -> 1DCNN(Channel: occupancy_set, Length: time) + FC(CNN_output + target + prev_action), if cit_flag = False 
+# Tentabot_2DCNN_FC                         -> 2DCNN(Channel: 1, Height: occupancy_set, Width: time) + FC(CNN_output + target + prev_action)
+observation_space_type: "Tentabot_FC"
+
+# training_garden_static_0
+# training_garden_dynamic_0 
+# training_4robot3D1P
+# training_real
+world_name: "training_garden_static_0"
+
+# TurtleBot3tentabot_drl-v0
+# TurtleBot3Realtentabot_drl-v0
+task_and_robot_environment_name: "TurtleBot3tentabot_drl-v0"
+
+number_of_robots: 1
+data_path: "$(find tentabot)/dataset/il/training/"
+#expert_data_path: "$(find tentabot)/dataset/il/expert/20220211_110745_tentabot/expert_oar_data.pkl"
+expert_data_path: "$(find tentabot)/dataset/drl/training/XPS_Tentabot_FC_2/20220209_180628_PPO_tentabot/oar_data.pkl"
+initial_training_path: ""
+#initial_training_path: "$(find tentabot)/dataset/il/training/20211214_150015_PPO_tentabot/"
+learning_rate: 0.0002
+n_steps: 1000
+batch_size: 50
+ent_coef: 0.001
+training_timesteps: 50000
+max_episode_steps: 2000
+n_epochs: 1
+
+plot_title: "Learning Curve"
+plot_moving_average_window_size: 20
+world_frame_name: "world"
+mantissa_precision: 2
+
+## Sensors
+laser_size_downsampled: 90
+laser_normalize_flag: True
+laser_error_threshold: 0.1
+
+## Robot
+#velocity_control_msg: /mobile_base/commands/velocity
+velocity_control_msg: /turtlebot0/cmd_vel
+velocity_control_data_path: "$(find tentabot)/dataset/trajectory_sampling/20220207_223653/"
+
+## Algorithm: Tentabot-RL Parameters
+goal_close_threshold: 0.25
+obs_min_range: 0.25
+
+n_obs_stack: 5
+n_skip_obs_stack: 5
+
+cit_flag: True # cit = channel is time
+
+n_wp: 8
+
+# Reward:
+reward_success: 50
+penalty_failure: -100
+reward_goal_scale: 10.0
+safety_range_threshold: 0.5
+penalty_safety_scale: -1.0

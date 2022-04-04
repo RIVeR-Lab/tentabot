@@ -1,0 +1,707 @@
+<?xml version='1.0'?>
+<!--URDF taken from https://github.com/husarion/rosbot_description, modified by Gary M. Lvov-->
+<!-- Modifications allow for several instances of rosbot in sim at once, while perserving correct TF tree-->
+<robot name="rosbot" 
+  xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="robot_namespace" default=""/>
+
+  <xacro:property name="cameraSize" value="0.05"/>
+  <xacro:property name="cameraMass" value="0.1"/>
+
+  <xacro:include filename="$(find tentabot)/models/husarion_rosbot/materials.xacro" />
+  <!--<xacro:include filename="$(find tentabot)/models/husarion_rosbot/rosbot.gazebo" />-->  
+  <!--GML : Possible improvement: add gazebo tags as seperate included .gazebo file-->
+  
+  <gazebo>
+    <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+      <updateRate>10.0</updateRate>
+      <robotBaseFrame>$(arg robot_namespace)/base_link</robotBaseFrame>
+      <wheelSeparation>0.20</wheelSeparation>
+      <wheelDiameter>0.08</wheelDiameter>
+      <torque>5</torque>s
+      <leftFrontJoint>front_left_wheel_hinge</leftFrontJoint>
+      <rightFrontJoint>front_right_wheel_hinge</rightFrontJoint>
+      <leftRearJoint>rear_left_wheel_hinge</leftRearJoint>
+      <rightRearJoint>rear_right_wheel_hinge</rightRearJoint>
+      <topicName>cmd_vel</topicName>
+      <commandTopic>cmd_vel</commandTopic>
+      <broadcastTF>true</broadcastTF>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>$(arg robot_namespace)/odom</odometryFrame>
+      <covariance_x>0.000100</covariance_x>
+      <covariance_y>0.000100</covariance_y>
+      <covariance_yaw>0.010000</covariance_yaw>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/White</material>
+  </gazebo>
+
+  <gazebo reference="top">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+
+  <gazebo reference="laser">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="camera_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="front_left_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="front_right_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="rear_left_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="rear_right_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <!-- astra -->
+
+  <gazebo reference="camera_link">
+    <sensor type="depth" name="openni_camera_camera">
+      <always_on>1</always_on>
+      <visualize>true</visualize>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <depth_camera>
+
+        </depth_camera>
+        <clip>
+          <near>0.1</near>
+          <far>100</far>
+        </clip>
+      </camera>
+
+      <plugin name="kinect_controller" filename="libgazebo_ros_openni_kinect.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>10.0</updateRate>
+        <cameraName>camera</cameraName>
+        <frameName>$(arg robot_namespace)/camera_depth_frame</frameName>
+        <imageTopicName>rgb/image_raw</imageTopicName>
+        <depthImageTopicName>depth/image_raw</depthImageTopicName>
+        <pointCloudTopicName>depth/points</pointCloudTopicName>
+        <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+        <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudCutoff>0.4</pointCloudCutoff>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+        <CxPrime>0.0</CxPrime>
+        <Cx>0.0</Cx>
+        <Cy>0.0</Cy>
+        <focalLength>0.0</focalLength>
+      </plugin>
+    </sensor>
+  </gazebo>
+  <!-- RpLidar A2 using CPU -->
+  <gazebo reference="laser">
+    <sensor type="ray" name="head_rplidar_sensor">
+      <pose>0 0 0.06 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159265</min_angle>
+            <max_angle>3.14159265</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_rplidar_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan</topicName>
+        <frameName>$(arg robot_namespace)/laser</frameName>
+      </plugin>
+    </sensor>
+  </gazebo> 
+
+  <gazebo reference="top">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <visualize>true</visualize>
+      <topic>imu</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>imu</topicName>
+        <bodyName>imu_link</bodyName>
+        <updateRateHZ>10.0</updateRateHZ>
+        <gaussianNoise>0.0</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>imu_link</frameName>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="range_fl">
+    <sensor type="ray" name="range_fl">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>5</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <max>0.9</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+        <gaussianNoise>0.005</gaussianNoise>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>5</updateRate>
+        <topicName>range/fl</topicName>
+        <frameName>$(arg robot_namespace)/range_fl</frameName>
+        <fov>0.1</fov>
+        <radiation>ultrasound</radiation>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="range_fr">
+    <sensor type="ray" name="range_fr">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>5</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <max>0.9</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+        <gaussianNoise>0.005</gaussianNoise>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>5</updateRate>
+        <topicName>range/fr</topicName>
+        <frameName>$(arg robot_namespace)/range_fr</frameName>
+        <fov>0.1</fov>
+        <radiation>ultrasound</radiation>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="range_rl">
+    <sensor type="ray" name="range_rl">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>5</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <max>0.9</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+        <gaussianNoise>0.005</gaussianNoise>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>5</updateRate>
+        <topicName>range/rl</topicName>
+        <frameName>$(arg robot_namespace)/range_rl</frameName>
+        <fov>0.1</fov>
+        <radiation>ultrasound</radiation>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="range_rr">
+    <sensor type="ray" name="range_rr">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>5</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.05</min_angle>
+            <max_angle>0.05</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.01</min>
+          <max>0.9</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+        <gaussianNoise>0.005</gaussianNoise>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>5</updateRate>
+        <topicName>range/rr</topicName>
+        <frameName>$(arg robot_namespace)/range_rr</frameName>
+        <fov>0.1</fov>
+        <radiation>ultrasound</radiation>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <link name="base_link"></link> 
+  <joint name="base_link_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="body_link"/>
+  </joint>
+
+  <link name='body_link'>
+    <pose>0 0 0.1 0 0 0</pose>
+
+    <inertial>
+      <mass value="5"/>
+      <origin xyz="0 0 0.04" rpy=" 0 0 0"/>
+      <inertia 
+      ixx="0.01" ixy="0.01" ixz="0" 
+      iyy="0.01" iyz="0.01" 
+      izz="0.01" 
+      />
+    </inertial>
+  
+
+    <collision>
+      <origin xyz="0 0 0.02" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.20 0.15 0.04"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 -0.02" rpy=" 1.5707 0 1.5707"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/box.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="White"/>
+    </visual>
+
+  </link>
+
+  <joint name="top_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="body_link"/>
+    <child link="top"/>
+  </joint>
+
+  <link name='top'>
+    <pose>0 0 0 0 0 0</pose>
+
+    <inertial>
+      <mass value="0.01"/>
+      <origin xyz="0 0 0.055" rpy=" 0 0 0"/>
+      <inertia 
+      ixx="0.0" ixy="0" ixz="0" 
+      iyy="0.0" iyz="0" 
+      izz="0.0" 
+      />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.055" rpy=" 1.5707 0 1.5707"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/upper.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Red"/>
+    </visual>
+  </link>
+
+  <link name="front_left_wheel">
+    <collision>
+      <origin xyz="0 -0.014 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder length="0.036" radius="0.04"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>10</mu>
+            <mu2>10</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 1.5707"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/wheel.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Black"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="0.5"/>
+      <inertia 
+      ixx="0.001" ixy="0.0" ixz="0.0" 
+      iyy="0.001" iyz="0.0" 
+      izz="0.001"/>
+    </inertial>
+  </link>
+
+  <link name="front_right_wheel">
+    <collision>
+      <origin xyz="0 0.014 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder length="0.036" radius="0.04"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>10</mu>
+            <mu2>10</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 -1.5707"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/wheel.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Black"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="0.5"/>
+      <inertia 
+      ixx="0.001" ixy="0.0" ixz="0.0" 
+      iyy="0.001" iyz="0.0" 
+      izz="0.001"/>
+    </inertial>
+  </link>
+
+  <link name="rear_left_wheel">
+    <collision>
+      <origin xyz="0 -0.014 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder length="0.036" radius="0.04"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>10</mu>
+            <mu2>10</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 1.5707"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/wheel.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Black"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="0.5"/>
+      <inertia 
+      ixx="0.001" ixy="0.0" ixz="0.0" 
+      iyy="0.001" iyz="0.0" 
+      izz="0.001"/>
+    </inertial>
+  </link>
+
+  <link name="rear_right_wheel">
+    <collision>
+      <origin xyz="0 0.014 0" rpy="${pi/2} 0 0"/>
+      <geometry>
+        <cylinder length="0.036" radius="0.04"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>10</mu>
+            <mu2>10</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 -1.5707"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/wheel.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Black"/>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="0.5"/>
+      <inertia 
+      ixx="0.001" ixy="0.0" ixz="0.0" 
+      iyy="0.001" iyz="0.0" 
+      izz="0.001"/>
+    </inertial>
+  </link>
+
+
+  <joint type="continuous" name="front_left_wheel_hinge">
+    <origin xyz="0.05 0.11 0" rpy="0 0 0"/>
+    <child link="front_left_wheel"/>
+    <parent link="body_link"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="1" velocity="10"/>
+    <joint_properties damping="5.0" friction="1.0"/>
+  </joint>
+
+  <transmission name="front_left_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="front_left_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="front_left_wheel_hinge">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <joint type="continuous" name="front_right_wheel_hinge">
+    <origin xyz="0.05 -0.11 0" rpy="0 0 0"/>
+    <child link="front_right_wheel"/>
+    <parent link="body_link"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="1" velocity="10"/>
+    <joint_properties damping="5.0" friction="1.0"/>
+  </joint>
+
+  <transmission name="front_right_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="front_right_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="front_right_wheel_hinge">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <joint type="continuous" name="rear_left_wheel_hinge">
+    <origin xyz="-0.055 0.11 0" rpy="0 0 0"/>
+    <child link="rear_left_wheel"/>
+    <parent link="body_link"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="1" velocity="10"/>
+    <joint_properties damping="5.0" friction="1.0"/>
+  </joint>
+
+  <transmission name="rear_left_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="rear_left_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="rear_left_wheel_hinge">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <joint type="continuous" name="rear_right_wheel_hinge">
+    <origin xyz="-0.055 -0.11 0" rpy="0 0 0"/>
+    <child link="rear_right_wheel"/>
+    <parent link="body_link"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="1" velocity="10"/>
+    <joint_properties damping="5.0" friction="1.0"/>
+  </joint>
+
+  <transmission name="rear_right_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="rear_right_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="rear_right_wheel_hinge">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <!-- Orbbec Astra RGBD Camera -->
+  <joint name="astra_joint" type="fixed">
+    <axis xyz="0 0 0" />
+    <origin xyz="-0.03 0 0.18" rpy="0 0 0"/>
+    <parent link="body_link"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0.02 0 0" rpy="0 0 0"/>
+      <geometry>0
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="-0.01 0 -0.03" rpy="1.5707 0 1.5707"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/astra.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Black"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+    </inertial>
+  </link>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_link"/>
+    <child link="camera_rgb_frame"/>
+  </joint>
+
+  <link name="camera_rgb_frame">
+  </link>
+
+  <joint name="camera_depth_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_link"/>
+    <child link="camera_depth_frame"/>
+  </joint>
+
+  <link name="camera_depth_frame">
+  </link>
+
+  <joint name="rplidar_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.02 0 0.058" rpy="0 0 3.14"/>
+    <parent link="body_link"/>
+    <child link="laser"/>
+  </joint>
+
+  <!-- rplidar Laser -->
+  <link name="laser">
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5707 0 4.71"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/rplidar.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5707 0 4.71"/>
+      <geometry>
+        <mesh filename="package://tentabot/models/husarion_rosbot/meshes/rplidar.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="Black"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="1.5707 0 4.71"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+    </inertial>
+  </link>
+
+  <joint name="range_fl_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.1 0.05 0.01" rpy="0 0 0.13 "/>
+    <parent link="body_link"/>
+    <child link="range_fl"/>
+  </joint>
+  <link name="range_fl"></link>
+
+  <joint name="range_fr_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.1 -0.05 0.01" rpy="0 0 -0.13 "/>
+    <parent link="body_link"/>
+    <child link="range_fr"/>
+  </joint>
+  <link name="range_fr"></link>
+
+  <joint name="range_rl_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="-0.1 0.05 0.01" rpy="0 0 3.01 "/>
+    <parent link="body_link"/>
+    <child link="range_rl"/>
+  </joint>
+  <link name="range_rl"></link>
+
+  <joint name="range_rr_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="-0.1 -0.05 0.01" rpy="0 0 3.27 "/>
+    <parent link="body_link"/>
+    <child link="range_rr"/>
+  </joint>
+  <link name="range_rr"></link>
+
+</robot>

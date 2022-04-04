@@ -1,17 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
-    <!-- Load parameters 
-    tentabot_drl_turtlebot3_testing_params
-    -->
-    <rosparam command="load" 
-        file="$(find tentabot)/config/tentabot_drl_turtlebot3_testing_params.yaml"
-        subst_value="True" />
-    
-    <!-- Launch the testing system 
-    tentabot_drl_testing_turtlebot3
-    -->
-    <node pkg="tentabot" 
-        name="tentabot_drl_testing_turtlebot3" 
-        type="tentabot_drl_testing_turtlebot3.py" 
-        output="screen"/>
+    <node name="tentabot_drl_testing" pkg="tentabot" type="tentabot_drl_testing.py" output="screen" />
 </launch>

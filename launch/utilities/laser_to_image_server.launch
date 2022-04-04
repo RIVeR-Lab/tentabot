@@ -1,0 +1,8 @@
+<!--AUTHOR: Neset Unver Akmandor (NUA)-->
+<!--E-MAIL: akmandor.n@northeastern.edu-->
+
+<launch>
+  <node name="laser_to_image_server" pkg="tentabot" type="laser_to_image_server" output="screen">
+    <rosparam file="$(find tentabot)/config/utilities/config_laser_to_image.yaml"/>
+  </node>
+</launch>

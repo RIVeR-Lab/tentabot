@@ -1,7 +1,7 @@
 #ifndef TENTABOT_H
 #define TENTABOT_H
 
-// LAST UPDATE: 2021.10.08
+// LAST UPDATE: 2022.03.23
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -18,7 +18,7 @@
 //     H.-J. Wuensche. Driving with tentacles: Integral structures for 
 //     sensing and motion. Journal of Field Robotics, 25(9):640–673, 2008.
 
-// --OUTSOURCE LIBRARIES--
+// --EXTERNAL LIBRARIES--
 #include <std_msgs/Float64MultiArray.h>
 #include <thread>
 #include <std_srvs/Empty.h>
@@ -32,6 +32,8 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/transforms.h>
+#include <ros/package.h>
+#include <boost/filesystem.hpp>
 
 // --CUSTOM LIBRARIES--
 #include "common_utility.h"
@@ -73,12 +75,16 @@ class Tentabot
       double time_limit;                            // TODO: Review: time limit for the navigation, unit: s, range: 0 < time_limit, E R+
       double nav_dt;                                // TODO: Review: frequency of ROS loop
       double goal_close_threshold;                  // TODO: Review: threshold distance from goal to robot position in the global coordinate frame, range: 0 <= goal_close_threshold, E R+
+      bool ground_collision_flag;
+      double ground_collision_threshold;
+      bool drl_service_flag;
     };
 
     // DESCRIPTION: TODO...
     struct RobotParams
     {
       string world_name;
+      string local_map_msg;
       string robot_name;                                        // TODO: Review: name of the robot
       string robot_frame_name;                                  // TODO: Review: name of the robot frame
       string sensor_frame_name;
@@ -92,11 +98,9 @@ class Tentabot
       double dummy_max_lat_acc;                                 // TODO: Review: max forward lateral acceleration of the robot, unit: m/s^2, range: 0 < dummy_max_lat_acc, E R+
       double dummy_max_yaw_velo;                                // TODO: Review: max yaw angle velocity of the robot, unit: rad/s, range: 0 < dummy_max_yaw_velo, E R+
       double dummy_max_yaw_acc;                                 // TODO: Review: max yaw angle acceleration of the robot, unit: rad/s^2, range: 0 < dummy_max_yaw_acc, E R+
-      geometry_msgs::Pose init_robot_pose;                      // TODO: Review: position and orientation of the robot's initial pose with respect to global coordinate system
       string robot_pose_control_msg;
       string robot_velo_control_msg;
-      string odometry_msg;
-      string map_msg;
+      string robot_odometry_msg;
     };
 
     // DESCRIPTION: TODO...
@@ -106,6 +110,9 @@ class Tentabot
       vector<vector<geometry_msgs::Point>> tentacle_data;
       vector<vector<double>> velocity_control_data;
       double max_occupancy_belief_value;
+      double sweight_max;                                 // max weight of support cells (= for priority cells) which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_max, E R+ 
+      double sweight_scale;                               // parameter to adjust weight of support cells which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_scale, E R+ 
+      double egrid_vdim;                                  // dimension of the voxel in the ego-grid, unit: m, range: 0 < cdim, E R+
       double pdist_x_max;                                 // priority distance, unit: m, range: 0 < cdist, E R+
       double pdist_x_min;                                 // priority distance, unit: m, range: 0 < cdist, E R+
       double pdist_y_max;                                 // priority distance, unit: m, range: 0 < cdist, E R+
@@ -118,9 +125,6 @@ class Tentabot
       double sdist_y_min;                                 // support distance, unit: m, range: cdist < sdist, E R+
       double sdist_z_max;                                 // support distance, unit: m, range: cdist < sdist, E R+
       double sdist_z_min;                                 // support distance, unit: m, range: cdist < sdist, E R+
-      double sweight_max;                                 // max weight of support cells (= for priority cells) which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_max, E R+ 
-      double sweight_scale;                               // parameter to adjust weight of support cells which affects drivability of a tentacle calculation based on closest tentacle sample point, range: 0 < cweight_scale, E R+ 
-      double egrid_vdim;                                  // dimension of the voxel in the ego-grid, unit: m, range: 0 < cdim, E R+
     };
 
     // DESCRIPTION: TODO...
@@ -130,6 +134,7 @@ class Tentabot
       double crash_dist_scale;                      // crash distance on the selected tentacle, range: 0 <= crash_dist, E R+
       double clear_scale;                           // parameter to adjust the weight of the clearance value while selecting best tentacle, range: 0 <= clear_scale, E R+
       double clutter_scale;                         // parameter to adjust the weight of the clutterness value while selecting best tentacle, range: 0 <= clutter_scale, E R+,
+      double occupancy_scale;                       // parameter to adjust the weight of the occupancy value while selecting best tentacle, range: 0 <= occupancy_scale, E R+,
       double close_scale;                           // parameter to adjust the weight of the closeness value while selecting best tentacle, range: 0 <= close_scale, E R+
       double smooth_scale;                          // parameter to adjust the weight of the smoothness value while selecting best tentacle, range: 0 <= smooth_scale, E R+
       
@@ -169,7 +174,7 @@ class Tentabot
       vector<vector<double>> sample_weight_data;
       vector<double> tentacle_weight_data;
 
-      octomap_msgs::Octomap measured_map_msg;
+      octomap_msgs::Octomap measured_local_map;
       geometry_msgs::Pose measured_robot_pose;            // TODO: Review: most recent position and orientation of the robot with respect to global coordinate system
 
       string map_frame_name;
@@ -264,6 +269,9 @@ class Tentabot
     VisuParams getVisuParams();
 
     // DESCRIPTION: TODO...
+    string getDataPath();
+
+    // DESCRIPTION: TODO...
     void setProcessParams(ProcessParams new_process_param);
 
     // DESCRIPTION: TODO...
@@ -285,7 +293,7 @@ class Tentabot
     void setVisuParams(VisuParams new_visu_param);
 
     // DESCRIPTION: TODO...
-    void setDataPath(string data_path);
+    void setDataPath(string new_data_path);
 
     // DESCRIPTION: TODO...
     void clearTentacleData();
@@ -355,9 +363,6 @@ class Tentabot
     void mapCallback(const octomap_msgs::Octomap::ConstPtr& msg);
 
     // DESCRIPTION: TODO...
-    //void pc2Callback(const sensor_msgs::PointCloud2::ConstPtr& msg);
-
-    // DESCRIPTION: TODO...
     void robotPoseCallback(const geometry_msgs::Pose::ConstPtr& msg);
 
     // DESCRIPTION: TODO...
@@ -367,10 +372,10 @@ class Tentabot
     void mainCallback(const ros::TimerEvent& e);
 
     // DESCRIPTION: TODO...
-    bool rl_step(tentabot::rl_step::Request &req, tentabot::rl_step::Response &res);
+    bool rl_step_srv(tentabot::rl_step::Request &req, tentabot::rl_step::Response &res);
 
     // DESCRIPTION: TODO...
-    bool update_goal(tentabot::update_goal::Request &req, tentabot::update_goal::Response &res);
+    bool update_goal_srv(tentabot::update_goal::Request &req, tentabot::update_goal::Response &res);
 
   private:
 
@@ -390,6 +395,10 @@ class Tentabot
     ofstream pre_data_stream;
     ofstream mid_data_stream;
     ofstream post_data_stream;
+    ros::Subscriber sub_odom;
+    ros::Subscriber sub_map;
+    ros::ServiceServer srv_rl_step;
+    ros::ServiceServer srv_update_goal;
     
     // DESCRIPTION: TODO...
     int toIndex(double pos, int grid_vnum);
@@ -478,9 +487,6 @@ class Tentabot
     vector<geometry_msgs::Point> equadistant(geometry_msgs::Point p1, 
                                              geometry_msgs::Point p2, 
                                              int num_btw);
-
-    // DESCRIPTION: TODO...UPDATE LOCAL MAP
-    //void update_local_map();
 
     // DESCRIPTION: TODO...
     bool isOccupied(double x, double y, double z);

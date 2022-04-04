@@ -1,0 +1,756 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 202
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Grid1
+        - /TF1
+        - /RobotModel1
+        - /PointCloud21
+        - /MarkerArray1
+        - /ColorOccupancyGrid1
+        - /MarkerArray5/Namespaces1
+        - /MarkerArray6/Namespaces1
+        - /MarkerArray7/Namespaces1
+      Splitter Ratio: 0.6235294342041016
+    Tree Height: 720
+  - Class: rviz/Selection
+    Name: Selection
+  - Class: rviz/Tool Properties
+    Expanded:
+      - /2D Pose Estimate1
+      - /2D Nav Goal1
+      - /Publish Point1
+    Name: Tool Properties
+    Splitter Ratio: 0.586667001247406
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz/Time
+    Experimental: false
+    Name: Time
+    SyncMode: 0
+    SyncSource: LaserScan
+Preferences:
+  PromptSaveOnExit: true
+Toolbars:
+  toolButtonStyle: 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz/Grid
+      Color: 0; 0; 0
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 50
+      Reference Frame: map
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        base_link:
+          Value: true
+        camera_accel_frame:
+          Value: true
+        camera_accel_optical_frame:
+          Value: true
+        camera_aligned_depth_to_color_frame:
+          Value: true
+        camera_bottom_screw_frame:
+          Value: true
+        camera_color_frame:
+          Value: true
+        camera_color_optical_frame:
+          Value: true
+        camera_depth_frame:
+          Value: true
+        camera_depth_optical_frame:
+          Value: true
+        camera_gyro_frame:
+          Value: true
+        camera_gyro_optical_frame:
+          Value: true
+        camera_infra1_frame:
+          Value: true
+        camera_infra1_optical_frame:
+          Value: true
+        camera_infra2_frame:
+          Value: true
+        camera_infra2_optical_frame:
+          Value: true
+        camera_link:
+          Value: true
+        caster_link:
+          Value: true
+        laser:
+          Value: true
+        link_arm_l0:
+          Value: true
+        link_arm_l1:
+          Value: true
+        link_arm_l2:
+          Value: true
+        link_arm_l3:
+          Value: true
+        link_arm_l4:
+          Value: true
+        link_aruco_inner_wrist:
+          Value: true
+        link_aruco_left_base:
+          Value: true
+        link_aruco_right_base:
+          Value: true
+        link_aruco_shoulder:
+          Value: true
+        link_aruco_top_wrist:
+          Value: true
+        link_grasp_center:
+          Value: true
+        link_gripper:
+          Value: true
+        link_gripper_finger_left:
+          Value: true
+        link_gripper_finger_right:
+          Value: true
+        link_gripper_fingertip_left:
+          Value: true
+        link_gripper_fingertip_right:
+          Value: true
+        link_head:
+          Value: true
+        link_head_pan:
+          Value: true
+        link_head_tilt:
+          Value: true
+        link_left_wheel:
+          Value: true
+        link_lift:
+          Value: true
+        link_mast:
+          Value: true
+        link_right_wheel:
+          Value: true
+        link_wrist_yaw:
+          Value: true
+        map:
+          Value: true
+        odom:
+          Value: true
+        respeaker_base:
+          Value: true
+      Marker Alpha: 1
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: false
+      Show Axes: true
+      Show Names: true
+      Tree:
+        map:
+          odom:
+            base_link:
+              caster_link:
+                {}
+              laser:
+                {}
+              link_aruco_left_base:
+                {}
+              link_aruco_right_base:
+                {}
+              link_left_wheel:
+                {}
+              link_mast:
+                link_head:
+                  link_head_pan:
+                    link_head_tilt:
+                      camera_bottom_screw_frame:
+                        camera_link:
+                          camera_accel_frame:
+                            camera_accel_optical_frame:
+                              {}
+                          camera_aligned_depth_to_color_frame:
+                            camera_color_optical_frame:
+                              {}
+                          camera_color_frame:
+                            {}
+                          camera_depth_frame:
+                            camera_depth_optical_frame:
+                              {}
+                          camera_gyro_frame:
+                            camera_gyro_optical_frame:
+                              {}
+                          camera_infra1_frame:
+                            camera_infra1_optical_frame:
+                              {}
+                          camera_infra2_frame:
+                            camera_infra2_optical_frame:
+                              {}
+                link_lift:
+                  link_arm_l4:
+                    link_arm_l3:
+                      link_arm_l2:
+                        link_arm_l1:
+                          link_arm_l0:
+                            link_aruco_inner_wrist:
+                              {}
+                            link_aruco_top_wrist:
+                              {}
+                            link_wrist_yaw:
+                              link_gripper:
+                                link_grasp_center:
+                                  {}
+                                link_gripper_finger_left:
+                                  link_gripper_fingertip_left:
+                                    {}
+                                link_gripper_finger_right:
+                                  link_gripper_fingertip_right:
+                                    {}
+                  link_aruco_shoulder:
+                    {}
+                respeaker_base:
+                  {}
+              link_right_wheel:
+                {}
+      Update Interval: 0
+      Value: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_accel_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_accel_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_bottom_screw_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_color_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_color_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_gyro_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_gyro_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_infra1_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_infra1_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_infra2_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_infra2_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        caster_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        laser:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_arm_l0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_arm_l1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_arm_l2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_arm_l3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_arm_l4:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_aruco_inner_wrist:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_aruco_left_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_aruco_right_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_aruco_shoulder:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_aruco_top_wrist:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_grasp_center:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        link_gripper:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_gripper_finger_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_gripper_finger_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_gripper_fingertip_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_gripper_fingertip_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_head:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_head_pan:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_head_tilt:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_left_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_lift:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_mast:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_right_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        link_wrist_yaw:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        respeaker_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 239; 41; 41
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /scan
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 0.1951487809419632
+        Min Value: 0.16953019797801971
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 206; 92; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 4
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /scan
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud
+      Color: 32; 74; 135
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /ego_occupancy_pc
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 2.338090658187866
+        Min Value: 0.0003185346722602844
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 1000
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /camera/depth/color/points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /goal
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: octomap_rviz_plugin/ColorOccupancyGrid
+      Enabled: true
+      Max. Height Display: 3.4028234663852886e+38
+      Max. Octree Depth: 16
+      Min. Height Display: -3.4028234663852886e+38
+      Name: ColorOccupancyGrid
+      Octomap Topic: /server_octomap
+      Queue Size: 1000
+      Value: true
+      Voxel Alpha: 1
+      Voxel Coloring: Z-Axis
+      Voxel Rendering: Occupied Voxels
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /best_tentacle
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /tentacles
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 300
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /sampling_points
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /support_voxels
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /traj_visu
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
+      Enabled: false
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Queue Size: 10
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /move_base/DWAPlannerROS/global_plan
+      Unreliable: false
+      Value: false
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: false
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /move_base/current_goal
+      Unreliable: false
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: false
+      Marker Topic: /debug_visu
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 10
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /turtlebot0/goal
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 211; 215; 207
+    Default Light: true
+    Fixed Frame: map
+    Frame Rate: 100
+  Name: root
+  Tools:
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/FocusCamera
+    - Class: rviz/Measure
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: /initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: xxx/move_base_simple/goal
+    - Class: rviz/PublishPoint
+      Single click: true
+      Topic: /clicked_point
+  Value: true
+  Views:
+    Current:
+      Class: rviz/Orbit
+      Distance: 7.8072919845581055
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Field of View: 0.7853981852531433
+      Focal Point:
+        X: -0.08668749034404755
+        Y: 0.47809773683547974
+        Z: 2.0434069633483887
+      Focal Shape Fixed Size: false
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 1.209796667098999
+      Target Frame: firefly/base_link
+      Yaw: 0.0830097571015358
+    Saved:
+      - Class: rviz/Orbit
+        Distance: 8.194913864135742
+        Enable Stereo Rendering:
+          Stereo Eye Separation: 0.05999999865889549
+          Stereo Focal Distance: 1
+          Swap Stereo Eyes: false
+          Value: false
+        Field of View: 0.7853981852531433
+        Focal Point:
+          X: 2.612833023071289
+          Y: 0.20453494787216187
+          Z: 0.9199336171150208
+        Focal Shape Fixed Size: false
+        Focal Shape Size: 0.05000000074505806
+        Invert Z Axis: false
+        Name: Orbit
+        Near Clip Distance: 0.009999999776482582
+        Pitch: 1.5697963237762451
+        Target Frame: firefly/base_link
+        Yaw: 1.5680162906646729
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1136
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd0000000400000000000001d7000003d7fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003d7000000c900fffffffb0000000a0049006d006100670065010000028d000000fb0000000000000000fb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d0061006700650100000337000000cd0000000000000000fb0000000a0049006d0061006700650100000369000000d00000000000000000000000010000016000000338fc0200000008fb0000000a0049006d0061006700650000000041000001290000000000000000fb0000000a0049006d00610067006501000000410000021e0000000000000000fb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000003d000003380000005c00fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000a30000000000000000fb0000000a0049006d00610067006500000000ab000000fa0000000000000000fb0000000a0049006d00610067006501000000d80000017b0000000000000000fb0000000a00560069006500770073000000017500000200000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000461000000bcfc0100000002fb0000000a0049006d0061006700650100000000000004610000000000000000fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000039fc0100000002fb0000000800540069006d0065010000000000000780000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000005a3000003d700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: false
+  Time:
+    collapsed: false
+  Tool Properties:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 1920
+  X: 0
+  Y: 27

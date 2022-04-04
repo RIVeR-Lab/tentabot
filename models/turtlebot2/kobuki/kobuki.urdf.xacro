@@ -7,8 +7,8 @@
       kobuki_description/launch/view_model.launch
  -->
 <robot name="kobuki" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:include filename="$(find tentabot_devel)/models/turtlebot2/common_properties.urdf.xacro"/>
-  <xacro:include filename="$(find tentabot_devel)/models/turtlebot2/kobuki/kobuki_gazebo.urdf.xacro"/>
+  <xacro:include filename="$(find tentabot)/models/turtlebot2/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find tentabot)/models/turtlebot2/kobuki/kobuki_gazebo.urdf.xacro"/>
 
   <!-- Kobuki --> 
   <xacro:macro name="kobuki">   

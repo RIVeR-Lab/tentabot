@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<robot name="jackal_custom1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:arg name="ns" default=""/>
+    <xacro:arg name="model" default=""/>
+
+    <!--xacro:property name="ns" value="$(arg ns)"/-->
+    <!--xacro:property name="arm_prefix" value="ur_arm_" /-->
+    <xacro:property name="path_meshes" value="package://tentabot/meshes" />
+    <xacro:property name="M_PI" value="3.1415926535897931" />
+    <xacro:property name="M_PI_2" value="1.570796327" />
+    
+    <!-- Import macro for materials-->
+    <xacro:include filename="$(find tentabot)/urdf/materials.xacro" />
+
+    <!-- Import mobile base -->
+    <!--xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_$(arg model)_with_ns.urdf.xacro"/-->
+    <!--xacro:include filename="$(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro"/-->
+    <!--xacro:include filename="$(find husky_description)/urdf/husky.urdf.xacro"/-->
+    <xacro:include filename="$(find jackal_description)/urdf/jackal.urdf.xacro"/>
+
+    <!-- Import macro for lidar-->
+    <xacro:include filename="$(find lms1xx)/urdf/sick_lms1xx_mount.urdf.xacro" />
+
+    <!-- Create lidar instance -->
+  <xacro:sick_lms1xx_mount prefix="jackal"
+      parent_link="base_link"
+      topic="jackal/scan"
+      min_range="0.2"
+      max_range="4.0">
+      <origin xyz="0 0 0.18" rpy="0 0 0" />
+  </xacro:sick_lms1xx_mount>
+
+    <!-- Import macro for camera-->
+    <!--xacro:include filename="$(find realsense_gazebo_plugin)/urdf/realsense-RS200.macro.xacro"/-->
+    <xacro:include filename="$(find tentabot)/urdf/r200.urdf.xacro"/>
+    <xacro:include filename="$(find tentabot)/urdf/realsense-d435.macro.xacro" />
+
+    <!-- Instantiate sensors-->
+
+    <!-- Create camera instance -->
+    <!--xacro:realsense-rs200 
+        prefix="rs200_cam1" 
+        parent="$(arg ns)/base_link">
+        <origin xyz="0.0 0.0 0.2" rpy="0.0 0.0 0.0" />   
+    </xacro:realsense-rs200-->
+
+    <!-- Create camera instance 1.570796327 (turtlebot3 burger)-->
+    <xacro:realsense-d435
+        prefix="d435_cam1" 
+        parent="base_link">
+        <origin xyz="0.2 0.0 0.2" rpy="0.0 0.0 0.0" />   
+    </xacro:realsense-d435>
+
+</robot>

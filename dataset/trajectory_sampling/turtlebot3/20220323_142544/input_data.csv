@@ -1,0 +1,14 @@
+trajectory_frame,turtlebot3_0/base_link
+trajectory_data_path,dataset/trajectory_sampling/turtlebot3/20220323_142544/
+trajectory_sampling_count,20
+trajectory_time,8
+trajectory_length,10
+trajectory_generation_type,
+trajectory_yaw,0
+trajectory_pitch,0
+trajectory_yaw_sampling_count,0
+trajectory_pitch_sampling_count,0
+trajectory_yaw_sampling_type,
+trajectory_pitch_sampling_type,
+lateral_velocity_sampling_count,5
+angular_velocity_sampling_count,21

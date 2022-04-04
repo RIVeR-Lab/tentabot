@@ -1,0 +1,19 @@
+teleop:
+  move:
+    type: topic
+    message_type: geometry_msgs/Twist
+    topic_name: turtlebot0/cmd_vel
+    axis_mappings:
+      -
+        axis: 1
+        target: linear.x
+        scale: .5
+      -
+        axis: 0
+        target: angular.z
+        scale: 1
+
+  reset_level:
+    type: service
+    service_name: /game/reset
+    buttons: [5]

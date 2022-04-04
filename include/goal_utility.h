@@ -1,7 +1,7 @@
 #ifndef GOAL_UTILITY_H
 #define GOAL_UTILITY_H
 
-// LAST UPDATE: 2021.10.05
+// LAST UPDATE: 2022.03.23
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -9,7 +9,7 @@
 //
 // DESCRIPTION: TODO...
 
-// --OUTSOURCE LIBRARIES--
+// --EXTERNAL LIBRARIES--
 #include "ros/ros.h"
 #include <visualization_msgs/MarkerArray.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -128,12 +128,13 @@ class GoalUtility
   private:
     
     string goal_name;
+    string frame_name;
+    string goal_msg;
     vector<geometry_msgs::Pose> goal;
     int active_goal_index;
     visualization_msgs::MarkerArray goal_visu;
     ros::Publisher goal_visu_pub;
-    string frame_name;
-    string goal_msg;
+    ros::Subscriber sub_goal;
 
     // DESCRIPTION: TODO...
     double randdouble(double from, double to);

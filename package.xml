@@ -53,66 +53,41 @@
   <build_export_depend>gazebo_ros</build_export_depend>
   <build_export_depend>message_generation</build_export_depend>
   <build_export_depend>message_runtime</build_export_depend>
-  <!--build_export_depend>eigen</build_export_depend>
-  <build_export_depend>eigen3</build_export_depend-->
-  <!--build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>std_msgs</build_export_depend>
-  <build_export_depend>geometry_msgs</build_export_depend>
-  <build_export_depend>pcl_conversions</build_export_depend>
-  <build_export_depend>libpcl-all-dev</build_export_depend>
-  <build_export_depend>octomap</build_export_depend>
-  <build_export_depend>octomap_ros</build_export_depend>
-  <build_export_depend>octomap_msgs</build_export_depend-->
+  <!--build_export_depend>pcl_ros</build_export_depend-->
+
+  <build_depend>gazebo_ros</build_depend>
+  <build_depend>message_generation</build_depend>
+  <!--build_depend>pcl_ros</build_depend-->
 
   <depend>roscpp</depend>
   <depend>rospy</depend>
+  <!--depend>gazebo_ros</depend>
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend-->
   <depend>tf</depend>
   <depend>tf_conversions</depend>
-  
   <depend>pcl_msgs</depend>
-  
+  <depend>pcl_ros</depend>
+  <depend>pcl_conversions</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>libpcl-all-dev</depend>
-  <depend>octomap</depend>
+  <!--depend>octomap</depend-->
   <depend>octomap_ros</depend>
   <depend>octomap_msgs</depend>
   <depend>mav_msgs</depend>
   <depend>roslib</depend>
   <depend>eigen_conversions</depend>
   <depend>cv_bridge</depend>
-  <!--depend>ewok_poly_spline</depend>
-  <depend>ewok_ring_buffer</depend>
-  <depend>ewok_optimization</depend-->
   <depend>rotors_control</depend>
   <depend>sensor_msgs</depend>
-  <!--depend>eigen3</depend-->
   <depend>libfcl-dev</depend>
   <depend>laser_geometry</depend>
+  <depend>stretch_gazebo</depend>
 
-  
-  <build_depend>message_generation</build_depend>
-  <!--build_depend>eigen</build_depend-->
-  <!--build_depend>eigen3</build_depend-->
-  <build_depend>gazebo_ros</build_depend>
-  <build_depend>pcl_conversions</build_depend>
-  <build_depend>pcl_ros</build_depend>
-
-  <exec_depend>message_runtime</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
-  <exec_depend>pcl_conversions</exec_depend>
-  <exec_depend>pcl_ros</exec_depend>
-
-  <!--exec_depend>gazebo_ros</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend-->
-  <!--exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>pcl_conversions</exec_depend>
-  <exec_depend>libpcl-all</exec_depend>
-  <exec_depend>eigen_conversions</exec_depend-->
+  <exec_depend>message_runtime</exec_depend>
+  <!--exec_depend>pcl_ros</exec_depend-->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

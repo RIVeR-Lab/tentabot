@@ -1,0 +1,43 @@
+# AUTHOR: Neset Unver Akmandor (NUA)
+#         Gary M. Lvov (GML)
+# E-MAIL: akmandor.n@northeastern.edu
+#         lvov.g@northeastern.edu
+
+world_frame_name: "map"
+map_name: "tentabot"
+map_frame_name: "base_link"
+map_resolution: 0.1
+map_server_dt: 0.1
+
+local_map_flag: false
+dynamic_flag: false
+skip_cnt_reset_sensor_range: 1
+
+sensor_pc2_msg_name: "/rslidar_points"
+sensor_pc2_direction: "z"
+sensor_pc2_min_range: 0.1
+sensor_pc2_max_range: 12.0
+sensor_pc2_max_yaw: 6.28
+sensor_pc2_max_pitch: 0.3
+
+#sensor_laser_msg_name: "/jackal/scan"
+sensor_laser_max_range: 4.0
+
+# Based on physical parameters of robot
+crop_x_min: -0.5
+crop_x_max: 0.5
+crop_y_min: -0.5
+crop_y_max: 0.5
+crop_z_min: -0.0
+crop_z_max: 0.6
+
+# Based on max sensor range of robot
+bbx_x_min: -10.0
+bbx_x_max: 10.0
+bbx_y_min: -10.0
+bbx_y_max: 10.0
+bbx_z_min: 0.0
+bbx_z_max: 3.0
+
+filter_ground: true
+filter_ground_threshold: 0.05

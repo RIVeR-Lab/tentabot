@@ -64,7 +64,7 @@ THE SOFTWARE.
         <color rgba="0.9 0.9 0.9 1.0" />
     </material>
 
-    <material name="dark_grey">
+    <!--material name="dark_grey">
       <color rgba="0.3 0.3 0.3 1"/>
-    </material>
+    </material-->
 </robot>

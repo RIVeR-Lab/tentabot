@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs 
   pcl_msgs 
   pcl_conversions 
-  pcl_ros 
+  pcl_ros
   octomap_ros
   octomap_msgs
   sensor_msgs
@@ -27,9 +27,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf_conversions
   cv_bridge
-  #ewok_optimization
-  #ewok_poly_spline
-  #ewok_ring_buffer
   forest_gen
   rotors_control
   laser_geometry
@@ -38,9 +35,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(PCL REQUIRED)
-find_package(Eigen3 REQUIRED)
+#find_package(Eigen3 REQUIRED)
 find_package(SuiteSparse REQUIRED)
-find_package(octomap REQUIRED)
+#find_package(octomap REQUIRED)
 find_package(CCD REQUIRED)
 
 find_library(EIGEN_CDDLIB_LIB eigen-cddlib)
@@ -55,7 +52,7 @@ endif()
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-#catkin_python_setup()
+catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -82,11 +79,9 @@ endif()
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
+#add_message_files(
 #   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+#)
 
 ## Generate services in the 'srv' folder
 add_service_files(
@@ -94,6 +89,7 @@ add_service_files(
    rl_step.srv
    update_goal.srv
    reset_map_utility.srv
+   get_laser_image.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -109,7 +105,13 @@ generate_messages(
    std_msgs
    geometry_msgs
    sensor_msgs
+   nav_msgs
    mav_msgs
+#   tentabot
+#   rl_step
+#   update_goal
+#   reset_map_utility
+#   get_laser_image
 )
 
 ################################################
@@ -142,9 +144,9 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-   LIBRARIES tentabot mat
-   CATKIN_DEPENDS roscpp rospy message_runtime std_msgs geometry_msgs octomap_ros octomap_msgs sensor_msgs pcl_conversions
+   INCLUDE_DIRS include
+#   LIBRARIES tentabot mat
+   CATKIN_DEPENDS roscpp rospy message_runtime std_msgs geometry_msgs octomap_ros octomap_msgs sensor_msgs pcl_ros
    DEPENDS FCL
 )
 
@@ -156,15 +158,13 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
-  ${PYTHON_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIRS}
   ${FCL_INCLUDE_DIRS}
   ${CHOLMOD_INCLUDE_DIR}
-  ${octomap_INCLUDE_DIRS}
-  mav_comm/
-  rotors_simulator/
+#  mav_comm
+#  rotors_simulator
 )
 
 ## Declare a C++ library
@@ -172,27 +172,20 @@ include_directories(
 #   src/${PROJECT_NAME}/tentabot.cpp
 # )
 
+add_library(trajectory_sampling_utility src/trajectory_sampling_utility.cpp)
+add_library(goal_utility src/goal_utility.cpp)
+add_library(map_utility src/map_utility.cpp)
+add_library(tentabot src/tentabot.cpp)
+add_library(laser_to_image src/laser_to_image.cpp)
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_library(trajectory_sampling_utility src/utilities/trajectory_sampling_utility.cpp)
-add_library(goal_utility src/utilities/goal_utility.cpp)
-add_library(map_utility src/utilities/map_utility.cpp)
-add_library(tentabot src/utilities/tentabot.cpp)
-
-add_executable(map_utility_server src/utilities/map_utility_server.cpp)
-target_link_libraries(map_utility_server ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} map_utility ${FCL_LIBRARIES} )
-
-add_executable(tentabot_drl_service src/utilities/tentabot_drl_service.cpp)
-target_link_libraries(tentabot_drl_service ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} trajectory_sampling_utility goal_utility tentabot)
-
-add_executable(tentabot_heuristic_firefly src/examples/tentabot_heuristic_firefly.cpp)
-target_link_libraries(tentabot_heuristic_firefly ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} trajectory_sampling_utility goal_utility tentabot)
-
-add_executable(tentabot_heuristic_turtlebot3 src/examples/tentabot_heuristic_turtlebot3.cpp)
-target_link_libraries(tentabot_heuristic_turtlebot3 ${octomap_LIBRARIES} ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${EIGEN3_LIBRARIES} ${TF_LIBRARIES} trajectory_sampling_utility goal_utility tentabot)
+add_dependencies(map_utility ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tentabot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(laser_to_image ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -213,6 +206,21 @@ target_link_libraries(tentabot_heuristic_turtlebot3 ${octomap_LIBRARIES} ${PCL_L
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+
+add_executable(publish_robot_pose_command src/publish_robot_pose_command.cpp)
+target_link_libraries(publish_robot_pose_command ${catkin_LIBRARIES})
+
+add_executable(map_utility_server src/map_utility_server.cpp)
+#add_dependencies(map_utility_server ${catkin_EXPORTED_TARGETS})
+target_link_libraries(map_utility_server ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${TF_LIBRARIES} map_utility ${FCL_LIBRARIES})
+
+add_executable(laser_to_image_server src/laser_to_image_server.cpp)
+#add_dependencies(laser_to_image_server ${catkin_EXPORTED_TARGETS})
+target_link_libraries(laser_to_image_server ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} ${TF_LIBRARIES} laser_to_image)
+
+add_executable(tentabot_server src/tentabot_server.cpp)
+#add_dependencies(tentabot_server ${catkin_EXPORTED_TARGETS})
+target_link_libraries(tentabot_server ${PCL_LIBRARIES} ${catkin_LIBRARIES} ${CHOLMOD_LIBRARY} nlopt ${TF_LIBRARIES} trajectory_sampling_utility goal_utility tentabot)
 
 #############
 ## Install ##

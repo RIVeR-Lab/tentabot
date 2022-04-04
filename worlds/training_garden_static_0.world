@@ -1,7 +1,7 @@
 <sdf version='1.7'>
   <world name='default'>
     <light name='sun' type='directional'>
-      <cast_shadows>1</cast_shadows>
+      <cast_shadows>0</cast_shadows>
       <pose>0 0 10 0 -0 0</pose>
       <diffuse>0.8 0.8 0.8 1</diffuse>
       <specular>0.2 0.2 0.2 1</specular>
@@ -76,7 +76,7 @@
     <scene>
       <ambient>0.4 0.4 0.4 1</ambient>
       <background>0.7 0.7 0.7 1</background>
-      <shadows>1</shadows>
+      <shadows>0</shadows>
     </scene>
     <wind/>
     <spherical_coordinates>
@@ -87,10 +87,10 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='default'>
-      <sim_time>3111 994000000</sim_time>
-      <real_time>419 337061882</real_time>
-      <wall_time>1627487032 920347637</wall_time>
-      <iterations>418014</iterations>
+      <sim_time>3783 697000000</sim_time>
+      <real_time>107 45026921</real_time>
+      <wall_time>1646593901 273242654</wall_time>
+      <iterations>106628</iterations>
       <model name='brick_box_3x1x3'>
         <pose>1.49178 -2.49626 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -132,7 +132,7 @@
         </link>
       </model>
       <model name='brick_box_3x1x3_3_clone'>
-        <pose>-3.49882 1.50233 0.005824 -0.001926 1e-05 1.56943</pose>
+        <pose>-3.49882 1.50233 0.005823 -0.001926 1e-05 1.56943</pose>
         <scale>1 1 1</scale>
         <link name='chassis'>
           <pose>-3.50171 1.50235 1.50582 -0.001926 1e-05 1.56943</pose>
@@ -142,7 +142,7 @@
         </link>
       </model>
       <model name='brick_box_3x1x3_3_clone_clone'>
-        <pose>-3.50965 -1.50337 0.00579 -0.001926 1e-05 1.56943</pose>
+        <pose>-3.50965 -1.50338 0.005793 -0.001926 1e-05 1.56943</pose>
         <scale>1 1 1</scale>
         <link name='chassis'>
           <pose>-3.51254 -1.50336 1.50579 -0.001926 1e-05 1.56943</pose>
@@ -152,7 +152,7 @@
         </link>
       </model>
       <model name='brick_box_3x1x3_3_clone_clone_clone_1'>
-        <pose>3.49137 -1.47793 -0.005789 -0.001926 1e-05 1.56943</pose>
+        <pose>3.49137 -1.47793 -0.005787 -0.001926 1e-05 1.56943</pose>
         <scale>1 1 1</scale>
         <link name='chassis'>
           <pose>3.48848 -1.47791 1.49421 -0.001926 1e-05 1.56943</pose>
@@ -162,7 +162,7 @@
         </link>
       </model>
       <model name='brick_box_3x1x3_3_clone_clone_clone_2'>
-        <pose>3.50131 1.51425 -0.005779 -0.001926 1e-05 1.56943</pose>
+        <pose>3.50131 1.51425 -0.005777 -0.001926 1e-05 1.56943</pose>
         <scale>1 1 1</scale>
         <link name='chassis'>
           <pose>3.49842 1.51427 1.49422 -0.001926 1e-05 1.56943</pose>
@@ -187,27 +187,27 @@
         <link name='link'>
           <pose>1.50422 -0.499807 0.499995 -1e-05 0 -0.000673</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.004708 0.011052 -9.78158 -0.0221 0.009412 1e-06</acceleration>
-          <wrench>0.004708 0.011052 -9.78158 0 -0 0</wrench>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='unit_box_0'>
-        <pose>-1.51573 0.040122 0.499995 -1e-05 -0 0</pose>
+        <pose>-1.51573 0.040122 0.499995 -1e-05 0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
           <pose>-1.51573 0.040122 0.499995 -1e-05 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.004709 0.011055 -9.78158 -0.022108 0.009414 1e-06</acceleration>
-          <wrench>0.004709 0.011055 -9.78158 0 -0 0</wrench>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
-        <pose>0 0 10 0 -0 0</pose>
+        <pose>0 0 50 0 -0 0</pose>
       </light>
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-0.088133 1.8619 16.746 -1e-06 1.4778 -1.56307</pose>
+        <pose>-0.046486 0.059055 9.60756 -2e-06 1.5658 -1.56405</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -624,6 +624,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
+      <static>1</static>
     </model>
     <model name='unit_box_0'>
       <pose>-1.95481 0.99549 0.5 0 -0 0</pose>
@@ -677,6 +678,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
+      <static>1</static>
     </model>
   </world>
 </sdf>

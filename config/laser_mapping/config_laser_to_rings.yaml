@@ -1,0 +1,7 @@
+## Parameters
+laser_scan_msg: "turtlebot0/scan"
+laser_rings_msg: "turtlebot0/laser_rings"
+#robot_frame: "turtlebot0/base_link"
+rings_angle_level: 64
+rings_range_level: 64
+rings_resolution: 0.01

@@ -1,7 +1,7 @@
 #ifndef TRAJECTORY_SAMPLING_UTILITY_H
 #define TRAJECTORY_SAMPLING_UTILITY_H
 
-// LAST UPDATE: 2021.10.08
+// LAST UPDATE: 2022.03.24
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -23,6 +23,7 @@
 #include <tf/message_filter.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <boost/filesystem.hpp>
+#include <ros/package.h>
 
 // --CUSTOM LIBRARIES--
 #include "common_utility.h"
@@ -55,14 +56,26 @@ class TrajectorySamplingUtility
     TrajectorySamplingUtility(NodeHandle& nh,
                               string tframe,
                               double tlen,
+                              int tsamp_cnt,
                               double tyaw,
                               double tpitch,
-                              int tsamp_cnt,
-                              int lat_velo_cnt,
                               int tyaw_cnt, 
                               int tpitch_cnt,
                               string tsdataset_path,
-                              string trajectory_type="",
+                              string tyaw_samp_type="",
+                              string tpitch_samp_type="");
+
+    // DESCRIPTION: TODO...Constructor
+    TrajectorySamplingUtility(NodeHandle& nh,
+                              string tframe,
+                              double tlen,
+                              int tsamp_cnt,
+                              int lat_velo_cnt,
+                              int ang_velo_cnt,
+                              double max_lat_velo,
+                              double max_yaw_velo,
+                              double dt,
+                              string tsdataset_path,
                               string tyaw_samp_type="",
                               string tpitch_samp_type="");
     
@@ -88,6 +101,9 @@ class TrajectorySamplingUtility
     string get_trajectory_frame();
 
     // DESCRIPTION: TODO...
+    string get_trajectory_generation_type();
+
+    // DESCRIPTION: TODO...
     double get_trajectory_time();
 
     // DESCRIPTION: TODO...
@@ -106,13 +122,13 @@ class TrajectorySamplingUtility
     int get_lateral_velocity_sampling_count();
 
     // DESCRIPTION: TODO...
+    int get_angular_velocity_sampling_count();
+
+    // DESCRIPTION: TODO...
     int get_trajectory_yaw_sampling_count();
 
     // DESCRIPTION: TODO...
     int get_trajectory_pitch_sampling_count();
-
-    // DESCRIPTION: TODO...
-    string get_trajectory_type();
 
     // DESCRIPTION: TODO...
     string get_trajectory_yaw_sampling_type();
@@ -151,6 +167,9 @@ class TrajectorySamplingUtility
     void set_trajectory_frame(string new_trajectory_frame);
 
     // DESCRIPTION: TODO...
+    void set_trajectory_generation_type(string new_trajectory_generation_type);
+
+    // DESCRIPTION: TODO...
     void set_trajectory_time(double new_trajectory_time);
 
     // DESCRIPTION: TODO...
@@ -169,13 +188,13 @@ class TrajectorySamplingUtility
     void set_lateral_velocity_sampling_count(int new_lateral_velocity_sampling_count);
 
     // DESCRIPTION: TODO...
+    void set_angular_velocity_sampling_count(int new_angular_velocity_sampling_count);
+
+    // DESCRIPTION: TODO...
     void set_trajectory_yaw_sampling_count(int new_trajectory_yaw_sampling_count);
 
     // DESCRIPTION: TODO...
     void set_trajectory_pitch_sampling_count(int new_trajectory_pitch_sampling_count);
-
-    // DESCRIPTION: TODO...
-    void set_trajectory_type(string new_trajectory_type);
 
     // DESCRIPTION: TODO...
     void set_trajectory_yaw_sampling_type(string new_trajectory_yaw_sampling_type);
@@ -250,15 +269,16 @@ class TrajectorySamplingUtility
     string trajectory_sampling_dataset_path;
     string trajectory_data_path;
     string trajectory_frame;
+    string trajectory_generation_type;
     double trajectory_time;
     double trajectory_length;
     double trajectory_yaw;
     double trajectory_pitch;
     int trajectory_sampling_count;                              // TODO: Review: number of sample points on the tentacle, range: 1 <= tsamp_cnt, E Z+
     int lateral_velocity_sampling_count;
+    int angular_velocity_sampling_count;
     int trajectory_yaw_sampling_count;                          // TODO: Review: number of tentacles along yaw direction, range: 1 <= tyaw_cnt, E Z+
     int trajectory_pitch_sampling_count;                        // TODO: Review: number of tentacles along pitch direction, range: 1 <= tpitch_cnt, E Z+
-    string trajectory_type;
     string trajectory_yaw_sampling_type;                        // TODO: Review: parameter to adjust yaw angle sampling type of tentacles    
     string trajectory_pitch_sampling_type;                      // TODO: Review: parameter to adjust pitch angle sampling type of tentacles
     ros::Publisher trajectory_visu_pub;

@@ -1,0 +1,11 @@
+<!--
+  Robot description only (used in private and paired master).
+ -->
+<launch>
+  <arg name="base"/>
+  <arg name="stacks"/>
+  <arg name="3d_sensor"/>
+
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find tentabot)/urdf/turtlebot2_kobuki_hexagons_kinect_sick.urdf.xacro'"/>
+  <param name="robot_description" command="$(arg urdf_file)"/>
+</launch>

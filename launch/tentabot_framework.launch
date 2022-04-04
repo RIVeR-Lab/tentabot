@@ -1,0 +1,53 @@
+<launch>
+
+  <arg name="sim_flag" default="true"/>
+  <arg name="rviz_flag" default="true"/>
+  <arg name="map_utility_flag" default="true"/>
+  <arg name="tentabot_server_flag" default="true"/>
+
+  <!-- CONFIGURATION OPTIONS
+    config_task_nav_cylinders0_firefly
+    config_task_nav_forestX_firefly
+    config_task_nav_turtlebot3
+    config_task_nav_stretch
+    config_task_nav_jackal
+    config_task_nav_jackal_real
+    config_task_nav_rosbot
+  -->
+  <arg name="config_task_name" default="config_task_nav_turtlebot3"/>
+
+  <!-- CONFIGURATION OPTIONS
+    config_map_utility_cylinders0_firefly
+    config_map_utility_forestX_firefly
+    config_map_utility_turtlebot3
+    config_map_utility_stretch
+    config_map_utility_jackal
+    config_map_utility_jackal_real
+    config_map_utility_rosbot
+    config_map_utility_turtlebot2
+  -->
+  <arg name="config_map_utility"  default="config_map_utility_turtlebot3" />
+
+  <!-- CONFIGURATION OPTIONS
+    config_tentabot_server_firefly
+    config_tentabot_server_turtlebot3
+    config_tentabot_server_stretch
+    config_tentabot_server_jackal
+    config_tentabot_server_jackal_real
+    config_tentabot_server_rosbot
+  -->
+  <arg name="config_tentabot_server" default="config_tentabot_server_turtlebot3"/>
+
+  <!-- PUBLISH CONFIGURATION PARAMETERS -->
+  <param name="sim_flag"                          value="$(arg sim_flag)" />
+  <param name="rviz_flag"                         value="$(arg rviz_flag)" />
+  <param name="map_utility_flag"                  value="$(arg map_utility_flag)" />
+  <param name="tentabot_server_flag"              value="$(arg tentabot_server_flag)" />
+  <rosparam file="$(find tentabot)/config/task_nav/$(arg config_task_name).yaml" />
+  <param name="config_map_utility"                value="$(arg config_map_utility)" />
+  <param name="config_tentabot_server"            value="$(arg config_tentabot_server)" />
+
+  <!-- RUN TENTABOT HEURISTIC FRAMEWORK -->
+  <node name="tentabot_framework_launch" pkg="tentabot" type="tentabot_framework_launch.py" output="screen" />
+
+</launch>

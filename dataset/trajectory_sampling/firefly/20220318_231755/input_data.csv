@@ -1,0 +1,14 @@
+trajectory_frame,firefly/base_link
+trajectory_data_path,dataset/trajectory_sampling/20220318_231755/
+trajectory_sampling_count,25
+trajectory_time,0
+trajectory_length,10
+trajectory_generation_type,
+trajectory_yaw,0.9
+trajectory_pitch,0.6
+trajectory_yaw_sampling_count,31
+trajectory_pitch_sampling_count,21
+trajectory_yaw_sampling_type,
+trajectory_pitch_sampling_type,
+lateral_velocity_sampling_count,0
+angular_velocity_sampling_count,0

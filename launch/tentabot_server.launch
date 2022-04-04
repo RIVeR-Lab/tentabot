@@ -1,0 +1,15 @@
+<launch>
+
+  <!-- CONFIGURATION OPTIONS
+    config_tentabot_server_firefly
+    config_tentabot_server_turtlebot3
+    config_tentabot_server_ROSbot
+  -->
+  <arg name="config_tentabot_server" default="config_tentabot_server_turtlebot3"/>
+
+  <!-- PUBLISH CONFIGURATION PARAMETERS -->
+  <rosparam file="$(find tentabot)/config/tentabot_server/$(arg config_tentabot_server).yaml" />
+
+  <node name="tentabot_server" pkg="tentabot" type="tentabot_server" output="screen" />
+
+</launch>

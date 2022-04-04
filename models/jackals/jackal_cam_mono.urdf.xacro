@@ -245,7 +245,7 @@
   </joint>
 
   <!-- Bring in simulation data for Gazebo. -->
-  <xacro:include filename="$(find navisim)/models/jackals/jackal.gazebo" />
+  <xacro:include filename="$(find tentabot)/models/jackals/jackal.gazebo" />
 
   <!-- Optional standard accessories, including their simulation data. The rendering
        of these into the final description is controlled by optenv variables, which
@@ -253,7 +253,7 @@
   <xacro:include filename="$(find jackal_description)/urdf/accessories.urdf.xacro" />
 
   
-  <xacro:include filename="$(find navisim)/models/realsense2_description/urdf/d435_mono.macro.xacro" />
+  <xacro:include filename="$(find tentabot)/models/realsense2_description/urdf/d435_mono.macro.xacro" />
   <xacro:sensor_d435 prefix="/$(arg namespace)" parent="rear_mount">
     <origin xyz="0 0 1" rpy="0 0 0"/>
   </xacro:sensor_d435>

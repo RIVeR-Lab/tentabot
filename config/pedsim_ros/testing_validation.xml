@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario>
+    
+    <waypoint id="overtaking0" x="1.0" y="0.0" r="1"/>
+    <waypoint id="overtaking001" x="1.5" y="1" r="1"/>
+    <waypoint id="overtaking002" x="2" y="-1" r="1"/>
+    <waypoint id="overtaking003" x="2.5" y="1" r="1"/>
+    <waypoint id="overtaking004" x="3" y="-1" r="1"/>
+    <waypoint id="overtaking005" x="3.5" y="1" r="1"/>
+    <waypoint id="overtaking006" x="4" y="-1" r="1"/>
+    <waypoint id="overtaking007" x="4.5" y="1" r="1"/>
+    <waypoint id="overtaking1" x="5.75" y="0" r="1"/>
+    <waypoint id="passing0" x="5.75" y="-4" r="1"/>
+    <waypoint id="passing1" x="0.0" y="-4" r="1"/>
+    <waypoint id="crossing0" x="-7.5" y="-2.0" r="1"/>
+    <waypoint id="crossing1" x="-7.5" y="2" r="1"/>
+
+    <waypoint id="crossing2" x="-7.5" y="2" r="1"/>
+    <waypoint id="crossing3" x="-7.5" y="-2.0" r="1"/>
+
+    <waypoint id="big10" x="20" y="-3" r="1"/>
+    <waypoint id="big1" x="20" y="4" r="1"/>
+
+    <queue id="center" x="0" y="0" direction="0"/>
+    
+    <!--AgentClusters-->
+    <agent x=".75" y="0" n="2" dx=".01" dy=".01" type="0">
+        <addwaypoint id="overtaking0"/>
+        <addwaypoint id="overtaking001"/>
+        <addwaypoint id="overtaking002"/>
+        <addwaypoint id="overtaking003"/>
+        <addwaypoint id="overtaking004"/>
+        <addwaypoint id="overtaking005"/>
+        <addwaypoint id="overtaking006"/>
+        <addwaypoint id="overtaking007"/>
+        <addwaypoint id="overtaking1"/>
+    </agent>
+
+    <agent x="5.75" y="-4" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="passing0"/>
+        <addwaypoint id="passing1"/>
+    </agent>
+
+    <agent x="-7.5" y="-2" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="crossing0"/>
+        <addwaypoint id="crossing1"/>
+    </agent>
+
+    <agent x="-7.5" y="2" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="crossing2"/>
+        <addwaypoint id="crossing3"/>
+    </agent>
+
+    <agent x="20" y="-3" n="6" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="big10"/>
+        <addwaypoint id="big1"/>
+    </agent>
+
+</scenario>

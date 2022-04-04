@@ -1,0 +1,11 @@
+<launch>
+  <!-- 3D sensor -->
+  <!--include file="$(find sick_scan)/launch/sick_lms_1xx.launch" /-->
+
+  <!-- Gmapping -->
+  <arg name="custom_gmapping_launch_file" default="$(find turtlebot_navigation)/launch/includes/gmapping/gmapping.launch.xml"/>
+  <include file="$(arg custom_gmapping_launch_file)">
+    <arg name="scan_topic" value="scan" />
+ </include>
+ 
+</launch>

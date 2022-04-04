@@ -245,7 +245,7 @@
   </joint>
 
   <!-- Bring in simulation data for Gazebo. -->
-  <xacro:include filename="$(find navisim)/models/jackals/jackal.gazebo" />
+  <xacro:include filename="$(find tentabot)/models/jackals/jackal.gazebo" />
 
   <!-- Optional standard accessories, including their simulation data. The rendering
        of these into the final description is controlled by optenv variables, which

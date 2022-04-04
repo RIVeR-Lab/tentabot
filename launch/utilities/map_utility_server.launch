@@ -1,0 +1,26 @@
+<!--AUTHOR: Neset Unver Akmandor (NUA)-->
+<!--        Gary Lvov (GML)-->
+<!--        Hongyu Li (LHY) -->
+<!--E-MAIL: akmandor.n@northeastern.edu-->
+<!--        lvov.g@northeastern.edu-->
+<!--        li.hongyu1@northeastern.edu -->
+
+<launch>
+
+  <!-- CONFIGURATION OPTIONS
+    config_map_utility_cylinders0_firefly
+    config_map_utility_forest_firefly
+    config_map_utility_ROSbot
+    config_map_utility_stretch
+    config_map_utility_jackal_real
+    config_map_utility_turtlebot2
+    config_map_utility_turtlebot3
+  -->
+  <arg name="config_map_utility"  default="config_map_utility_jackal_real" />
+
+  <!-- PUBLISH CONFIGURATION PARAMETERS -->
+  <rosparam file="$(find tentabot)/config/map_utility/$(arg config_map_utility).yaml"/>
+
+  <node name="map_utility_server" pkg="tentabot" type="map_utility_server" output="screen" />
+
+</launch>

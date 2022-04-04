@@ -1,0 +1,165 @@
+<!--AUTHOR: Neset Unver Akmandor (NUA)-->
+<!--        Gary Lvov (GML)-->
+<!--E-MAIL: akmandor.n@northeastern.edu-->
+<!--        lvov.g@northeastern.edu-->
+
+<launch>
+
+  <arg name="robot" default="turtlebot3" />
+  <arg name="ns" default="$(arg robot)_0" />
+  <arg name="model" default="burger" doc="model type [burger, waffle, waffle_pi]" />
+  <arg name="gui" default="false" />
+  <arg name="x" default="0.0" />
+  <arg name="y" default="0.0" />
+  <arg name="z" default="0.0" />
+  <arg name="roll" default="0" />
+  <arg name="pitch" default="0" />
+  <arg name="yaw" default="0" />
+
+  <group if="$(eval arg('robot') == 'turtlebot3')">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/urdf/turtlebot3_custom1.urdf.xacro'
+                                            ns:=$(arg ns) model:=$(arg model)" />
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+          args="-urdf
+                -param robot_description 
+                -model $(arg ns)
+                -robot_namespace $(arg ns)
+                -x $(arg x) -y $(arg y) -z $(arg z) 
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="tf_prefix" value="$(arg ns)" />
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1">
+      <param name="/use_gui" value="$(arg gui)" />
+    </node>
+  </group>
+
+  <group if="$(eval arg('robot') == 'turtlebot3_il')">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/urdf/turtlebot3_custom2.urdf.xacro'
+                                            ns:=$(arg ns) model:=$(arg model)" />
+    
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+          args="-urdf
+                -param robot_description 
+                -model $(arg ns)
+                -robot_namespace $(arg ns)
+                -x $(arg x) -y $(arg y) -z $(arg z) 
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="tf_prefix" value="$(arg ns)" />
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1">
+      <param name="/use_gui" value="$(arg gui)" />
+    </node>
+  </group>
+
+  <group if="$(eval arg('robot') == 'turtlebot2')">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/models/turtlebot2/turtlebot.urdf.xacro'
+                                            ns:=$(arg ns) model:=$(arg model)" />
+    
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+          args="-urdf
+                -param robot_description 
+                -model $(arg ns)
+                -robot_namespace $(arg ns)
+                -x $(arg x) -y $(arg y) -z $(arg z) 
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="tf_prefix" value="$(arg ns)" />
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1">
+      <param name="/use_gui" value="$(arg gui)" />
+    </node>
+  </group>
+
+  <group if="$(eval arg('robot') == 'rosbot')">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/models/husarion_rosbot/rosbot.urdf.xacro'
+                                            robot_namespace:=$(arg ns)" />
+    
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+          args="-urdf
+                -param robot_description 
+                -model $(arg ns)
+                -robot_namespace $(arg ns)
+                -x $(arg x) -y $(arg y) -z $(arg z) 
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="tf_prefix" value="$(arg ns)" />
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1">
+      <param name="/use_gui" value="$(arg gui)" />
+    </node>
+  </group>
+  
+  <group if="$(eval arg('robot') == 'stretch')">
+    <!--param name="robot_description" 
+              command="$(find xacro)/xacro '$(find tentabot)/models/stretch/stretch_gazebo_holonomic_base.urdf.xacro'" /-->
+    <param  name="robot_description" 
+            command="$(find xacro)/xacro '$(find stretch_gazebo)/urdf/stretch_gazebo.urdf.xacro'" />
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+          args="-urdf
+                -param robot_description 
+                -model robot
+                -x $(arg x) -y $(arg y) -z $(arg z) 
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)
+                -J joint_lift 0.2 -J joint_wrist_yaw 3.14" 
+          respawn="false" 
+          output="screen" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <rosparam command="load" file="$(find stretch_gazebo)/config/joints.yaml" ns="stretch_joint_state_controller" />
+    <rosparam command="load" file="$(find stretch_gazebo)/config/drive_config.yaml" ns="stretch_diff_drive_controller" />
+    <rosparam command="load" file="$(find stretch_gazebo)/config/arm.yaml" />
+    <rosparam command="load" file="$(find stretch_gazebo)/config/head.yaml" />
+    <rosparam command="load" file="$(find stretch_gazebo)/config/gripper.yaml" />
+
+    <!-- LHY: ERROR exist when used under namespace -->
+    <node name="stretch_controller_spawner" pkg="controller_manager" type="spawner"
+          args="stretch_joint_state_controller stretch_diff_drive_controller stretch_arm_controller stretch_head_controller stretch_gripper_controller" />
+
+    <node name="publish_ground_truth_odom" pkg="tentabot" type="publish_ground_truth_odom.py" output="screen" />
+  </group>
+
+  <group if="$(eval arg('robot') == 'jackal')">
+
+    <param name="robot_description"
+          command="$(find xacro)/xacro $(find tentabot)/urdf/jackal_custom1.urdf.xacro
+                      --inorder" />
+
+    <include file="$(find jackal_control)/launch/control.launch" />
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+          args="-urdf
+                -param robot_description 
+                -model robot
+                -x $(arg x) -y $(arg y) -z $(arg z) 
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <!--param name="tf_prefix" value="$(arg ns)" /-->
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1">
+      <param name="/use_gui" value="$(arg gui)" />
+    </node>
+  </group>
+
+</launch>

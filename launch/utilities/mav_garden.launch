@@ -1,0 +1,87 @@
+<launch>
+  <!-- General Parameters -->
+
+  <!-- CONFIGURATION OPTIONS
+    cylinders0
+    forest0
+    training_mav_garden_static_0
+  -->
+  <arg name="world_name" default=""/>
+
+  <arg name="world_frame_name" default="world"/>
+
+  <!-- Robot Parameters -->
+  
+  <!-- CONFIGURATION OPTIONS
+    firefly
+  -->
+  <arg name="robot_name" default=""/>
+
+  <!-- CONFIGURATION OPTIONS
+    mav_r200
+    mav_d435
+    -->
+  <arg name="robot_model" default="" />
+
+  <arg name="robot_init_pos_x" default="0.0"/>
+  <arg name="robot_init_pos_y" default="0.0"/>
+  <arg name="robot_init_pos_z" default="1.0"/>
+  <arg name="robot_odometry_msg" default=""/>
+  <arg name="robot_pose_control_msg" default=""/>
+
+  <!-- Simulation Parameters -->
+  <arg name="enable_logging" default="false" />
+  <arg name="enable_ground_truth" default="true" />
+  <arg name="log_file" default="$(arg robot_name)" />
+  <arg name="paused" default="false" />
+  <arg name="verbose" default="false" />
+  <arg name="gui" default="true" />
+  <arg name="dt" default="0.1" />
+
+  <!-- START SIMULATION -->
+  <env name="GAZEBO_MODEL_PATH" value="$(find rotors_gazebo)/models:$(find tentabot)/models"/>
+  <env name="GAZEBO_RESOURCE_PATH" value="$(find forest_gen)"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find tentabot)/worlds/$(arg world_name).world"    if="$(eval arg('world_name') == 'cylinders0')"/>
+    <arg name="world_name" value="$(find forest_gen)/worlds/$(arg world_name).world"  unless="$(eval arg('world_name') == 'cylinders0')"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="verbose" default="$(arg verbose)"/>
+    <arg name="gui" default="$(arg gui)"/>
+  </include>
+
+  <!--node pkg="tf" type="static_transform_publisher" name="world" args="0 0 0 0 0 0 1 world $(arg robot_name)/odometry_sensor1/odometry 100" /-->
+
+  <group ns="$(arg robot_name)">
+
+    <!-- ADD ROBOT INTO SIMULATION -->
+    <include file="$(find rotors_gazebo)/launch/spawn_mav.launch">
+      <arg name="mav_name" value="$(arg robot_name)" />
+      <arg name="model" value="$(find tentabot)/urdf/$(arg robot_model).gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" value="$(arg robot_init_pos_x)"/>
+      <arg name="y" value="$(arg robot_init_pos_y)"/>
+    </include>
+
+    <!-- START THE POSITION CONTROLLER -->
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg robot_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg robot_name).yaml" />
+      <param name="dt" value="$(arg dt)" />
+      <remap from="odometry" to="$(arg robot_odometry_msg)" />
+    </node>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  </group>
+
+  <node name="publish_init_robot_pose_command" pkg="tentabot" type="publish_robot_pose_command" output="screen">
+    <param name="frame_name"                  value="$(arg world_frame_name)"/>
+    <param name="robot_pose_control_msg"      value="$(arg robot_pose_control_msg)"/>
+    <param name="robot_pose_x"                value="$(arg robot_init_pos_x)"/>
+    <param name="robot_pose_y"                value="$(arg robot_init_pos_y)"/>
+    <param name="robot_pose_z"                value="$(arg robot_init_pos_z)"/>
+  </node>
+</launch>

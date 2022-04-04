@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario>
+
+    <waypoint id="route1_start" x="-2" y="0" r="0"/>
+    <waypoint id="route1_end" x="-18" y="0" r="0"/>
+    
+    <queue id="center" x="0" y="0" direction="0"/>
+
+    <!--Agents-->
+    <!--agent x="17" y="11" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="robot_start"/>
+        <addwaypoint id="robot_goal"/>
+    </agent-->
+    
+    <!--AgentClusters-->
+    <agent x="-2" y="0" n="2" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="route1_end"/>
+        <addwaypoint id="route1_start"/>
+    </agent>
+
+</scenario>

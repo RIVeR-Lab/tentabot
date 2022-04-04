@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot name="turtlebot_sick" xmlns:xacro="http://ros.org/wiki/xacro">
+    
+    <xacro:include filename="$(find tentabot)/urdf/turtlebot2_common_library.urdf.xacro"/>
+    <xacro:include filename="$(find sick_scan)/urdf/sick_lms1xx.urdf.xacro"/>
+	
+    <joint name="sick_joint" type="fixed">
+      <origin xyz="0.09 0 0.09" rpy="0 0 0" />
+      <parent link="plate_top_link"/>
+      <child link="${sick_name}_mount_link" />
+    </joint>
+    
+</robot>

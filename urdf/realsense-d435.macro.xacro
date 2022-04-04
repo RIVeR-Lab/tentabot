@@ -24,8 +24,7 @@ THE SOFTWARE.
 -->
 <robot name="d435" xmlns:xacro="http://ros.org/wiki/xacro">
 
-    <!--xacro:macro name="d435" params="offset_x offset_y offset_z"-->
-    <xacro:macro name="realsense-d435" params="prefix parent *origin ns">
+    <xacro:macro name="realsense-d435" params="prefix parent *origin">
   
         <xacro:property name="d435_cam_depth_to_left_ir_offset" value="0.0"/>
         <xacro:property name="d435_cam_depth_to_right_ir_offset" value="-0.050"/>
@@ -45,7 +44,6 @@ THE SOFTWARE.
             <parent link="${parent}"/>
             <child link="${prefix}/camera_bottom_screw_frame" />
             <xacro:insert_block name="origin"/>
-            <!--origin rpy="0.0 0.0 0" xyz="${offset_x} ${offset_y} ${offset_z}"/-->
         </joint>
 
         <link name="${prefix}/camera_bottom_screw_frame"/>
@@ -201,13 +199,13 @@ THE SOFTWARE.
                 <baseline>0.05</baseline>
                 <alwaysOn>true</alwaysOn>
                 <updateRate>0.0</updateRate>
-                <cameraName>/${ns}/${prefix}</cameraName>
-                <imageTopicName>/${ns}/${prefix}/camera/color/image_raw</imageTopicName>
-                <cameraInfoTopicName>/${ns}/${prefix}/camera/color/camera_info</cameraInfoTopicName>
-                <depthImageTopicName>/${ns}/${prefix}/camera/depth/image_raw</depthImageTopicName>
-                <depthImageInfoTopicName>/${ns}/${prefix}/camera/depth/camera_info</depthImageInfoTopicName>
-                <pointCloudTopicName>/${ns}/${prefix}/camera/depth/color/points</pointCloudTopicName>
-                <frameName>/${ns}/${prefix}/camera_depth_frame_gazebo</frameName>
+                <cameraName>${prefix}</cameraName>
+                <imageTopicName>${prefix}/camera/color/image_raw</imageTopicName>
+                <cameraInfoTopicName>${prefix}/camera/color/camera_info</cameraInfoTopicName>
+                <depthImageTopicName>${prefix}/camera/depth/image_raw</depthImageTopicName>
+                <depthImageInfoTopicName>${prefix}/camera/depth/camera_info</depthImageInfoTopicName>
+                <pointCloudTopicName>${prefix}/camera/depth/color/points</pointCloudTopicName>
+                <frameName>${prefix}/camera_depth_frame_gazebo</frameName>
                 <pointCloudCutoff>0.02</pointCloudCutoff>
                 <distortionK1>0</distortionK1>
                 <distortionK2>0</distortionK2>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- Load parameters -->
+    <rosparam command="load" 
+        file="$(find tentabot)/config/utilities/config_laser_to_rings.yaml"
+        subst_value="True" />
+
+    <!-- Launch the training system -->
+    <node pkg="tentabot" 
+        name="laser_to_rings_server" 
+        type="laser_to_rings.py" 
+        output="screen"/>
+</launch>

@@ -1,7 +1,7 @@
 #ifndef MAP_UTILITY_H
 #define MAP_UTILITY_H
 
-// LAST UPDATE: 2021.10.05
+// LAST UPDATE: 2022.03.23
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -9,7 +9,7 @@
 //
 // DESCRIPTION: TODO...
 
-// --OUTSOURCE LIBRARIES--
+// --EXTERNAL LIBRARIES--
 #include <boost/algorithm/string.hpp>
 #include <message_filters/subscriber.h>
 #include <tf/transform_listener.h>
@@ -28,6 +28,7 @@
 #include <fcl/fcl.h>
 #include <fcl/geometry/shape/convex.h>
 #include <laser_geometry/laser_geometry.h>
+#include <ros/package.h>
 
 // --CUSTOM LIBRARIES--
 #include "common_utility.h"
@@ -47,7 +48,10 @@ class MapUtility
     MapUtility();
 
     // DESCRIPTION: TODO...
-    MapUtility(NodeHandle& nh);
+    MapUtility(NodeHandle& nh, 
+               string new_map_name, 
+               string sensor_pc2_msg_name, 
+               string sensor_laser_msg_name);
 
     // DESCRIPTION: TODO...
   	MapUtility(const MapUtility& mu);
@@ -641,6 +645,9 @@ class MapUtility
     visualization_msgs::MarkerArray debug_array_visu;
     visualization_msgs::Marker debug_visu;
     
+    ros::Subscriber sub_pc2;
+    ros::Subscriber sub_laser;
+
     ros::Publisher oct_msg_pub;
     ros::Publisher pc_msg_pub;
     ros::Publisher pc2_msg_pub;

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario>
+    
+    <waypoint id="following0" x="1.0" y="0.0" r="1"/>
+    <waypoint id="following1" x="5.75" y="0" r="1"/>
+    <waypoint id="passing0" x="5.75" y="-4" r="1"/>
+    <waypoint id="passing1" x="0.0" y="-4" r="1"/>
+    <waypoint id="crossing0" x="-7.5" y="-2.0" r="1"/>
+    <waypoint id="crossing1" x="-7.5" y="2" r="1"/>
+
+    <waypoint id="museum_large_room0" x="22" y="15" r="1"/>
+    <waypoint id="museum_large_room1" x="11" y="20" r="1"/>
+    <waypoint id="museum_large_room2" x="22" y="20" r="1"/>
+    <waypoint id="museum_large_room3" x="12" y="15" r="1"/>
+    <waypoint id="museum_hallway0" x="16.5" y="11" r="1"/>
+    <waypoint id="museum_hallway1" x="16.5" y="3" r="1"/>
+    <waypoint id="museum_hallway2" x="21" y="7" r="1"/>
+    <waypoint id="museum_hallway3" x="21" y="13" r="1"/>
+    <waypoint id="museum_hallway4" x="12" y="6" r="1"/>
+    <waypoint id="museum_hallway5" x="12" y="11" r="1"/>
+    <waypoint id="museum_hallway6" x="9.5" y="9.5" r="1"/>
+    <waypoint id="museum_hallway7" x="12" y="8" r="1"/>
+
+
+    <queue id="center" x="0" y="0" direction="0"/>
+    
+    <!--AgentClusters-->
+    <agent x="2.0" y="0" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="following0"/>
+        <addwaypoint id="following1"/>
+    </agent>
+
+    <agent x="5.75" y="-4" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="passing0"/>
+        <addwaypoint id="passing1"/>
+    </agent>
+
+    <agent x="-7.5" y="-2" n="1" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="crossing0"/>
+        <addwaypoint id="crossing1"/>
+    </agent>
+
+    <agent x="22" y="15" n="4" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="museum_large_room0"/>
+        <addwaypoint id="museum_large_room1"/>
+    </agent>
+
+    <agent x="22" y="20" n="4" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="museum_large_room2"/>
+        <addwaypoint id="museum_large_room3"/>
+    </agent>
+
+    <agent x="16.5" y="3" n="2" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="museum_hallway0"/>
+        <addwaypoint id="museum_hallway1"/>
+    </agent>
+
+    <agent x="21" y="7" n="2" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="museum_hallway2"/>
+        <addwaypoint id="museum_hallway3"/>
+    </agent>
+
+    <agent x="12" y="6" n="3" dx="0.1" dy="0.1" type="0">
+        <addwaypoint id="museum_hallway4"/>
+        <addwaypoint id="museum_hallway5"/>
+        <addwaypoint id="museum_hallway6"/>
+        <addwaypoint id="museum_hallway7"/>
+    </agent>
+
+</scenario>

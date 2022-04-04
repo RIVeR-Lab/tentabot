@@ -1,7 +1,7 @@
 #ifndef COMMON_UTILITY_H
 #define COMMON_UTILITY_H
 
-// LAST UPDATE: 2021.09.24
+// LAST UPDATE: 2022.03.23
 //
 // AUTHOR: Neset Unver Akmandor
 //
@@ -163,7 +163,29 @@ vector<double> sampling_func(double mini,
 
 // DESCRIPTION: TODO...
 template <class T>
-vector<T> subsample(vector<T> v, int scount)
+void subsample(vector<T>& v, int scount, vector<T>& vsub)
+{
+  int dv;
+  int vsize = v.size();
+  if(vsize % scount == 0)
+  {
+    dv = vsize / scount;
+  }
+  else
+  {
+    dv = vsize / scount + 1;
+  }
+
+  for (int i = 0; i < scount-1; ++i)
+  {
+    vsub.push_back(v[i*dv]);
+  }
+  vsub.push_back(v.back());
+}
+
+// DESCRIPTION: TODO...
+template <class T>
+void subsample(vector<T>& v, int scount)
 {
   vector<T> vsub;
   int dv;
@@ -182,11 +204,11 @@ vector<T> subsample(vector<T> v, int scount)
     vsub.push_back(v[i*dv]);
   }
   vsub.push_back(v.back());
-  return vsub;
+  v = vsub;
 }
 
 // DESCRIPTION: TODO...
-int find_min(vector<double> v)
+int find_min(vector<double>& v)
 {
   if (v.size() > 0)
   {
@@ -202,6 +224,27 @@ int find_min(vector<double> v)
       }
     }
     return min_index;
+  }
+  return -1;
+}
+
+// DESCRIPTION: TODO...
+int find_max(vector<double>& v)
+{
+  if (v.size() > 0)
+  {
+    int max_index = 0;
+    double maxi = v[0];
+
+    for (int i = 0; i < v.size(); ++i)
+    {
+      if (v[i] > maxi)
+      {
+        maxi = v[i];
+        max_index = i;
+      }
+    }
+    return max_index;
   }
   return -1;
 }
@@ -340,6 +383,41 @@ bool isInBBx(tf::Vector3 po, tf::Vector3 mini, tf::Vector3 maxi)
 bool isInBBx(tf::Vector3 po, octomap::point3d mini, octomap::point3d maxi)
 {
   return (po.x() >= mini.x()) && (po.x() < maxi.x()) && (po.y() >= mini.y()) && (po.y() < maxi.y()) && (po.z() >= mini.z()) && (po.z() < maxi.z());
+}
+
+// DESCRIPTION: TODO...
+double normalize(double mini, double maxi, double val)
+{
+  return (val - mini) / (maxi - mini);
+}
+
+// DESCRIPTION: TODO...
+void normalize(vector<double>& vals, vector<double>& normalized_vals)
+{
+  normalized_vals.clear();
+
+  int min_index = find_min(vals);
+  int max_index = find_max(vals);
+
+  for (int i = 0; i < vals.size(); ++i)
+  {
+    normalized_vals.push_back(normalize(vals[min_index], vals[max_index], vals[i]));
+  }
+}
+
+// DESCRIPTION: TODO...
+void normalize(vector<double>& vals)
+{
+  vector<double> normalized_vals;
+
+  int min_index = find_min(vals);
+  int max_index = find_max(vals);
+
+  for (int i = 0; i < vals.size(); ++i)
+  {
+    normalized_vals.push_back(normalize(vals[min_index], vals[max_index], vals[i]));
+  }
+  vals = normalized_vals;
 }
 
 // DESCRIPTION: TODO...

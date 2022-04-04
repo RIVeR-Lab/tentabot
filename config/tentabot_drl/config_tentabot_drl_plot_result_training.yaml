@@ -1,0 +1,34 @@
+## General Parameters
+multi_flag: True
+multi_plot_path: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/"
+
+plot_path: ""
+plot_flag: True
+plot_title: "Learning Curve"
+plot_moving_average_window_size_timesteps: 200
+plot_moving_average_window_size_episodes: 20
+
+print_flag: False
+
+data_cnt: 7
+
+data_path1: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/IROS22_laser_1DCNN_FC/"
+data_name1: ""
+
+data_path2: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/IROS22_laser_FC/"
+data_name2: ""
+
+data_path3: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/IROS22_laser_image_2DCNN_FC/"
+data_name3: ""
+
+data_path4: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/IROS22_laser_rings_2DCNN_FC/"
+data_name4: ""
+
+data_path5: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/IROS22_Tentabot_1DCNN_FC/"
+data_name5: ""
+
+data_path6: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/IROS22_Tentabot_2DCNN_FC/"
+data_name6: ""
+
+data_path7: "$(find tentabot)/dataset/benchmark/2022_IROS/training_data/IROS22_Tentabot_FC/"
+data_name7: ""

@@ -1,0 +1,44 @@
+## World Parameters
+world_name: "forest8"
+world_frame_name: "world"
+
+## Goal Parameters
+goal_msg: ""
+n_goal: 2
+
+goal1_x: 0.0
+goal1_y: 0.0
+goal1_z: 0.6
+goal1_yaw: -0.7854 # approx -Pi / 4
+
+goal2_x: 5.0
+goal2_y: -15.0
+goal2_z: 0.6
+goal2_yaw: -0.7854 # approx -Pi / 4
+
+## Robot Parameters
+n_robot: 1
+robot_name: "firefly"
+robot_model: "mav_r200"
+robot_frame_name: "firefly/base_link"
+
+robot_bbx_x_min: -0.2
+robot_bbx_x_max: 0.2
+robot_bbx_y_min: -0.2
+robot_bbx_y_max: 0.2
+robot_bbx_z_min: -0.2
+robot_bbx_z_max: 0.2
+
+robot_max_lat_velo: 2
+robot_max_lat_acc: 2
+robot_max_yaw_velo: 2
+robot_max_yaw_acc: 2
+
+robot_init_pos_x: -15.0                
+robot_init_pos_y: 15.0                 
+robot_init_pos_z: 1.0                  
+robot_init_yaw: 6.2832 # approx 2 * Pi
+
+robot_odometry_msg: "/firefly/odometry_sensor1/odometry"
+robot_pose_control_msg: "/firefly/command/pose"
+robot_velo_control_msg: ""

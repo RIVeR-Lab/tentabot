@@ -1,0 +1,5 @@
+## Parameters
+
+#data_path: "$(find tentabot)/dataset/drl/training/20220208_144408_PPO_tentabot/"
+data_path: "$(find tentabot)/dataset/drl/training/XPS_Tentabot_FC_2/20220209_180628_PPO_tentabot/"
+expert_data_path: "$(find tentabot)/dataset/il/expert/"

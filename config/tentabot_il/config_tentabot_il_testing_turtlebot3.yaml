@@ -1,0 +1,29 @@
+## Testing Parameters
+
+mode: "testing"
+data_path: "$(find tentabot)/dataset/il/testing/"
+initial_training_path: "$(find tentabot)/dataset/il/training/20220211_133251_PPO_tentabot/"
+#initial_trained_model_path: "$(find tentabot)/dataset/il/training/20220211_120828_PPO_tentabot/BC/epoch_5_model.zip"
+initial_trained_model_path: "$(find tentabot)/dataset/il/training/20220211_133251_PPO_tentabot/BC/epoch_5_model.zip"
+#initial_trained_model_path: "$(find tentabot)/dataset/drl/training/XPS_Tentabot_FC_2/20220209_180628_PPO_tentabot/trained_model.zip"
+
+# SIMULATION: testing_lvl_1
+#             training_garden_static_0
+# REAL: testing_real
+world_name: "training_garden_static_0"
+
+# SIMULATION: TurtleBot3tentabot_drl-v0
+# REAL: TurtleBot3Realtentabot_drl-v0
+task_and_robot_environment_name: TurtleBot3tentabot_drl-v0
+
+# SIMULATION: /turtlebot0/cmd_vel
+# REAL: /cmd_vel_mux/input/teleop
+velocity_control_msg: "/turtlebot0/cmd_vel"
+
+# SIMULATION: /turtlebot0/odom
+# REAL: /odom
+odometry_msg: "turtlebot0/odom"
+
+goal_status_msg: "/turtlebot0/goal_reaching_status"
+testing_timesteps: 2000
+max_testing_episodes: 2

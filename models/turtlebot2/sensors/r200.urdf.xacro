@@ -2,7 +2,7 @@
 
 <robot name="sensor_r200" xmlns:xacro="http://ros.org/wiki/xacro">
   <!--xacro:include filename="$(find navisim)/models/turtlebot2/turtlebot_gazebo.urdf.xacro"/-->
-  <xacro:include filename="$(find tentabot_devel)/models/turtlebot2/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find tentabot)/models/turtlebot2/common_properties.urdf.xacro"/>
 
 
   

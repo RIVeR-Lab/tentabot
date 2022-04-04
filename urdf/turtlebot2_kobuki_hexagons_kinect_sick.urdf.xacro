@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+    - Base      : kobuki
+    - Stacks    : hexagons
+    - 3d Sensor : kinect
+-->    
+<robot name="turtlebot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="sick_name" value="laser" />
+
+  <xacro:include filename="$(find tentabot)/urdf/turtlebot2_sick.urdf.xacro" />
+  <xacro:include filename="$(find kobuki_description)/urdf/kobuki.urdf.xacro" />
+  <xacro:include filename="$(find tentabot)/urdf/turtlebot2_hexagons.urdf.xacro" />
+  <xacro:include filename="$(find tentabot)/urdf/turtlebot2_kinect.urdf.xacro"/>
+  
+  <xacro:kobuki/>
+  <xacro:stack_hexagons parent="base_link"/>
+  <xacro:sensor_kinect parent="base_link"/>
+  <xacro:sick_lms_1xx name="${sick_name}" ros_topic="laser_cloud"/>
+  
+</robot>

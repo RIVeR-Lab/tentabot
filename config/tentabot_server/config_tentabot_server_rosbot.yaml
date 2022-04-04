@@ -1,0 +1,85 @@
+## Robot Parameters
+local_map_msg: "/octomap_tentabot"
+
+# NOTE: Expected to be available in ROS paremeter server
+#       by config files task_nav, map_utility
+#world_frame_name: ""
+#n_goal: 1
+#goal1_x: 0.0
+#goal1_y: 0.0
+#goal1_z: 1.0
+#goal1_yaw: 0.0
+#world_name: ""
+#robot_name: ""
+#robot_frame_name: ""
+#robot_bbx_x_min: 0.0
+#robot_bbx_x_max: 0.0
+#robot_bbx_y_min: 0.0
+#robot_bbx_y_max: 0.0
+#robot_bbx_z_min: 0.0
+#robot_bbx_z_max: 0.0
+#robot_max_lat_velo: 0.0
+#robot_max_lat_acc: 0.0
+#robot_max_yaw_velo: 0.0
+#robot_max_yaw_acc: 0.0
+#robot_odometry_msg: "/turtlebot3_0/odom"
+#robot_pose_control_msg: ""
+#robot_velo_control_msg: "/turtlebot3_0/cmd_vel"
+
+## Process Parameters
+visu_flag: true 
+time_limit: 180 
+dt: 0.1 
+goal_close_threshold: 0.25
+ground_collision_flag: false
+ground_collision_threshold: 0.1
+heuristic_data_path: "dataset/heuristic/rosbot/"
+drl_service_flag: false
+
+## Trajectory Sampling Parameters
+trajectory_sampling_dataset_path: "dataset/trajectory_sampling/rosbot/"
+tlen: 10
+tsamp_cnt: 20
+
+#trajectory_gen_type: "geometric"
+tyaw: 0.0 
+tpitch: 0.0
+tyaw_cnt: 1
+tpitch_cnt: 1
+
+trajectory_gen_type: "kinematic"
+ttime: 8
+lat_velo_samp_cnt: 5
+ang_velo_samp_cnt: 21
+
+## Offline Tuning Parameters
+trajectory_data_path: "dataset/trajectory_sampling/rosbot/20220402_230708/"
+max_occupancy_belief_value: 100
+sweight_max: 1 
+sweight_scale: 10 
+egrid_vdim: 0.1 
+
+pdist_x_min: -0.15
+pdist_x_max: 0.15
+pdist_y_min: -0.17
+pdist_y_max: 0.17
+pdist_z_min: -0.0 
+pdist_z_max: 0.35
+
+sdist_x_min: -0.4
+sdist_x_max: 0.4
+sdist_y_min: -0.5
+sdist_y_max: 0.5
+sdist_z_min: -0.0
+sdist_z_max: 1.0 
+
+## Online tuning Parameters
+tbin_obs_cnt_threshold: 1 
+crash_dist_scale: 0.8
+occupancy_scale: 3
+close_scale: 5
+smooth_scale: 1
+
+### DRL Parameters 
+### NOTE: Be sure that -> drl_service_flag: true
+### TODO: Add robot and task in openai_ros!

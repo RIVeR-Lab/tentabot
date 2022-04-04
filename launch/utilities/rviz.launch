@@ -1,0 +1,16 @@
+<launch>
+
+  <!-- OPTIONS
+    turtlebot3
+    stretch
+    ROSbot
+    firefly
+    jackal
+    jackal_real
+  -->
+  <arg name="robot_name"  default="jackal_real" />
+  <arg name="rvizconfig"  default="$(find tentabot)/rviz/$(arg robot_name).rviz" />
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+</launch>

@@ -1,0 +1,8 @@
+## Parameters
+laser_scan_msg: "turtlebot0/scan"
+laser_image_msg: "turtlebot0/laser_image"
+robot_frame: "turtlebot0/base_link"
+img_width_pos: 32
+img_width_neg: 32
+img_height: 64
+resolution: 0.1
