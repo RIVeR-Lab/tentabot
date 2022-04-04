@@ -9,7 +9,7 @@
 
 # GML TODO: verify new auto install
 
-echo -e "What is the absolute file path to your user from root? (for example: /home/YOUR_USERNAME_HERE/)
+echo -e "What is the absolute file path to your user from root? (for example: /home/YOUR_USERNAME_HERE/)"
 read abs_path
 echo -e "What is the absolute path to your catkin workspace? (for example:  home/YOUR_USERNAME_HERE/catkin_ws)"
 read catkin_path
