@@ -5,7 +5,6 @@ dataset/il/expert/
 dataset/il/testing/
 dataset/il/training/
 dataset/training/
-dataset/benchmark/2022_IROS/*/*/*/trained_model.zip
 dataset/benchmark/2022_IROS/*/*/*/PPO_tensorboard
 dataset/benchmark/2022_IROS/*/*/*/oar_data.pkl
 .vscode/

@@ -827,8 +827,7 @@ void Tentabot::initialize(NodeHandle& nh)
     string tentabot_path = ros::package::getPath("tentabot") + "/";
     data_tag = createFileName();
     string data_directory = tentabot_path + data_path + data_tag + "/";
-    boost::filesystem::create_directory(tentabot_path + data_path);
-    boost::filesystem::create_directory(data_directory);
+    boost::filesystem::create_directories(data_directory);
 
     string input_data_filename = data_directory + data_tag + "_param_" + robot_param.world_name + ".csv";
     input_data_stream.open(input_data_filename);

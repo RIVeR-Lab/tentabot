@@ -35,7 +35,7 @@ goal_close_threshold: 0.25
 ground_collision_flag: false
 ground_collision_threshold: 0.1
 heuristic_data_path: "dataset/heuristic/turtlebot3/"
-drl_service_flag: true
+drl_service_flag: false
 
 ## Trajectory Sampling Parameters
 trajectory_sampling_dataset_path: "dataset/trajectory_sampling/turtlebot3/"

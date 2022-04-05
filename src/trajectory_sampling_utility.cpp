@@ -800,8 +800,7 @@ void TrajectorySamplingUtility::create_trajectory_data_path()
     string trajectory_data_tag = createFileName();
     string tentabot_path = ros::package::getPath("tentabot") + "/";
     trajectory_data_path = trajectory_sampling_dataset_path + trajectory_data_tag + "/";
-    boost::filesystem::create_directory(tentabot_path + trajectory_sampling_dataset_path);
-    boost::filesystem::create_directory(tentabot_path + trajectory_data_path);
+    boost::filesystem::create_directories(tentabot_path + trajectory_data_path);
   }
 }
 
