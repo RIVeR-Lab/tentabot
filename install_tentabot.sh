@@ -49,6 +49,7 @@ if [[ "$fcl" == "n" ]]; then
     mkdir build 
     cd build
     cmake ..
+    make install
     cd ..
     cd ..
 fi
@@ -121,8 +122,16 @@ git clone https://github.com/ethz-asl/navrep.git # need to run setup.py install
 
 
 # 3.15 Install ROS dependencies
+apt-get update
 apt-get install libsuitesparse-dev
 apt-get install libnlopt-dev
+apt-get install ros-noetic-octomap-msgs
+apt-get install ros-noetic-octomap-ros
+apt-get install ros-noetic-turtlebot3-msgs
+apt-get upgrade python3-catkin-pkg
+apt-get install libgflags-dev
+apt-get install libgoogle-glog-dev
+apt-get install protobuf-compiler libprotobuf-dev
 
 # 3.16 Install other ROS dependencies using rosdep tool:
 cd ..
