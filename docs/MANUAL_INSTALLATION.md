@@ -42,7 +42,7 @@ Follow the tutorials to
 
 #### Install [libccd](https://github.com/danfis/libccd) following their instructions using CMake.
 
-#### Install [rotors_simulator](https://github.com/ethz-asl/rotors_simulator.git) package into the src folder.
+#### Install [rotors_simulator](https://github.com/ethz-asl/rotors_simulator.git) package into the src folder and reset hard to the commit ```fe64a7157160781061c11b54678bb5845afaa6d7```.
 #### Install 'noetic-akmandor' branch of [turtlebot3](https://github.com/RIVeR-Lab/turtlebot3/tree/noetic-akmandor) package into the src folder.
 #### Install 'noetic-akmandor' branch of [LMS1xx](https://github.com/RIVeR-Lab/LMS1xx/tree/noetic-akmandor) package into the src folder.
 #### Install 'noetic-akmandor' branch of [geometry2](https://github.com/RIVeR-Lab/geometry2/tree/noetic-akmandor) package into the src folder.
@@ -64,7 +64,7 @@ Follow the tutorials to
 
 ```
 cd ~/catkin_ws/src
-git clone https://github.com/ethz-asl/rotors_simulator.git
+git clone https://github.com/ethz-asl/rotors_simulator.git #reset --hard to ```fe64a7157160781061c11b54678bb5845afaa6d7``` 
 git clone https://github.com/RIVeR-Lab/turtlebot3.git #'noetic-akmandor' branch*
 git clone https://github.com/RIVeR-Lab/LMS1xx.git #'noetic-akmandor' branch*
 git clone https://github.com/RIVeR-Lab/geometry2.git #'noetic-akmandor' branch*
