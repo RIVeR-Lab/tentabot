@@ -111,14 +111,16 @@ git clone https://github.com/jackal/jackal.git
 # Install husky package into src folder
 git clone https://github.com/husky/husky.git
 
+# NUA: Not required right now. 
 # Install joystick drivers into ssrc folder
-git clone https://github.com/ros-drivers/joystick_drivers.git
-cd joystick_drivers
-git checkout kinetic-devel
-cd ..
+#git clone https://github.com/ros-drivers/joystick_drivers.git
+#cd joystick_drivers
+#git checkout kinetic-devel
+#cd ..
 
+# NUA: Not required. 
 # install navrep 
-git clone https://github.com/ethz-asl/navrep.git # need to run setup.py install
+#git clone https://github.com/ethz-asl/navrep.git # need to run setup.py install
 
 
 # 3.15 Install ROS dependencies
