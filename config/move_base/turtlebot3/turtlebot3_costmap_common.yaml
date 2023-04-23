@@ -1,7 +1,7 @@
 footprint: [[-0.2, -0.2], [-0.2, 0.2], [0.2, 0.2], [0.2, -0.2]]
 footprint_padding: 0.01
 
-robot_base_frame: turtlebot0/base_link
+robot_base_frame: turtlebot3_0/base_link
 update_frequency: 5.0
 publish_frequency: 5.0
 transform_tolerance: 0.2
@@ -13,12 +13,12 @@ raytrace_range: 10.0
 
 #layer definitions
 static:
-    map_topic: turtlebot0/map
+    map_topic: turtlebot3_0/map
     subscribe_to_updates: true
 
 obstacles_laser:
     observation_sources: laser
-    laser: {data_type: LaserScan, clearing: true, marking: true, topic: turtlebot0/scan, inf_is_valid: false}
+    laser: {data_type: LaserScan, clearing: true, marking: true, topic: turtlebot3_0/scan, inf_is_valid: false}
 
 inflation:
     inflation_radius: 0.2

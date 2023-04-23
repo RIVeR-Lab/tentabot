@@ -7,6 +7,7 @@ dataset/il/training/
 dataset/training/
 dataset/benchmark/2022_IROS/*/*/*/PPO_tensorboard
 dataset/benchmark/2022_IROS/*/*/*/oar_data.pkl
+dataset/benchmark/2022_IROS/*/*/*/.*
 .vscode/
 build/
 !dataset/training/ViewPlot.py
