@@ -38,7 +38,7 @@ find_package(PCL REQUIRED)
 #find_package(Eigen3 REQUIRED)
 find_package(SuiteSparse REQUIRED)
 #find_package(octomap REQUIRED)
-find_package(CCD REQUIRED)
+#find_package(CCD REQUIRED)
 
 find_library(EIGEN_CDDLIB_LIB eigen-cddlib)
 
