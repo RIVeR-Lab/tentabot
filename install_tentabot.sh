@@ -17,7 +17,7 @@
 # 2) Not required: install navrep 
 #   git clone https://github.com/ethz-asl/navrep.git # need to run setup.py install
 
-eval cd "$catkin_path"/src
+cd ..
 
 # 3.1 Install outsourced ROS packages.
 git clone https://github.com/catkin/catkin_simple.git
