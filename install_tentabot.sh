@@ -4,7 +4,7 @@
 #         Gary M. Lvov (GML)     
 #         Hongyu Li (LHY) 
 # E-Mail: akmandor.n@northeastern.edu
-#         lvov.g@nor4theastern.edu
+#         lvov.g@northeastern.edu
 #         li.hongyu1@northeastern.edu
 # TODO:
 #
@@ -26,8 +26,6 @@ git clone https://github.com/ethz-asl/forest_gen.git
 git clone https://github.com/OctoMap/octomap_rviz_plugins.git
 git clone https://github.com/pal-robotics/realsense_gazebo_plugin.git
 git clone https://github.com/hello-robot/stretch_ros.git
-git clone https://github.com/jackal/jackal.git
-git clone https://github.com/husky/husky.git
 
 # 3.2 Install edited ROS packages (checkout to the specified branch is required).
 git clone https://github.com/RIVeR-Lab/rotors_simulator.git #checkout noetic-akmandor
