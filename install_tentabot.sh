@@ -57,17 +57,17 @@ cd ..
 
 # 3.3 Install other developed ROS packages.
 git clone https://github.com/RIVeR-Lab/openai_ros.git
-
-# 3.4 Install other ROS dependencies using rosdep tool:
 cd ..
-wait
-source /opt/ros/noetic/setup.bash
-rosdep install --from-paths src --ignore-src -r -y
 
-# 3.5 Install Python dependencies (required for tentabot drl).
+# 3.4 Install Python dependencies (required for tentabot drl).
 pip install stable-baselines3[extra]
 pip install GitPython
 pip install squaternion
 
+# 3.5 Install other ROS dependencies using rosdep tool:
+wait
+source /opt/ros/noetic/setup.bash
+rosdep install --from-paths src --ignore-src -r -y
+
 # 3.6 Build the catkin workspace:
-$catkin_command
+#catkin build
