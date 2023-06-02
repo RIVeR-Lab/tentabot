@@ -13,8 +13,6 @@ Follow the tutorials to
 #### Install [octomap_rviz_plugins](https://github.com/OctoMap/octomap_rviz_plugins) package into the src folder.
 #### Install [realsense_gazebo_plugin](https://github.com/pal-robotics/realsense_gazebo_plugin.git) package into the src folder.
 #### Install [stretch_ros](https://github.com/hello-robot/stretch_ros) package into the src folder.
-#### Install [jackal](https://github.com/jackal/jackal.git) package into the src folder.
-#### Install [husky](https://github.com/husky/husky.git) package into the src folder.
 
 #### Install 'noetic-akmandor' branch of [rotors_simulator](https://github.com/RIVeR-Lab/rotors_simulator.git) package into the src folder.
 #### Install 'noetic-akmandor' branch of [pedsim_ros](https://github.com/RIVeR-Lab/pedsim_ros.git) package into the src folder.
@@ -34,8 +32,6 @@ git clone https://github.com/ethz-asl/forest_gen.git
 git clone https://github.com/OctoMap/octomap_rviz_plugins.git
 git clone https://github.com/pal-robotics/realsense_gazebo_plugin.git
 git clone https://github.com/hello-robot/stretch_ros
-git clone https://github.com/jackal/jackal.git
-git clone https://github.com/husky/husky.git
 git clone https://github.com/RIVeR-Lab/rotors_simulator.git 		#'noetic-akmandor' branch*
 git clone https://github.com/RIVeR-Lab/pedsim_ros.git 				#'noetic-akmandor' branch*
 git clone https://github.com/RIVeR-Lab/turtlebot3.git 				#'noetic-akmandor' branch*
