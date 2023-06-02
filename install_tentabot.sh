@@ -55,9 +55,8 @@ cd geometry2
 git checkout noetic-akmandor
 cd ..
 
-# 3.3 Install developed ROS packages.
+# 3.3 Install other developed ROS packages.
 git clone https://github.com/RIVeR-Lab/openai_ros.git
-git clone https://github.com/RIVeR-Lab/tentabot.git
 
 # 3.4 Install other ROS dependencies using rosdep tool:
 cd ..
