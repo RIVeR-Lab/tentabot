@@ -66,7 +66,7 @@ cd tentabot
 ##### Note: This script requires superuser and makes system changes. Review the script before running.
 ```
 chmod +x install_tentabot.sh
-sudo ./install_tentabot.sh
+./install_tentabot.sh
 ```
 
 #### 3.3 Source the workspace, after successfully built.
