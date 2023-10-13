@@ -14,8 +14,8 @@ drl_service_flag: false
 
 ## Trajectory Sampling Parameters
 trajectory_sampling_dataset_path: "dataset/trajectory_sampling/turtlebot2/"
-tlen: 10
-tsamp_cnt: 20
+tlen: 1.5
+tsamp_cnt: 5
 
 #trajectory_gen_type: "geometric"
 tyaw: 0.0 
@@ -24,12 +24,12 @@ tyaw_cnt: 1
 tpitch_cnt: 1
 
 trajectory_gen_type: "kinematic"
-ttime: 8
+ttime: 2
 lat_velo_samp_cnt: 5
 ang_velo_samp_cnt: 21
 
 ## Offline Tuning Parameters
-trajectory_data_path: "dataset/trajectory_sampling/turtlebot2/20231013_101618/"
+trajectory_data_path: "dataset/trajectory_sampling/turtlebot2/20231013_152335/"
 max_occupancy_belief_value: 100
 sweight_max: 1 
 sweight_scale: 10 
@@ -51,10 +51,10 @@ sdist_z_max: 0.9
 
 ## Online tuning Parameters
 tbin_obs_cnt_threshold: 1 
-crash_dist_scale: 0.8
-occupancy_scale: 3
-close_scale: 5
-smooth_scale: 1
+crash_dist_scale: 0.5
+occupancy_scale: 3.0
+close_scale: 5.0
+smooth_scale: 1.0
 
 #### DRL Parameters 
 #### NOTE: Be sure that -> drl_service_flag: true

@@ -23,7 +23,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -405,62 +405,6 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/LaserScan
-      Color: 252; 233; 79
-      Color Transformer: FlatColor
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Min Color: 0; 0; 0
-      Name: LaserScan
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.009999999776482582
-      Style: Flat Squares
-      Topic: /scan
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Min Color: 0; 0; 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.009999999776482582
-      Style: Flat Squares
-      Topic: /laser_cloud
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/LaserScan
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
@@ -475,7 +419,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Squares
-      Topic: /camera_scan
+      Topic: /turtlebot2_0/gibson_ros/laserscan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -503,20 +447,10 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /turtlebot2_0/camera/depth/points
+      Topic: /turtlebot2_0/gibson_ros/camera/depth_registered/points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
-    - Alpha: 0.699999988079071
-      Class: rviz/Map
-      Color Scheme: map
-      Draw Behind: false
-      Enabled: true
-      Name: Map
-      Topic: /map
-      Unreliable: false
-      Use Timestamp: false
       Value: true
     - Class: octomap_rviz_plugin/ColorOccupancyGrid
       Enabled: true
@@ -535,128 +469,23 @@ Visualization Manager:
       Marker Topic: /nav_goal
       Name: MarkerArray
       Namespaces:
-        /nav_goal_wp1: true
-      Queue Size: 100
+        {}
+      Queue Size: 10
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /best_tentacle
       Name: MarkerArray
       Namespaces:
-        best_sampling_points: true
-        best_tentacle: true
-      Queue Size: 100
+        {}
+      Queue Size: 10
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /tentacles
       Name: MarkerArray
       Namespaces:
-        tentacle0: true
-        tentacle1: true
-        tentacle10: true
-        tentacle100: true
-        tentacle101: true
-        tentacle102: true
-        tentacle103: true
-        tentacle104: true
-        tentacle11: true
-        tentacle12: true
-        tentacle13: true
-        tentacle14: true
-        tentacle15: true
-        tentacle16: true
-        tentacle17: true
-        tentacle18: true
-        tentacle19: true
-        tentacle2: true
-        tentacle20: true
-        tentacle21: true
-        tentacle22: true
-        tentacle23: true
-        tentacle24: true
-        tentacle25: true
-        tentacle26: true
-        tentacle27: true
-        tentacle28: true
-        tentacle29: true
-        tentacle3: true
-        tentacle30: true
-        tentacle31: true
-        tentacle32: true
-        tentacle33: true
-        tentacle34: true
-        tentacle35: true
-        tentacle36: true
-        tentacle37: true
-        tentacle38: true
-        tentacle39: true
-        tentacle4: true
-        tentacle40: true
-        tentacle41: true
-        tentacle42: true
-        tentacle43: true
-        tentacle44: true
-        tentacle45: true
-        tentacle46: true
-        tentacle47: true
-        tentacle48: true
-        tentacle49: true
-        tentacle5: true
-        tentacle50: true
-        tentacle51: true
-        tentacle52: true
-        tentacle53: true
-        tentacle54: true
-        tentacle55: true
-        tentacle56: true
-        tentacle57: true
-        tentacle58: true
-        tentacle59: true
-        tentacle6: true
-        tentacle60: true
-        tentacle61: true
-        tentacle62: true
-        tentacle63: true
-        tentacle64: true
-        tentacle65: true
-        tentacle66: true
-        tentacle67: true
-        tentacle68: true
-        tentacle69: true
-        tentacle7: true
-        tentacle70: true
-        tentacle71: true
-        tentacle72: true
-        tentacle73: true
-        tentacle74: true
-        tentacle75: true
-        tentacle76: true
-        tentacle77: true
-        tentacle78: true
-        tentacle79: true
-        tentacle8: true
-        tentacle80: true
-        tentacle81: true
-        tentacle82: true
-        tentacle83: true
-        tentacle84: true
-        tentacle85: true
-        tentacle86: true
-        tentacle87: true
-        tentacle88: true
-        tentacle89: true
-        tentacle9: true
-        tentacle90: true
-        tentacle91: true
-        tentacle92: true
-        tentacle93: true
-        tentacle94: true
-        tentacle95: true
-        tentacle96: true
-        tentacle97: true
-        tentacle98: true
-        tentacle99: true
+        {}
       Queue Size: 10
       Value: true
   Enabled: true
@@ -686,7 +515,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.4243745803833
+      Distance: 9.850910186767578
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -694,17 +523,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.596001386642456
-        Y: -0.09004005789756775
-        Z: 0.16652026772499084
+        X: 0.3100868761539459
+        Y: 0.6784090399742126
+        Z: -0.22004252672195435
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4497967958450317
+      Pitch: 1.3247969150543213
       Target Frame: <Fixed Frame>
-      Yaw: 1.5682107210159302
+      Yaw: 1.5732107162475586
     Saved: ~
 Window Geometry:
   Displays:

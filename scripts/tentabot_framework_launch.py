@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-LAST UPDATE: 2022.04.03
+LAST UPDATE: 2023.10.13
 
 AUTHOR: Neset Unver Akmandor (NUA)
         Gary M. Lvov (GML)
@@ -13,6 +13,7 @@ E-MAIL: akmandor.n@northeastern.edu
 import rospy
 import rospkg
 import roslaunch 
+import tf2_ros
 
 if __name__=="__main__":
 
@@ -27,27 +28,28 @@ if __name__=="__main__":
     tentabot_launch_path = tentabot_path + "launch/"
 
     ## General Parameters
-    sim_flag = rospy.get_param('sim_flag', True)
+    sim = rospy.get_param('sim', "")
     rviz_flag = rospy.get_param('rviz_flag', True)
     map_utility_flag = rospy.get_param('map_utility_flag', True)
     tentabot_server_flag = rospy.get_param('tentabot_server_flag', True)
 
-    print("tentabot_framework_launch:: __main__ -> General Parameters:")
-    print("tentabot_framework_launch:: __main__ -> sim_flag: " + str(sim_flag))
-    print("tentabot_framework_launch:: __main__ -> rviz_flag: " + str(rviz_flag))
-    print("tentabot_framework_launch:: __main__ -> map_utility_flag: " + str(map_utility_flag))
-    print("tentabot_framework_launch:: __main__ -> tentabot_server_flag: " + str(tentabot_server_flag))
+    print("[tentabot_framework_launch:: __main__ ] General Parameters:")
+    print("[tentabot_framework_launch:: __main__ ] sim: " + str(sim))
+    print("[tentabot_framework_launch:: __main__ ] rviz_flag: " + str(rviz_flag))
+    print("[tentabot_framework_launch:: __main__ ] map_utility_flag: " + str(map_utility_flag))
+    print("[tentabot_framework_launch:: __main__ ] tentabot_server_flag: " + str(tentabot_server_flag))
 
     ## Task-Nav Parameters
     world_name = rospy.get_param('world_name', "")
     world_frame_name = rospy.get_param('world_frame_name', "")
+    robot_frame_name = rospy.get_param('robot_frame_name', "")
 
-    print("tentabot_framework_launch:: __main__ -> Task-Nav Parameters:")
-    print("tentabot_framework_launch:: __main__ -> world_name: " + str(world_name))
-    print("tentabot_framework_launch:: __main__ -> world_frame_name: " + str(world_frame_name))
+    print("[tentabot_framework_launch:: __main__ ] Task-Nav Parameters:")
+    print("[tentabot_framework_launch:: __main__ ] world_name: " + str(world_name))
+    print("[tentabot_framework_launch:: __main__ ] world_frame_name: " + str(world_frame_name))
 
     n_goal = rospy.get_param('n_goal', "")
-    print("tentabot_framework_launch:: __main__ -> n_goal: " + str(n_goal))
+    print("[tentabot_framework_launch:: __main__ ] n_goal: " + str(n_goal))
     
     goals_x = []
     goals_y = []
@@ -68,10 +70,10 @@ if __name__=="__main__":
         goals_z.append(goal_z)
         goals_yaw.append(goal_yaw)
 
-        print("tentabot_framework_launch:: __main__ -> " + goal_name + ": " + str(goal_x))
-        print("tentabot_framework_launch:: __main__ -> " + goal_name + ": " + str(goal_y))
-        print("tentabot_framework_launch:: __main__ -> " + goal_name + ": " + str(goal_z))
-        print("tentabot_framework_launch:: __main__ -> " + goal_name + ": " + str(goal_yaw))
+        print("[tentabot_framework_launch:: __main__ ] " + goal_name + ": " + str(goal_x))
+        print("[tentabot_framework_launch:: __main__ ] " + goal_name + ": " + str(goal_y))
+        print("[tentabot_framework_launch:: __main__ ] " + goal_name + ": " + str(goal_z))
+        print("[tentabot_framework_launch:: __main__ ] " + goal_name + ": " + str(goal_yaw))
 
     robot_name = rospy.get_param('robot_name', "")
     robot_model = rospy.get_param('robot_model', "")
@@ -83,36 +85,36 @@ if __name__=="__main__":
     robot_pose_control_msg = rospy.get_param('robot_pose_control_msg', "")
     robot_velo_control_msg = rospy.get_param('robot_velo_control_msg', "")
 
-    print("tentabot_framework_launch:: __main__ -> robot_name: " + str(robot_name))
-    print("tentabot_framework_launch:: __main__ -> robot_model: " + str(robot_model))
-    print("tentabot_framework_launch:: __main__ -> robot_init_pos_x: " + str(robot_init_pos_x))
-    print("tentabot_framework_launch:: __main__ -> robot_init_pos_y: " + str(robot_init_pos_y))
-    print("tentabot_framework_launch:: __main__ -> robot_init_pos_z: " + str(robot_init_pos_z))
-    print("tentabot_framework_launch:: __main__ -> robot_init_yaw: " + str(robot_init_yaw))
-    print("tentabot_framework_launch:: __main__ -> robot_odometry_msg: " + str(robot_odometry_msg))
-    print("tentabot_framework_launch:: __main__ -> robot_pose_control_msg: " + str(robot_pose_control_msg))
-    print("tentabot_framework_launch:: __main__ -> robot_velo_control_msg: " + str(robot_velo_control_msg))
+    print("[tentabot_framework_launch:: __main__ ] robot_name: " + str(robot_name))
+    print("[tentabot_framework_launch:: __main__ ] robot_model: " + str(robot_model))
+    print("[tentabot_framework_launch:: __main__ ] robot_init_pos_x: " + str(robot_init_pos_x))
+    print("[tentabot_framework_launch:: __main__ ] robot_init_pos_y: " + str(robot_init_pos_y))
+    print("[tentabot_framework_launch:: __main__ ] robot_init_pos_z: " + str(robot_init_pos_z))
+    print("[tentabot_framework_launch:: __main__ ] robot_init_yaw: " + str(robot_init_yaw))
+    print("[tentabot_framework_launch:: __main__ ] robot_odometry_msg: " + str(robot_odometry_msg))
+    print("[tentabot_framework_launch:: __main__ ] robot_pose_control_msg: " + str(robot_pose_control_msg))
+    print("[tentabot_framework_launch:: __main__ ] robot_velo_control_msg: " + str(robot_velo_control_msg))
 
     ## Map Utility Parameters
     config_map_utility = rospy.get_param('config_map_utility', "")
 
-    print("tentabot_framework_launch:: __main__ -> Map Utility Parameters:")
-    print("tentabot_framework_launch:: __main__ -> config_map_utility: " + str(config_map_utility))
+    print("[tentabot_framework_launch:: __main__ ] Map Utility Parameters:")
+    print("[tentabot_framework_launch:: __main__ ] config_map_utility: " + str(config_map_utility))
 
     ## Tentabot Server Parameters
     config_tentabot_server = rospy.get_param('config_tentabot_server', "")
 
-    print("tentabot_framework_launch:: __main__ -> Tentabot-Server Parameters:")
-    print("tentabot_framework_launch:: __main__ -> config_tentabot_server: " + str(config_tentabot_server))
+    print("[tentabot_framework_launch:: __main__ ] Tentabot-Server Parameters:")
+    print("[tentabot_framework_launch:: __main__ ] config_tentabot_server: " + str(config_tentabot_server))
 
     ## Launch Simulation
     sim_paused = "false"
 
-    if sim_flag:
+    if sim == "gazebo":
         
         if robot_name == "firefly":
 
-            # Launch Mav-Garden
+            # Launch Mav-Garden Gazebo
             mav_garden_path = tentabot_launch_path + "utilities/mav_garden.launch"
             mav_garden_args = [mav_garden_path,
                                'world_name:=' + str(world_name),
@@ -129,14 +131,14 @@ if __name__=="__main__":
             mav_garden = roslaunch.parent.ROSLaunchParent(uuid, mav_garden_launch)
             mav_garden.start()
 
-            print("tentabot_framework_launch:: __main__ -> Launched Mav-Garden!")
+            print("[tentabot_framework_launch:: __main__ ] Launched Mav-Garden!")
 
         else:
 
             if robot_name == "stretch":
                 sim_paused = "true"
 
-            # Launch Mobile-Garden
+            # Launch Mobile-Garden Gazebo
             mobile_garden_path = tentabot_launch_path + "utilities/mobile_garden.launch"
             mobile_garden_args = [mobile_garden_path,
                                   'sim_paused:=' + str(sim_paused),
@@ -151,9 +153,28 @@ if __name__=="__main__":
             mobile_garden = roslaunch.parent.ROSLaunchParent(uuid, mobile_garden_launch)
             mobile_garden.start()
 
-            print("tentabot_framework_launch:: __main__ -> Launched Mobile-Garden!")
+            print("[tentabot_framework_launch:: __main__ ] Launched Mobile-Garden in Gazebo!")
         
         rospy.sleep(2)
+
+    elif sim == "igibson":
+
+        ns1 = "turtlebot2_0"
+
+        # Launch Mobile-Garden iGibson
+        mobile_garden_path = tentabot_launch_path + "utilities/mobile_garden_igibson.launch"
+        mobile_garden_args = [mobile_garden_path,
+                                'ns1:=' + str(ns1),
+                                'world_frame_name:=' + str(world_frame_name)]
+
+        mobile_garden_launch = [ (roslaunch.rlutil.resolve_launch_arguments(mobile_garden_args)[0], mobile_garden_args[1:]) ]
+        mobile_garden = roslaunch.parent.ROSLaunchParent(uuid, mobile_garden_launch)
+        mobile_garden.start()
+
+        print("[tentabot_framework_launch:: __main__ ] Launched Mobile-Garden in iGibson!")
+    
+    else:
+        print("[tentabot_framework_launch:: __main__ ] Empty or wrong simulator name!")
 
     ## Launch Rviz
     if rviz_flag:
@@ -166,8 +187,20 @@ if __name__=="__main__":
         rviz = roslaunch.parent.ROSLaunchParent(uuid, rviz_launch)
         rviz.start()
 
-        print("tentabot_framework_launch:: __main__ -> Launched Rviz!")
+        print("[tentabot_framework_launch:: __main__ ] Launched Rviz!")
         rospy.sleep(1)
+
+    ## Wait for simulation to be ready!
+    tfBuffer = tf2_ros.Buffer()
+    listener = tf2_ros.TransformListener(tfBuffer)
+    print("Waiting the transform between " + world_frame_name + " and " + robot_frame_name + "...")
+    trans = None
+    while (not rospy.is_shutdown()) and (not trans):
+        try:
+            trans = tfBuffer.lookup_transform(world_frame_name, robot_frame_name, rospy.Time(0))
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as ex:
+            rospy.logwarn(str(ex))
+            rospy.sleep(1.0)
 
     ## Launch Map Utility Server
     if map_utility_flag:
@@ -180,7 +213,7 @@ if __name__=="__main__":
         map_utility = roslaunch.parent.ROSLaunchParent(uuid, map_utility_launch)
         map_utility.start()
 
-        print("tentabot_framework_launch:: __main__ -> Launched Map Utility Server!")
+        print("[tentabot_framework_launch:: __main__ ] Launched Map Utility Server!")
         rospy.sleep(1)
     
     ## Launch Tentabot Server
@@ -194,15 +227,15 @@ if __name__=="__main__":
         tentabot_server = roslaunch.parent.ROSLaunchParent(uuid, tentabot_server_launch)
         tentabot_server.start()
 
-        print("tentabot_framework_launch:: __main__ -> Launched Tentabot Server!")
+        print("[tentabot_framework_launch:: __main__ ] Launched Tentabot Server!")
         rospy.sleep(1)
 
     ## Launch Tentabot-DRL Training/Testing
     drl_service_flag = rospy.get_param('drl_service_flag', False)
     mode = rospy.get_param('mode', "")
     
-    print("tentabot_framework_launch:: __main__ -> drl_service_flag: " + str(drl_service_flag))
-    print("tentabot_framework_launch:: __main__ -> mode: " + str(mode))
+    print("[tentabot_framework_launch:: __main__ ] drl_service_flag: " + str(drl_service_flag))
+    print("[tentabot_framework_launch:: __main__ ] mode: " + str(mode))
     
     if drl_service_flag:
 
@@ -213,7 +246,7 @@ if __name__=="__main__":
         tentabot_drl = roslaunch.parent.ROSLaunchParent(uuid, tentabot_drl_launch)
         tentabot_drl.start()
 
-        print("tentabot_framework_launch:: __main__ -> Launched Tentabot-DRL: " + mode + "!")
+        print("[tentabot_framework_launch:: __main__ ] Launched Tentabot-DRL: " + mode + "!")
 
     while (not rospy.is_shutdown()):
         pass

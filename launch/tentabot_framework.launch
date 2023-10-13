@@ -1,6 +1,11 @@
 <launch>
 
-  <arg name="sim_flag" default="true"/>
+  <!-- CONFIGURATION OPTIONS
+    gazebo
+    igibson
+  -->
+  <arg name="sim" default="igibson"/>
+  
   <arg name="rviz_flag" default="true"/>
   <arg name="map_utility_flag" default="true"/>
   <arg name="tentabot_server_flag" default="true"/>
@@ -14,8 +19,9 @@
     config_task_nav_jackal
     config_task_nav_jackal_real
     config_task_nav_rosbot
+    config_task_nav_igibson_turtlebot2
   -->
-  <arg name="config_task_name" default="config_task_nav_turtlebot2"/>
+  <arg name="config_task_name" default="config_task_nav_igibson_turtlebot2"/>
 
   <!-- CONFIGURATION OPTIONS
     config_map_utility_cylinders0_firefly
@@ -26,9 +32,9 @@
     config_map_utility_jackal
     config_map_utility_jackal_real
     config_map_utility_rosbot
-    config_map_utility_turtlebot2
+    config_map_utility_igibson_turtlebot2
   -->
-  <arg name="config_map_utility"  default="config_map_utility_turtlebot2" />
+  <arg name="config_map_utility"  default="config_map_utility_igibson_turtlebot2" />
 
   <!-- CONFIGURATION OPTIONS
     config_tentabot_server_firefly
@@ -38,11 +44,12 @@
     config_tentabot_server_jackal
     config_tentabot_server_jackal_real
     config_tentabot_server_rosbot
+    config_tentabot_server_igibson_turtlebot2
   -->
-  <arg name="config_tentabot_server" default="config_tentabot_server_turtlebot2"/>
+  <arg name="config_tentabot_server" default="config_tentabot_server_igibson_turtlebot2"/>
 
   <!-- PUBLISH CONFIGURATION PARAMETERS -->
-  <param name="sim_flag"                          value="$(arg sim_flag)" />
+  <param name="sim"                               value="$(arg sim)" />
   <param name="rviz_flag"                         value="$(arg rviz_flag)" />
   <param name="map_utility_flag"                  value="$(arg map_utility_flag)" />
   <param name="tentabot_server_flag"              value="$(arg tentabot_server_flag)" />

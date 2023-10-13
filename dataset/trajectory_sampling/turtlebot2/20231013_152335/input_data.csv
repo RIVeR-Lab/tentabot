@@ -1,8 +1,8 @@
 trajectory_frame,turtlebot2_0/base_link
-trajectory_data_path,dataset/trajectory_sampling/turtlebot2/20231013_101618/
-trajectory_sampling_count,20
-trajectory_time,8
-trajectory_length,10
+trajectory_data_path,dataset/trajectory_sampling/turtlebot2/20231013_152335/
+trajectory_sampling_count,5
+trajectory_time,2
+trajectory_length,1.5
 trajectory_generation_type,
 trajectory_yaw,0
 trajectory_pitch,0
