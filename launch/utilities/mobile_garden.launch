@@ -12,7 +12,7 @@
     training_garden_dynamic_0
     validation
   -->
-  <arg name="world_name"      default="training_garden_static_1" />
+  <arg name="world_name"      default="" />
   <arg name="world_file"      default="$(find tentabot)/worlds/$(arg world_name).world" />
 
   <!-- CONFIGURATION OPTIONS

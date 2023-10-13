@@ -1818,8 +1818,11 @@ void MapUtility::update_states()
     tflistener -> waitForTransform(world_frame_name, map_frame_name, ros::Time::now(), ros::Duration(map_server_dt));
     tflistener -> lookupTransform(world_frame_name, map_frame_name, ros::Time(0), transform_map_wrt_world);
 
-    tflistener -> waitForTransform(world_frame_name, sensor_pc2_frame_name, ros::Time::now(), ros::Duration(map_server_dt));
-    tflistener -> lookupTransform(world_frame_name, sensor_pc2_frame_name, ros::Time(0), transform_sensor_pc2_wrt_world);
+    if (sensor_pc2_frame_name != "")
+    {
+      tflistener -> waitForTransform(world_frame_name, sensor_pc2_frame_name, ros::Time::now(), ros::Duration(map_server_dt));
+      tflistener -> lookupTransform(world_frame_name, sensor_pc2_frame_name, ros::Time(0), transform_sensor_pc2_wrt_world);
+    }
 
     if (sensor_laser_frame_name != "")
     {

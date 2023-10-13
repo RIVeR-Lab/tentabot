@@ -4,12 +4,18 @@
 # training_garden_dynamic_0
 # validation
 # real
+# igibson
 world_name: "training_garden_static_1"
 world_frame_name: "world"
 
 ## Goal Parameters
 goal_msg: ""
 n_goal: 1
+
+#goal1_x: 1.0
+#goal1_y: -3.0
+#goal1_z: 0.0
+#goal1_yaw: -0.7854 # approx -Pi / 4
 
 goal1_x: -4.0
 goal1_y: 4.0

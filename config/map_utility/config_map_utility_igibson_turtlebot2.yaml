@@ -13,6 +13,7 @@ local_map_flag: true
 dynamic_flag: true
 skip_cnt_reset_sensor_range: 1
 
+#sensor_pc2_msg_name: ""
 sensor_pc2_msg_name: "/turtlebot2_0/gibson_ros/camera/depth_registered/points"
 sensor_pc2_direction: "z"
 sensor_pc2_min_range: 0.3
@@ -20,6 +21,7 @@ sensor_pc2_max_range: 12.0
 sensor_pc2_max_yaw: 0.5
 sensor_pc2_max_pitch: 0.5
 
+#sensor_laser_msg_name: ""
 sensor_laser_msg_name: "/turtlebot2_0/gibson_ros/laserscan"
 sensor_laser_max_range: 4.0
 
