@@ -59,7 +59,7 @@ To install tentabot, either follow the [manual installation instructions](docs/M
 
 #### 3.1 Clone the tentabot repository into the src folder of your catkin workspace, and change into the tentabot directory.
 ```
-git clone https://github.com/RIVeR-Lab/tentabot.git
+git clone git@github.com:RIVeR-Lab/tentabot.git
 cd tentabot
 ```
 #### 3.2 Run the bash script to automate installing all dependencies.
