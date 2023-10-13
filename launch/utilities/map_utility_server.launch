@@ -16,7 +16,7 @@
     config_map_utility_turtlebot2
     config_map_utility_turtlebot3
   -->
-  <arg name="config_map_utility"  default="config_map_utility_jackal_real" />
+  <arg name="config_map_utility"  default="config_map_utility_turtlebot2" />
 
   <!-- PUBLISH CONFIGURATION PARAMETERS -->
   <rosparam file="$(find tentabot)/config/map_utility/$(arg config_map_utility).yaml"/>

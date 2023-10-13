@@ -1830,7 +1830,7 @@ void MapUtility::update_states()
   }
   catch (tf::TransformException ex)
   {
-    ROS_INFO("MapUtility::update_states -> Couldn't get transform!");
+    ROS_INFO("[MapUtility::update_states] Couldn't get transform!");
     ROS_ERROR("%s", ex.what());
     ROS_ERROR("world_frame_name: %s", world_frame_name.c_str());
     ROS_ERROR("map_frame_name: %s", map_frame_name.c_str());

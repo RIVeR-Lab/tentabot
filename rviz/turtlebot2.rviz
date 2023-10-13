@@ -3,11 +3,9 @@ Panels:
     Help Height: 138
     Name: Displays
     Property Tree Widget:
-      Expanded:
-        - /Global Options1
-        - /TF1/Frames1
+      Expanded: ~
       Splitter Ratio: 0.5
-    Tree Height: 1628
+    Tree Height: 754
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -23,10 +21,9 @@ Panels:
     Name: Views
     Splitter Ratio: 0.5
   - Class: rviz/Time
-    Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: PointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -36,75 +33,83 @@ Visualization Manager:
   Displays:
     - Class: rviz/TF
       Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        base_footprint:
+        turtlebot2_0/base_footprint:
           Value: false
-        base_link:
-          Value: false
-        camera_depth_frame:
-          Value: false
-        camera_depth_optical_frame:
-          Value: false
-        camera_link:
-          Value: false
-        camera_rgb_frame:
-          Value: false
-        camera_rgb_optical_frame:
-          Value: false
-        caster_back_link:
-          Value: false
-        caster_front_link:
-          Value: false
-        cliff_sensor_front_link:
-          Value: false
-        cliff_sensor_left_link:
-          Value: false
-        cliff_sensor_right_link:
-          Value: false
-        gyro_link:
-          Value: false
-        laser_laser:
-          Value: false
-        laser_mount_link:
-          Value: false
-        map:
+        turtlebot2_0/base_link:
           Value: true
-        odom:
+        turtlebot2_0/camera_depth_frame:
+          Value: false
+        turtlebot2_0/camera_depth_optical_frame:
+          Value: false
+        turtlebot2_0/camera_link:
+          Value: false
+        turtlebot2_0/camera_rgb_frame:
+          Value: false
+        turtlebot2_0/camera_rgb_optical_frame:
+          Value: false
+        turtlebot2_0/caster_back_link:
+          Value: false
+        turtlebot2_0/caster_front_link:
+          Value: false
+        turtlebot2_0/cliff_sensor_front_link:
+          Value: false
+        turtlebot2_0/cliff_sensor_left_link:
+          Value: false
+        turtlebot2_0/cliff_sensor_right_link:
+          Value: false
+        turtlebot2_0/gyro_link:
+          Value: false
+        turtlebot2_0/odom:
+          Value: false
+        turtlebot2_0/plate_bottom_link:
+          Value: false
+        turtlebot2_0/plate_middle_link:
+          Value: false
+        turtlebot2_0/plate_top_link:
+          Value: false
+        turtlebot2_0/pole_bottom_0_link:
+          Value: false
+        turtlebot2_0/pole_bottom_1_link:
+          Value: false
+        turtlebot2_0/pole_bottom_2_link:
+          Value: false
+        turtlebot2_0/pole_bottom_3_link:
+          Value: false
+        turtlebot2_0/pole_bottom_4_link:
+          Value: false
+        turtlebot2_0/pole_bottom_5_link:
+          Value: false
+        turtlebot2_0/pole_kinect_0_link:
+          Value: false
+        turtlebot2_0/pole_kinect_1_link:
+          Value: false
+        turtlebot2_0/pole_middle_0_link:
+          Value: false
+        turtlebot2_0/pole_middle_1_link:
+          Value: false
+        turtlebot2_0/pole_middle_2_link:
+          Value: false
+        turtlebot2_0/pole_middle_3_link:
+          Value: false
+        turtlebot2_0/pole_top_0_link:
+          Value: false
+        turtlebot2_0/pole_top_1_link:
+          Value: false
+        turtlebot2_0/pole_top_2_link:
+          Value: false
+        turtlebot2_0/pole_top_3_link:
+          Value: false
+        turtlebot2_0/wheel_left_link:
+          Value: false
+        turtlebot2_0/wheel_right_link:
+          Value: false
+        world:
           Value: true
-        plate_bottom_link:
-          Value: false
-        plate_top_link:
-          Value: false
-        pole_bottom_0_link:
-          Value: false
-        pole_bottom_1_link:
-          Value: false
-        pole_bottom_2_link:
-          Value: false
-        pole_bottom_3_link:
-          Value: false
-        pole_bottom_4_link:
-          Value: false
-        pole_bottom_5_link:
-          Value: false
-        pole_kinect_0_link:
-          Value: false
-        pole_kinect_1_link:
-          Value: false
-        pole_top_0_link:
-          Value: false
-        pole_top_1_link:
-          Value: false
-        pole_top_2_link:
-          Value: false
-        pole_top_3_link:
-          Value: false
-        wheel_left_link:
-          Value: false
-        wheel_right_link:
-          Value: false
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -112,63 +117,71 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        map:
-          odom:
-            base_footprint:
-              base_link:
-                camera_rgb_frame:
-                  camera_depth_frame:
-                    camera_depth_optical_frame:
+        world:
+          turtlebot2_0/odom:
+            turtlebot2_0/base_footprint:
+              turtlebot2_0/base_link:
+                turtlebot2_0/camera_rgb_frame:
+                  turtlebot2_0/camera_depth_frame:
+                    turtlebot2_0/camera_depth_optical_frame:
                       {}
-                  camera_link:
+                  turtlebot2_0/camera_link:
                     {}
-                  camera_rgb_optical_frame:
+                  turtlebot2_0/camera_rgb_optical_frame:
                     {}
-                caster_back_link:
+                turtlebot2_0/caster_back_link:
                   {}
-                caster_front_link:
+                turtlebot2_0/caster_front_link:
                   {}
-                cliff_sensor_front_link:
+                turtlebot2_0/cliff_sensor_front_link:
                   {}
-                cliff_sensor_left_link:
+                turtlebot2_0/cliff_sensor_left_link:
                   {}
-                cliff_sensor_right_link:
+                turtlebot2_0/cliff_sensor_right_link:
                   {}
-                gyro_link:
+                turtlebot2_0/gyro_link:
                   {}
-                plate_bottom_link:
+                turtlebot2_0/plate_bottom_link:
                   {}
-                plate_top_link:
-                  laser_mount_link:
-                    laser_laser:
-                      {}
-                pole_bottom_0_link:
+                turtlebot2_0/plate_middle_link:
                   {}
-                pole_bottom_1_link:
+                turtlebot2_0/plate_top_link:
                   {}
-                pole_bottom_2_link:
+                turtlebot2_0/pole_bottom_0_link:
                   {}
-                pole_bottom_3_link:
+                turtlebot2_0/pole_bottom_1_link:
                   {}
-                pole_bottom_4_link:
+                turtlebot2_0/pole_bottom_2_link:
                   {}
-                pole_bottom_5_link:
+                turtlebot2_0/pole_bottom_3_link:
                   {}
-                pole_kinect_0_link:
+                turtlebot2_0/pole_bottom_4_link:
                   {}
-                pole_kinect_1_link:
+                turtlebot2_0/pole_bottom_5_link:
                   {}
-                pole_top_0_link:
+                turtlebot2_0/pole_kinect_0_link:
                   {}
-                pole_top_1_link:
+                turtlebot2_0/pole_kinect_1_link:
                   {}
-                pole_top_2_link:
+                turtlebot2_0/pole_middle_0_link:
                   {}
-                pole_top_3_link:
+                turtlebot2_0/pole_middle_1_link:
                   {}
-                wheel_left_link:
+                turtlebot2_0/pole_middle_2_link:
                   {}
-                wheel_right_link:
+                turtlebot2_0/pole_middle_3_link:
+                  {}
+                turtlebot2_0/pole_top_0_link:
+                  {}
+                turtlebot2_0/pole_top_1_link:
+                  {}
+                turtlebot2_0/pole_top_2_link:
+                  {}
+                turtlebot2_0/pole_top_3_link:
+                  {}
+                turtlebot2_0/wheel_left_link:
+                  {}
+                turtlebot2_0/wheel_right_link:
                   {}
       Update Interval: 0
       Value: true
@@ -256,16 +269,12 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        laser_laser:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        laser_mount_link:
+        plate_bottom_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        plate_bottom_link:
+        plate_middle_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -315,6 +324,26 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        pole_middle_0_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_middle_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_middle_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_middle_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         pole_top_0_link:
           Alpha: 1
           Show Axes: false
@@ -346,8 +375,8 @@ Visualization Manager:
           Show Trail: false
           Value: true
       Name: RobotModel
-      Robot Description: robot_description
-      TF Prefix: ""
+      Robot Description: turtlebot2_0/robot_description
+      TF Prefix: turtlebot2_0
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -458,7 +487,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /camera/depth_registered/points
+      Topic: /turtlebot2_0/camera/depth/points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -479,12 +508,29 @@ Visualization Manager:
       Max. Octree Depth: 16
       Min. Height Display: -3.4028234663852886e+38
       Name: ColorOccupancyGrid
-      Octomap Topic: /server_octomap
+      Octomap Topic: /octomap_tentabot
       Queue Size: 5
       Value: true
       Voxel Alpha: 1
       Voxel Coloring: Z-Axis
       Voxel Rendering: Occupied Voxels
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /nav_goal
+      Name: MarkerArray
+      Namespaces:
+        /nav_goal_wp1: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /best_tentacle
+      Name: MarkerArray
+      Namespaces:
+        best_sampling_points: true
+        best_tentacle: true
+      Queue Size: 100
+      Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /tentacles
@@ -498,48 +544,10 @@ Visualization Manager:
         tentacle102: true
         tentacle103: true
         tentacle104: true
-        tentacle105: true
-        tentacle106: true
-        tentacle107: true
-        tentacle108: true
-        tentacle109: true
         tentacle11: true
-        tentacle110: true
-        tentacle111: true
-        tentacle112: true
-        tentacle113: true
-        tentacle114: true
-        tentacle115: true
-        tentacle116: true
-        tentacle117: true
-        tentacle118: true
-        tentacle119: true
         tentacle12: true
-        tentacle120: true
-        tentacle121: true
-        tentacle122: true
-        tentacle123: true
-        tentacle124: true
-        tentacle125: true
-        tentacle126: true
-        tentacle127: true
-        tentacle128: true
-        tentacle129: true
         tentacle13: true
-        tentacle130: true
-        tentacle131: true
-        tentacle132: true
-        tentacle133: true
-        tentacle134: true
-        tentacle135: true
-        tentacle136: true
-        tentacle137: true
-        tentacle138: true
-        tentacle139: true
         tentacle14: true
-        tentacle140: true
-        tentacle141: true
-        tentacle142: true
         tentacle15: true
         tentacle16: true
         tentacle17: true
@@ -633,21 +641,21 @@ Visualization Manager:
         tentacle97: true
         tentacle98: true
         tentacle99: true
-      Queue Size: 1000
+      Queue Size: 5
       Value: true
     - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /subGoal
+      Enabled: false
+      Marker Topic: /sampling_points
       Name: MarkerArray
       Namespaces:
-        subGoal_wp1: true
-      Queue Size: 100
-      Value: true
+        {}
+      Queue Size: 5
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
@@ -670,7 +678,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.887941360473633
+      Distance: 16.86338233947754
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -678,25 +686,25 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.39924103021621704
-        Y: 0.17633309960365295
-        Z: -0.24011866748332977
+        X: -1.7338765859603882
+        Y: 1.993040919303894
+        Z: -0.5513647794723511
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6547975540161133
+      Pitch: 1.3247969150543213
       Target Frame: <Fixed Frame>
-      Yaw: 0.35821476578712463
+      Yaw: 1.5732107162475586
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 2032
+  Height: 1043
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001f700000754fc0200000005fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000b000fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000006e000007540000018200ffffff000000010000015f00000754fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000006e000007540000013200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004a00000003efc0100000002fb0000000800540069006d00650000000000000004a0000008d800fffffffb0000000800540069006d00650100000000000004500000000000000000000003ca0000075400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001f7000003b9fc0200000005fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003b9000000c900ffffff000000010000015f000003b9fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d000003b9000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004a00000003efc0100000002fb0000000800540069006d00650000000000000004a00000041800fffffffb0000000800540069006d006501000000000000045000000000000000000000041e000003b900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -705,6 +713,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1848
-  X: 144
-  Y: 54
+  Width: 1920
+  X: 3840
+  Y: 0

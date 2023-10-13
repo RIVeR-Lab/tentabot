@@ -1,0 +1,150 @@
+### Tentabot Server Parameters
+## Robot Parameters
+local_map_msg: "/octomap_tentabot"
+
+# NOTE: Expected to be available in ROS paremeter server
+#       by config files task_nav, map_utility
+#world_frame_name: ""
+#n_goal: 1
+#goal1_x: 0.0
+#goal1_y: 0.0
+#goal1_z: 1.0
+#goal1_yaw: 0.0
+#world_name: ""
+#robot_name: ""
+#robot_frame_name: ""
+#robot_bbx_x_min: 0.0
+#robot_bbx_x_max: 0.0
+#robot_bbx_y_min: 0.0
+#robot_bbx_y_max: 0.0
+#robot_bbx_z_min: 0.0
+#robot_bbx_z_max: 0.0
+#robot_max_lat_velo: 0.0
+#robot_max_lat_acc: 0.0
+#robot_max_yaw_velo: 0.0
+#robot_max_yaw_acc: 0.0
+#robot_odometry_msg: "/turtlebot3_0/odom"
+#robot_pose_control_msg: ""
+#robot_velo_control_msg: "/turtlebot3_0/cmd_vel"
+
+## Process Parameters
+visu_flag: true 
+time_limit: 180 
+dt: 0.1 
+goal_close_threshold: 0.25
+ground_collision_flag: false
+ground_collision_threshold: 0.1
+heuristic_data_path: "dataset/heuristic/turtlebot2/"
+drl_service_flag: false
+
+## Trajectory Sampling Parameters
+trajectory_sampling_dataset_path: "dataset/trajectory_sampling/turtlebot2/"
+tlen: 10
+tsamp_cnt: 20
+
+#trajectory_gen_type: "geometric"
+tyaw: 0.0 
+tpitch: 0.0
+tyaw_cnt: 1
+tpitch_cnt: 1
+
+trajectory_gen_type: "kinematic"
+ttime: 8
+lat_velo_samp_cnt: 5
+ang_velo_samp_cnt: 21
+
+## Offline Tuning Parameters
+trajectory_data_path: "dataset/trajectory_sampling/turtlebot2/20231013_101618/"
+max_occupancy_belief_value: 100
+sweight_max: 1 
+sweight_scale: 10 
+egrid_vdim: 0.1 
+
+pdist_x_min: -0.25 
+pdist_x_max: 0.25
+pdist_y_min: -0.25
+pdist_y_max: 0.25
+pdist_z_min: -0.0 
+pdist_z_max: 0.65
+
+sdist_x_min: -0.6
+sdist_x_max: 0.6
+sdist_y_min: -0.6
+sdist_y_max: 0.6
+sdist_z_min: -0.0
+sdist_z_max: 0.9 
+
+## Online tuning Parameters
+tbin_obs_cnt_threshold: 1 
+crash_dist_scale: 0.2
+occupancy_scale: 3
+close_scale: 5
+smooth_scale: 1
+
+#### DRL Parameters 
+#### NOTE: Be sure that -> drl_service_flag: true
+
+### Common Parameters for Training and Testing
+mode: "testing"
+drl_data_path: "dataset/drl/testing/turtlebot2/"
+initial_training_path: ""
+#initial_training_path: "20220220_001614_PPO_tentabot/"
+#initial_training_path: "dataset/benchmark/2022_IROS/training_data/IROS22_Tentabot_1DCNN_FC/20220228_222559_PPO_tentabot/"
+
+### DRL-Training Parameters
+deep_learning_algorithm: "PPO"
+motion_planning_algorithm: "tentabot_drl"
+
+# Options:
+# laser_FC                -> FC(laser_data + target + prev_action)
+# laser_image_2DCNN_FC    -> 2DCNN(Channel: time, Height: image, Width: image) + FC(laser_data + target + prev_action)
+# laser_rings_2DCNN_FC    -> 2DCNN(Channel: time, Height: image, Width: image) + FC(laser_data + target + prev_action)
+# laser_1DCNN_FC          -> 1DCNN(Channel: time, Length: laser_data) + FC(CNN_output + target + prev_action)
+# Tentabot_FC             -> FC(occupancy_set + target + prev_action)
+# Tentabot_1DCNN_FC       -> 1DCNN(Channel: time, Length: occupancy_set) + FC(CNN_output + target + prev_action), if cit_flag = True 
+# Tentabot_1DCNN_FC       -> 1DCNN(Channel: occupancy_set, Length: time) + FC(CNN_output + target + prev_action), if cit_flag = False 
+# Tentabot_2DCNN_FC       -> 2DCNN(Channel: 1, Height: occupancy_set, Width: time) + FC(CNN_output + target + prev_action)
+observation_space_type: "Tentabot_FC"
+
+# Options:
+# TurtleBot2tentabot_drl-v0
+# TurtleBot2Realtentabot_drl-v0
+task_and_robot_environment_name: "TurtleBot2tentabot_drl-v00"
+
+learning_rate: 0.0002
+n_steps: 1000
+batch_size: 50
+ent_coef: 0.001
+training_timesteps: 2000
+max_episode_steps: 2000
+
+training_checkpoint_freq: 1000
+plot_title: "Learning Curve"
+plot_moving_average_window_size_timesteps: 20
+plot_moving_average_window_size_episodes: 5
+
+## Sensors
+laser_size_downsampled: 90
+laser_normalize_flag: True
+laser_error_threshold: 0.1
+
+laser_image_width: 64
+laser_image_height: 64
+
+## Algorithm: Tentabot-DRL Parameters
+obs_min_range: 0.25
+n_obs_stack: 5
+n_skip_obs_stack: 5
+cit_flag: True # cit = channel is time
+n_wp: 8
+
+## Reward:
+reward_terminal_success: 8
+reward_step_scale: 0.5
+penalty_terminal_fail: -5
+penalty_cumulative_step: -5
+
+### DRL-Testing Parameters
+max_testing_episode_timesteps: 2000
+max_testing_episodes: 2
+goal_status_msg: "/turtlebot2_0/goal_reaching_status"

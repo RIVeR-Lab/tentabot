@@ -7,7 +7,7 @@
 
   <arg name="robot" default="turtlebot3" />
   <arg name="ns" default="$(arg robot)_0" />
-  <arg name="model" default="burger" doc="model type [burger, waffle, waffle_pi]" />
+  <arg name="model" default="burger" doc="model type [kobuki_hexagons_kinect, burger, waffle, waffle_pi]" />
   <arg name="gui" default="false" />
   <arg name="x" default="0.0" />
   <arg name="y" default="0.0" />
@@ -15,6 +15,43 @@
   <arg name="roll" default="0" />
   <arg name="pitch" default="0" />
   <arg name="yaw" default="0" />
+
+  <group if="$(eval arg('robot') == 'turtlebot2')">
+
+    <param name="tf_prefix" value="$(arg ns)"/>
+    <arg name="base"       value="$(optenv TURTLEBOT_BASE kobuki)"/> <!-- create, roomba -->
+    <arg name="battery"    value="$(optenv TURTLEBOT_BATTERY /proc/acpi/battery/BAT0)"/>  <!-- /proc/acpi/battery/BAT0 -->
+    <arg name="stacks"     value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons -->
+    <arg name="3d_sensor"  value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro -->
+    
+    <arg name="urdf_file" default="$(find xacro)/xacro '$(find tentabot)/urdf/turtlebot2_custom1.urdf.xacro'"/>
+    <param name="robot_description" command="$(arg urdf_file) ns:=$(arg ns) model:=$(arg model) tf_prefix:=$(arg ns)"/>
+
+    <!-- Gazebo model spawner -->
+    <!--node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model"
+          args="$(optenv ROBOT_INITIAL_POSE) -unpause -urdf -param robot_description -model mobile_base"/-->
+
+
+    <!--param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/models/turtlebot2/turtlebot.urdf.xacro'
+                                            ns:=$(arg ns) model:=$(arg model)" /-->
+    
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+          args="-urdf
+                -param robot_description 
+                -model $(arg ns)
+                -robot_namespace $(arg ns)
+                -x $(arg x) -y $(arg y) -z $(arg z) 
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="tf_prefix" value="$(arg ns)" />
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1">
+      <param name="/use_gui" value="$(arg gui)" />
+    </node>
+  </group>
 
   <group if="$(eval arg('robot') == 'turtlebot3')">
     <param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/urdf/turtlebot3_custom1.urdf.xacro'
@@ -40,28 +77,6 @@
 
   <group if="$(eval arg('robot') == 'turtlebot3_il')">
     <param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/urdf/turtlebot3_custom2.urdf.xacro'
-                                            ns:=$(arg ns) model:=$(arg model)" />
-    
-    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
-          args="-urdf
-                -param robot_description 
-                -model $(arg ns)
-                -robot_namespace $(arg ns)
-                -x $(arg x) -y $(arg y) -z $(arg z) 
-                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" />
-
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-      <param name="tf_prefix" value="$(arg ns)" />
-      <param name="publish_frequency" type="double" value="30.0" />
-    </node>
-
-    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1">
-      <param name="/use_gui" value="$(arg gui)" />
-    </node>
-  </group>
-
-  <group if="$(eval arg('robot') == 'turtlebot2')">
-    <param name="robot_description" command="$(find xacro)/xacro '$(find tentabot)/models/turtlebot2/turtlebot.urdf.xacro'
                                             ns:=$(arg ns) model:=$(arg model)" />
     
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 

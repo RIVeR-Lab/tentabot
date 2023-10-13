@@ -12,17 +12,18 @@
     training_garden_dynamic_0
     validation
   -->
-  <arg name="world_name"      default="training_garden_static_0" />
+  <arg name="world_name"      default="training_garden_static_1" />
   <arg name="world_file"      default="$(find tentabot)/worlds/$(arg world_name).world" />
 
   <!-- CONFIGURATION OPTIONS
+    turtlebot2
     turtlebot3
     stretch
     jackal
     rosbot
   -->
-  <arg name="robot_name"      default="turtlebot3" />
-  <arg name="robot_model"     default="burger" />
+  <arg name="robot_name"      default="turtlebot2" />
+  <arg name="robot_model"     default="kobuki_hexagons_kinect"      doc="model type [kobuki_hexagons_kinect, burger, waffle, waffle_pi]" /> 
   <arg name="debug"           default="false" />
   <arg name="gui"             default="true" />
   <arg name="verbose"         default="false" />
@@ -31,6 +32,7 @@
   <arg name="sim_paused"      default="false"/>
 
   <arg name="ns0"             default="$(arg robot_name)_0" />
+  <!--arg name="ns0"             default="/" /-->
   <!--arg name="x0"           default="0.8866"/>
   <arg name="y0"              default="0.24"/-->
   <arg name="robot0_init_pos_x"              default="0.0" />
@@ -124,6 +126,20 @@
   <group if="$(eval arg('world_name') == 'validation')">
     <node pkg="tentabot" type="spawn_pedsim_agents.py" name="spawn_pedsim_agents" output="screen" />
     <include file="$(find tentabot)/launch/others/pedsim_ros/pedsim_testing_validation.launch" />
+  </group>
+
+  <group if="$(eval arg('robot_name') == 'turtlebot2')">
+    <group ns="$(arg ns0)">
+      <node pkg="tf" type="static_transform_publisher" name="static_transform_publisher" args="0 0 0 0 0 0 1 world $(arg ns0)/odom 100" />
+      <include file="$(find tentabot)/launch/utilities/spawn_robot.launch">
+        <arg name="robot" value="$(arg robot_name)" />
+        <arg name="model" value="$(arg robot_model)" />
+        <arg name="ns" value="$(arg ns0)" />
+        <arg name="x" value="$(arg robot0_init_pos_x)" />
+        <arg name="y" value="$(arg robot0_init_pos_y)" />
+        <arg name="yaw" value="$(arg robot0_init_yaw)" />
+      </include>
+    </group>
   </group>
 
   <group if="$(eval arg('robot_name') == 'turtlebot3')">

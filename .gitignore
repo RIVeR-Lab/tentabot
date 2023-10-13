@@ -1,4 +1,5 @@
 __pycache__/
+dataset/heuristic/
 dataset/drl/testing/
 dataset/drl/training/
 dataset/il/expert/
