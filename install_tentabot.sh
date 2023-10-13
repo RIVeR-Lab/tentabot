@@ -38,6 +38,12 @@ cd pedsim_ros
 git checkout noetic-akmandor
 cd ..
 
+git clone git@github.com:RIVeR-Lab/turtlebot2.git
+cd turtlebot2
+git checkout noetic-river-v0
+sh turtlebot_noetic.sh
+cd ..
+
 git clone https://github.com/RIVeR-Lab/turtlebot3.git #checkout noetic-akmandor
 cd turtlebot3
 git checkout noetic-akmandor
