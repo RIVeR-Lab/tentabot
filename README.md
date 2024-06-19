@@ -45,8 +45,10 @@
 * Von Hundelshausen, F., Himmelsbach, M., Hecker, F., Mueller, A., & Wuensche, H. J. (2008). **Driving with tentacles: Integral structures for sensing and motion**. Journal of Field Robotics, 25(9), 640-673. [[DOI:10.1002/rob.20256]](https://doi.org/10.1002/rob.20256).
 
 ### 2. Videos
-* [[IRC 2020 - supplementary video]](https://www.youtube.com/watch?v=5vZSEuWUXe4&t)
-* [[IRC 2020 - presentation]](https://youtu.be/Y5FCiJPXmlo)
+* [IRC 2020 - supplementary video](https://www.youtube.com/watch?v=5vZSEuWUXe4&t)
+* [IRC 2020 - presentation](https://youtu.be/Y5FCiJPXmlo)
+* [IROS 2022 - supplementary video](https://youtu.be/42m7VU8uaVw)
+* [IROS 2022 - presentation](https://youtu.be/CDW_sHrvsuk)
 
 ### 3 Installation
 The system has been tested with 20.04 (ROS Noetic).
