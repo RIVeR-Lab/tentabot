@@ -44,13 +44,13 @@
 * Akmandor, N. Ü., & Padir, T. (2020, November). **A 3d reactive navigation algorithm for mobile robots by using tentacle-based sampling**. In 2020 Fourth IEEE International Conference on Robotic Computing (IRC) (pp. 9-16). IEEE. [[DOI:10.1109/IRC.2020.00009]](https://doi.org/10.1109/IRC.2020.00009), [[arXiv:2001.09199]](https://arxiv.org/abs/2001.09199).
 * Von Hundelshausen, F., Himmelsbach, M., Hecker, F., Mueller, A., & Wuensche, H. J. (2008). **Driving with tentacles: Integral structures for sensing and motion**. Journal of Field Robotics, 25(9), 640-673. [[DOI:10.1002/rob.20256]](https://doi.org/10.1002/rob.20256).
 
-### 2. Videos
+### 3. Videos
 * [IRC 2020 - supplementary video](https://www.youtube.com/watch?v=5vZSEuWUXe4&t)
 * [IRC 2020 - presentation](https://youtu.be/Y5FCiJPXmlo)
 * [IROS 2022 - supplementary video](https://youtu.be/42m7VU8uaVw)
 * [IROS 2022 - presentation](https://youtu.be/CDW_sHrvsuk)
 
-### 3 Installation
+### 4. Installation
 The system has been tested with 20.04 (ROS Noetic).
 
 Follow the tutorials to
@@ -59,24 +59,24 @@ Follow the tutorials to
 
 To install tentabot, either follow the [manual installation instructions](docs/MANUAL_INSTALLATION.md), or attempt an automated install with the following instructions (experimental):
 
-#### 3.1 Clone the tentabot repository into the src folder of your catkin workspace, and change into the tentabot directory.
+#### 4.1 Clone the tentabot repository into the src folder of your catkin workspace, and change into the tentabot directory.
 ```
 git clone git@github.com:RIVeR-Lab/tentabot.git
 cd tentabot
 ```
-#### 3.2 Run the bash script to automate installing all dependencies.
+#### 4.2 Run the bash script to automate installing all dependencies.
 ##### Note: This script requires superuser and makes system changes. Review the script before running.
 ```
 chmod +x install_tentabot.sh
 ./install_tentabot.sh
 ```
 
-#### 3.3 Source the workspace, after successfully built.
+#### 4.3 Source the workspace, after successfully built.
 ```
 source devel/setup.bash
 ```
 
-### 4. Simulation
+### 5. Simulation
 Tentabot features out of the box simulation support for certain robots. You can view the status of this support here:
 
 | Robot / Model| Manufacturer | Simulation | Real | Methods |
@@ -97,17 +97,17 @@ Tentabot navigation framework is formed by several submodules such as:
 ##### d. Tentabot Server
 ##### e. Tentabot DRL (Training / Testing)
 
-#### 4.1 Configure the configuration files located in:
+#### 5.1 Configure the configuration files located in:
 - [task_nav](config/task_nav): World, goal and robot specific parameters. Example: [Turtlebot3](config/task_nav/config_task_nav_turtlebot3.yaml)
 - [map_utility](config/map_utility): User defined local map features and sensor specific parameters. Example: [Turtlebot3](config/map_utility/config_map_utility_turtlebot3.yaml).
 - [tentabot_server](config/tentabot_server): User defined Tentabot algorithm parameters. Example: [Turtlebot3](config/tentabot_server/config_tentabot_server_turtlebot3.yaml).
 
-##### 4.1.1 To enable Tentabot DRL, set "drl_service_flag: true" in the Tentabot Server configuration file.
-##### 4.1.2 Set the "mode" parameter in the Tentabot Server configuration file as either "training" or "testing".
-##### 4.1.3 To continue "training" or start "testing", set the "initial_training_path" parameter in the Tentabot Server configuration file by providing the location of a trained model.
+##### 5.1.1 To enable Tentabot DRL, set "drl_service_flag: true" in the Tentabot Server configuration file.
+##### 5.1.2 Set the "mode" parameter in the Tentabot Server configuration file as either "training" or "testing".
+##### 5.1.3 To continue "training" or start "testing", set the "initial_training_path" parameter in the Tentabot Server configuration file by providing the location of a trained model.
 
-#### 4.2 Open the [tentabot_framework.launch](launch/tentabot_framework.launch) file.
-##### 4.2.1 Configure the submodule flags.
+#### 5.2 Open the [tentabot_framework.launch](launch/tentabot_framework.launch) file.
+##### 5.2.1 Configure the submodule flags.
 | Argument | Description |
 |:- |:- |
 | sim_flag | If True, it launches Gazebo simulation. |
@@ -115,34 +115,34 @@ Tentabot navigation framework is formed by several submodules such as:
 | map_utility_flag | If True, it runs the Map Utility Server. |
 | tentabot_server_flag | If True, it launches the Tentabot Server. |
 
-##### 4.2.2 Set the names of configuration files.
+##### 5.2.2 Set the names of configuration files.
 | Argument | Examples | File Location |
 |:- |:- |:- |
 | config_task_name  | config_task_nav_cylinders0_firefly, config_task_nav_forestX_firefly, config_task_nav_turtlebot3, config_task_nav_stretch, config_task_nav_jackal, config_task_nav_jackal_real, config_task_nav_rosbot | [task_nav](config/task_nav) |
 | config_map_utility | config_map_utility_cylinders0_firefly, config_map_utility_forestX_firefly, config_map_utility_turtlebot3, config_map_utility_stretch, config_map_utility_jackal, config_map_utility_jackal_real, config_map_utility_rosbot | [map_utility](config/map_utility) |
 | config_tentabot_server | config_tentabot_server_firefly, config_tentabot_server_turtlebot3, config_tentabot_server_stretch, config_tentabot_server_jackal, config_tentabot_server_jackal_real, config_tentabot_server_rosbot| [tentabot_server](config/tentabot_server) |
 
-#### 4.3 Run the Tentabot Framework launch file in a terminal window:
+#### 5.3 Run the Tentabot Framework launch file in a terminal window:
 ```
 roslaunch tentabot tentabot_framework.launch
 ```
 
-### 5. Real Robot
+### 6. Real Robot
 We tested our framework in real robot platforms including Turtlebot2, Stretch and Jackal.
 ![teaser](videos/tentabot_heuristic_jackal.gif) ![teaser](videos/tentabot_drl_testing_stretch.gif)
-#### 5.1 Run the robot bring-up (Example: [Jackal](launch/others/robot_bringup/jackal/jackal_bringup.launch)) which includes:
+#### 6.1 Run the robot bring-up (Example: [Jackal](launch/others/robot_bringup/jackal/jackal_bringup.launch)) which includes:
 - publishing robot's links and joint state info
 - launching sensor drivers.
 
-#### 5.2 Run a localization estimation algorithm (Example: [ROS Gmapping](launch/others/gmapping/gmapping_jackal.launch)).
+#### 6.2 Run a localization estimation algorithm (Example: [ROS Gmapping](launch/others/gmapping/gmapping_jackal.launch)).
 
-#### 5.3 Follow all steps in the previous section noting that in step 4.2.1, set the "sim_flag" argument as False in [tentabot_framework.launch](launch/tentabot_framework.launch) file.
+#### 6.3 Follow all steps in the previous section noting that in step 4.2.1, set the "sim_flag" argument as False in [tentabot_framework.launch](launch/tentabot_framework.launch) file.
 
-### 6. Contributors
+### 7. Contributors
 Neset Unver Akmandor | akmandor.n@northeastern.edu \
 Eric Dusel | dusel.e@northeastern.edu \
 Gary Lvov | lvov.g@northeastern.edu | www.garylvov.com \
 Hongyu Li | li.hongyu1@northeastern.edu
 
-### 7. Credentials
+### 8. Credentials
 Tentabot was developed at the [RIVeR Lab, Northeastern University](http://robot.neu.edu/).
